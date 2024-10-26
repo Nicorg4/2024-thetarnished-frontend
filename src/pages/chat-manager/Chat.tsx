@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import "./Chat.css";
-import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import styled from "styled-components";
 import SideBar from "../../components/sidebar/sidebar";
@@ -29,18 +28,16 @@ const socket: Socket = io("https://chat.fpenonori.com", {
   secure: true,
 });
 
-const Chat: React.FC = () => {
+const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => void }> = ({ teacherId, studentId, closeChat }) => {  
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [role, setRole] = useState("");
   const [studentName, setStudentName] = useState<string>("");
   const [teacherName, setTeacherName] = useState<string>("");
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const {studentId, teacherId} = useParams();
   const {user} = useAuth();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const URL = import.meta.env.VITE_API_URL;
-
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -55,8 +52,10 @@ const Chat: React.FC = () => {
     if (user?.role) {
       setRole(user.role);
     }
-    fetchStudentName(studentId);
-    fetchTeacherName(teacherId);
+    if (studentId && teacherId) {
+      fetchStudentName(studentId);
+      fetchTeacherName(teacherId);
+    }
     scrollToBottom();
   }, [user, messages]);
 
@@ -100,15 +99,13 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (studentId && teacherId) {
-
-
       socket.emit("joinRoom", { studentId, teacherId });
-
       socket.on("messageHistory", (history: Message[]) => {
         const filteredHistory = history.filter(
           (msg) => msg.message && msg.message.trim() !== ""
         );
         setMessages(filteredHistory);
+        setIsLoading(false);
         scrollToBottom();
       });
 
@@ -119,7 +116,6 @@ const Chat: React.FC = () => {
         }
       });
     }
-
     return () => {
       socket.off("message");
       socket.off("messageHistory");
@@ -144,17 +140,15 @@ const Chat: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const navigate = useNavigate();
-
   const handleCloseChat = () => {
-    navigate("/my-classes")
+    closeChat();
   };
 
   return (
     <MainContainer>
       <Topbar/>
       <SideBar/>
-      {isLoading ? (<InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>) : (
+        {isLoading ? (<InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>) : (
         <Content>        
         <div className="chat-container">
           <div className="sender-name">{role === "STUDENT" ? teacherName : studentName}<CloseButton onClick={handleCloseChat}><RiCloseLargeFill/></CloseButton></div>
@@ -238,6 +232,7 @@ const Chat: React.FC = () => {
     </MainContainer>
   );
 };
+
 const MainContainer =  styled.div`
     height: 100vh ;
     width: 100vw ;

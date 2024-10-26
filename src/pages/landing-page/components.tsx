@@ -14,18 +14,15 @@ const HeaderSection = styled.header`
   padding: 40px;
   text-align: center;
   color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 0;
-  background: rgb(89,185,99);
-  background: linear-gradient(143deg, rgba(89,185,99,1) 0%, rgba(38,78,42,1) 35%, rgba(15,41,46,1) 84%);
-  border-bottom-left-radius: 500px;
-  border-bottom-right-radius: 500px;
+  background-color: ${colors.secondary};
 `;
 
 const Title = styled.h1`
   font-size: 3rem;
   font-weight: 700;
   transition: transform 0.3s ease;
+  color: ${colors.primary};
 
   &:hover {
     transform: translateY(-5px);
@@ -35,11 +32,12 @@ const Title = styled.h1`
 const Subtitle = styled.p`
   font-size: 1.2rem;
   margin: 20px auto;
+  color: ${colors.primary};
 `;
 
 const GetStartedButton = styled.button`
-  background: ${colors.secondary};
-  color: ${colors.primary};
+  background: ${colors.primary};
+  color: ${colors.secondary};
   padding: 12px 24px;
   font-size: 1.2rem;
   border: none;

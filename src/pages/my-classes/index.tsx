@@ -4,8 +4,8 @@ import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFoote
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
 import Logo from '../../components/top-down-logo';
-import { useNavigate } from 'react-router-dom';
 import { CiChat1 } from "react-icons/ci";
+import Chat from '../chat-manager/Chat';
 
 
 interface Teacher {
@@ -27,12 +27,14 @@ interface Reservations {
 
 const MyClasses = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
     const [reservations, setReservations] = useState<Reservations[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+    const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
     const URL = import.meta.env.VITE_API_URL;
     const navigateToChat = (teacherid:string) =>{
-        navigate(`/chat/${user?.id}/${teacherid}`);
+        setSelectedTeacherId(teacherid);
+        setIsChatOpen(true);
     }
 
     useEffect(() => {
@@ -69,7 +71,14 @@ const MyClasses = () => {
             <SideBar />
             <Logo/>
             <Topbar/>
-            <Content>
+            {isChatOpen ? (
+                <Chat
+                    teacherId={selectedTeacherId || ''}
+                    studentId={`${user?.id}` || ''}
+                    closeChat={() => setIsChatOpen(false)}
+                />
+            ) : (
+                <Content>
                 {isLoading ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         {Array.from({ length: totalCards }).map((_, index) => (
@@ -103,6 +112,8 @@ const MyClasses = () => {
                     <h2 style={{textAlign:"center"}}>You haven’t booked any class yet.</h2>
                 )}
             </Content>
+            )}
+            
         </MainContainer>
     );
 };

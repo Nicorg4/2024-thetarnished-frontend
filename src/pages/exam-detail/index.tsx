@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Choice, ChoiceList, ExamHeader, QuestionCard, QuestionList, QuestionText, ResultText, MainContainer, Content, ExamInfo, ScoreContainer } from './components';
+import { Choice, ChoiceList, ExamHeader, QuestionCard, QuestionList, QuestionText, MainContainer, Content, ExamInfo, ScoreContainer } from './components';
 import SideBar from '../../components/sidebar/sidebar';
 import Topbar from '../../components/topbar';
 import Logo from '../../components/top-down-logo';
@@ -42,7 +42,6 @@ const ExamDetail: React.FC = () => {
   const [exam, setExam] = useState<Exam | null>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
   const [showResults, setShowResults] = useState(false);
-  const [results, setResults] = useState<Results>({});
   const [message, setMessage] = useState("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [finalGrade, setFinalGrade] = useState(0);
@@ -99,7 +98,6 @@ const ExamDetail: React.FC = () => {
     const percentage = (correctAnswersCount / totalQuestions) * 100;
     const grade = Math.round(percentage);
     setFinalGrade(grade);
-    setResults(result);
     setShowResults(true);
   };
 
@@ -134,11 +132,7 @@ const ExamDetail: React.FC = () => {
                         </Choice>
                     ))}
                     </ChoiceList>
-                    {showResults && (
-                    <ResultText>
-                        {results[question.question_id] ? 'Correct' : 'Incorrect'}
-                    </ResultText>
-                    )}
+
                 </QuestionCard>
                 ))}
             </QuestionList>

@@ -98,19 +98,15 @@ export const Choice = styled.li<ChoiceProps>`
   margin-bottom: 5px;
   background-color: ${({ selected, showResults, correct }) => 
     showResults 
-      ? (correct ? `${colors.light}` :` ${colors.important}`)
+      ? (correct ? `${colors.light}` : (selected ? `${colors.important}` : `${colors.secondary}`))
       : (selected ? colors.primary : colors.secondary)
   };
   color: ${({ selected, showResults, correct }) => 
     showResults 
-      ? (correct ? `${colors.secondary}` :` ${colors.secondary}`)
+      ? (correct ? `${colors.secondary}` : (selected ? `${colors.secondary}` : `${colors.primary}`))
       : (selected ? colors.secondary : colors.primary)
   };
   padding: 8px;
-  border: ${({showResults}) => 
-    showResults 
-      ? "none" : `1px solid ${colors.primary}`
-  };
   border-radius: 4px;
   cursor: pointer;
 
