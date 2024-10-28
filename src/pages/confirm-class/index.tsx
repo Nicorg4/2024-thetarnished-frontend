@@ -7,7 +7,7 @@ import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { IoCheckmarkCircleOutline, IoCloseCircleOutline  } from "react-icons/io5";
 
 
-const ClassConfirm = () => {
+const ClassConfirm = ({ mode }: { mode: string }) => {    
     const [isLoading, setIsLoading] = React.useState(true);
     const URL = import.meta.env.VITE_API_URL;
     const { reservationId, teacherId } = useParams();
@@ -35,13 +35,41 @@ const ClassConfirm = () => {
                 setIsConfirmed(true);
                 setIsLoading(false);
             }catch(error){
-                setMessage('Failed to confirm class.');
+                setMessage('Failed to confirm class, try again later.');
                 setIsLoading(false);
                 console.error(error);
             }
         }
-        confirmClass();
-    }, [URL, reservationId, teacherId]);
+        const rejectClass = async () => {
+            try{
+                const reponse = await fetch(`${URL}reservation/cancel/${reservationId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        teacher_id: teacherId,
+                    })
+                });
+
+                if (!reponse.ok) {
+                    throw new Error('Failed to fetch teacher reservations');
+                }
+                setMessage('Class rejected succesfully!');
+                setIsConfirmed(true);
+                setIsLoading(false);
+            }catch(error){
+                setMessage('Failed to reject class, try again later.');
+                setIsLoading(false);
+                console.error(error);
+            }
+        }
+        if (mode === 'confirm') {
+            confirmClass();
+        } else {
+            rejectClass();
+        }
+    }, [URL, mode, reservationId, teacherId]);
     
     return (
         <MainContainer>

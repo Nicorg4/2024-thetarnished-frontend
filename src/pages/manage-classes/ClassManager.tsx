@@ -10,13 +10,15 @@ import { Message } from '../../components/message/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import CreateExamForm from '../../components/create-exam-form';
-import { useNavigate } from 'react-router-dom';
 import { CiChat1 } from "react-icons/ci";
+import Chat from '../chat-manager/Chat';
+import Notification from '../../components/notification';
 
 
 interface Reservation {
     id: string;
     student_name: string;
+    subject_id: string
     subject_name: string;
     student_id: string;
     datetime: string;
@@ -25,9 +27,11 @@ interface Reservation {
 
 const ClassManager = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
-    const navigateToChat = (studentid:string) =>{
-        navigate(`/chat/${studentid}/${user?.id}`);
+    const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+    const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
+    const navigateToChat = (teacherid:string) =>{
+        setSelectedTeacherId(teacherid);
+        setIsChatOpen(true);
     }
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [currentReservation, setCurrentReservation] = useState<Reservation | null>(null);
@@ -54,7 +58,7 @@ const ClassManager = () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch student reservations');
+                    throw new Error('Failed to fetch teacher reservations');
                 }
                 const data = await response.json();
                 setReservations(data);
@@ -71,10 +75,18 @@ const ClassManager = () => {
     const totalCards = 4;
     const skeletonCards = totalCards - reservations.length;
 
-    const handleFinishedClass = async (reservationId: string) => {
+    const handleFinishedClass = async (reservationId: string, subject_id: string) => {
         setSelectedClassId(reservationId);
         try {
             setIsFinishing(true);
+            const price = await fetch(`${URL}subject/get-price/${subject_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`,
+                },
+            });
+            const subject_price = await price.json();
             const response = await fetch(`${URL}reservation/terminate/${reservationId}`, {
                 method: 'DELETE',
                 headers: {
@@ -82,7 +94,7 @@ const ClassManager = () => {
                     'Authorization': `Bearer ${user?.token}`,
                 },
                 body: JSON.stringify({
-                    valor: 300,
+                    valor: subject_price,
                 })
             });
             if (!response.ok) {
@@ -150,6 +162,14 @@ const ClassManager = () => {
     };
 
   return (
+    <>
+    {isChatOpen ? (
+        <Chat
+            teacherId={`${user?.id}` || ''}
+            studentId={selectedTeacherId || ''}
+            closeChat={() => setIsChatOpen(false)}
+        />
+    ) : (
     <MainContainer isCreateExamPopupOpen={isCreateExamPopupOpen} isPopupOpen={isPopupOpen}>
         {showMessage && <Message>{message}</Message>}
         {showErrorMessage && <Message error>{message}</Message>}
@@ -192,7 +212,7 @@ const ClassManager = () => {
                             </CardBody>
                             <CardFooter>
                                 {new Date(reservation.datetime) < new Date() && (
-                                <Button onClick={() => handleFinishedClass(reservation.id)}>
+                                <Button onClick={() => handleFinishedClass(reservation.id, reservation.subject_id)}>
                                     {isFinishing && selectedClassId === reservation.id ? (
                                         <AnimatedLoadingLogo src={SimplifiedLogo} />
                                     ) : (
@@ -215,10 +235,12 @@ const ClassManager = () => {
                     ))}
                 </CardsContainer>
             ) : (
-                <h2 style={{textAlign:"center"}}>You don't have any class to manage.</h2>
+                <Notification alternative={false} message={"You don't have any class to manage."} />
             )}
         </Content>
     </MainContainer>
+    )}
+    </>
   )
 };
 

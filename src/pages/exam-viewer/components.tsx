@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import colors from "../../assets/colors";
 
-export const MainContainer =  styled.div`
+export const MainContainer = styled.div`
     height: 100vh ;
     width: 100vw ;
     display: flex;
@@ -15,38 +15,51 @@ export const Content = styled.div`
     height: 100% ;
     margin-left: 100px;
     display: flex ;
-    flex-direction: column;
     align-items: center ;
     justify-content: center;
-
-    @media (max-width: 1000px){
-        margin-left: 0;
-        width: 100% ;
-    }
 `
 
 export const ExamCard = styled.div`
-  background-color: ${colors.secondary};
-  color: ${colors.primary};
-  width: 300px;
-  margin: 15px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.3s ease;
+    background-color: ${colors.secondary};
+    color: ${colors.primary};
+    width: 100%;
+    max-width: 350px;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 
-  &:hover {
-    transform: translateY(-5px);
-  }
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+    }
 `;
 
 export const ExamTitle = styled.h3`
-  font-size: 1.6rem;
-  margin-bottom: 10px;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: ${colors.primary};
+    font-weight: 600;
 `;
 
 export const ExamInfo = styled.p`
-  font-size: 1rem;
-  margin-bottom: 5px;
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: ${colors.primary}cc;
+`;
+
+export const NoExamsMessage = styled.div`
+    text-align: center;
+    color: ${colors.primary};
+    font-size: 1.5rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
 `;

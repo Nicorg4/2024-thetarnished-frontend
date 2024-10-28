@@ -3,8 +3,6 @@ import { io, Socket } from "socket.io-client";
 import "./Chat.css";
 import { useAuth } from "../../auth/useAuth";
 import styled from "styled-components";
-import SideBar from "../../components/sidebar/sidebar";
-import Topbar from "../../components/topbar";
 import { Button } from "../../components/main-button/components";
 import { InteractionBlocker } from "../../components/interaction-blocker/components";
 import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/components";
@@ -52,50 +50,49 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
     if (user?.role) {
       setRole(user.role);
     }
-    if (studentId && teacherId) {
-      fetchStudentName(studentId);
-      fetchTeacherName(teacherId);
-    }
-    scrollToBottom();
-  }, [user, messages]);
-
-
-  const fetchStudentName = async (id: string) => {
-    try {
-      const response = await fetch(
-        `${URL}students/${id}`
-      , { 
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${user?.token}`,
-        },
-      });
-      const student = await response.json();
-      setStudentName(student.firstname +" "+ student.lastname);
-    } catch (error) {
-      console.error("Error fetching student name:", error);
-    }
-  };
-
-  const fetchTeacherName = async (id: string) => {
-    try {
-      const response = await fetch(
-        `${URL}teachers/${id}`
-        , {
+    const fetchStudentName = async (id: string) => {
+      try {
+        const response = await fetch(
+          `${URL}students/${id}`
+        , { 
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${user?.token}`,
           },
         });
-      const teacher = await response.json();
-      setTeacherName(teacher.firstname +" "+ teacher.lastname);
-
-    } catch (error) {
-      console.error("Error fetching teacher name:", error);
+        const student = await response.json();
+        setStudentName(student.firstname +" "+ student.lastname);
+      } catch (error) {
+        console.error("Error fetching student name:", error);
+      }
+    };
+  
+    const fetchTeacherName = async (id: string) => {
+      try {
+        const response = await fetch(
+          `${URL}teachers/${id}`
+          , {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${user?.token}`,
+            },
+          });
+        const teacher = await response.json();
+        setTeacherName(teacher.firstname +" "+ teacher.lastname);
+  
+      } catch (error) {
+        console.error("Error fetching teacher name:", error);
+      }
+    };
+    if (studentId && teacherId) {
+      fetchStudentName(studentId);
+      fetchTeacherName(teacherId);
     }
-  };
+    scrollToBottom();
+  }, [user, messages, studentId, teacherId, URL]);
+
 
   useEffect(() => {
     if (studentId && teacherId) {
@@ -146,12 +143,12 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
 
   return (
     <MainContainer>
-      <Topbar/>
-      <SideBar/>
         {isLoading ? (<InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>) : (
         <Content>        
         <div className="chat-container">
-          <div className="sender-name">{role === "STUDENT" ? teacherName : studentName}<CloseButton onClick={handleCloseChat}><RiCloseLargeFill/></CloseButton></div>
+          <div className="sender-name">
+            <UserImage src="https://imgs.search.brave.com/CidPMbEerqHyYiRV-k0nX7jmRCWkpObwF5BxWwlJKog/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNjE5/NDAwODEwL3Bob3Rv/L21yLXdoby5qcGc_/cz02MTJ4NjEyJnc9/MCZrPTIwJmM9aGFy/VHhXX0lSbDA2Q25o/LTRrbkNudHh3WWlx/V282eWlBeEpUcld5/U0ppRT0" alt="User Image" />
+            {role === "STUDENT" ? teacherName : studentName}<CloseButton onClick={handleCloseChat}><RiCloseLargeFill/></CloseButton></div>
           <div className="message-history" ref={chatContainerRef}>
           {messages.map((msg, index) => {
             const isSender =
@@ -211,8 +208,9 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
             );
           })}
         </div>
+        <BottomBarContainer>
           <div className="chat-input">
-            <input
+            <Input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -223,8 +221,9 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
               }}
               placeholder="Type a message"
             />
-            <Button onClick={sendMessage}>Send</Button>
           </div>
+          <SendButton onClick={sendMessage}>Send</SendButton>
+        </BottomBarContainer>
         </div>
       </Content>
 
@@ -243,18 +242,12 @@ const MainContainer =  styled.div`
 `
 
 const Content = styled.div`
-    width: 90% ;
+    width: 100% ;
     height: 100% ;
-    margin-left: 100px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
     justify-content: center;
-
-    @media (max-width: 1000px){
-        margin-left: 0;
-        width: 100% ;
-    }
 `
 
 const CloseButton = styled.button`
@@ -263,12 +256,51 @@ const CloseButton = styled.button`
     font-size: 1.4rem;
     border: none;
     position: absolute;
-    top: 0px;
+    top: 5px;
     right: 10px;
 
     &:hover {
         opacity: 0.7;
+        background-color: transparent ;
     }
 `
 
+const UserImage = styled.img`
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid ${colors.primary};
+`
+
+const BottomBarContainer = styled.div`
+  display: flex;
+  width: 95%;
+  margin: auto;
+  margin-bottom: 15px;
+  justify-content: center;
+  align-items: center;
+`
+const SendButton = styled(Button)`
+  background-color: ${colors.primary};
+  height: 100%;
+  border-radius: 0 30px 30px 0;
+  display: flex;
+  text-align: center;
+`
+
+const Input = styled.input`
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
+  color: #3e7d44;
+  font-size: 1rem;
+  border: none;
+  margin-right: 10px;
+  box-sizing: border-box;
+  background-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
+`
 export default Chat;
