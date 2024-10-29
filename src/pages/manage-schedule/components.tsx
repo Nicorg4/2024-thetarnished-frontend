@@ -8,7 +8,7 @@ interface MainContainerProps {
 
 export const MainContainer = styled.div<MainContainerProps>`
     height: 100vh ;
-    width: 100% ;
+    width: 100vw ;
     display: flex;
     align-items: center ;
     background: rgb(43,84,52);
@@ -20,15 +20,15 @@ export const MainContainer = styled.div<MainContainerProps>`
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
         background: rgba(0, 0, 0, 0.5);
         z-index: 999;
         opacity: ${({ isPopupOpen, isOnVacationPopUpOpen }) => (isPopupOpen || isOnVacationPopUpOpen ? 1 : 0)};
         transition: opacity 0.3s ease;
         pointer-events: none;
         backdrop-filter: blur(5px);      
-        padding-bottom: 50px ;  
+        padding-bottom: 60px ;  
     }
 
     @media (max-width: 1000px){
@@ -37,13 +37,14 @@ export const MainContainer = styled.div<MainContainerProps>`
 `
 
 export const Content = styled.div`
-    width: 90% ;
+    width: 80% ;
     height: 100%;
     margin-left: 100px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
     justify-content: center;
+    margin: auto;
 
     @media (max-width: 1000px){
         margin-left: 0;

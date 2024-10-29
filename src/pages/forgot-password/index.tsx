@@ -34,7 +34,7 @@ const ForgotPassword = () => {
         setEmailSent(true);
         setTimeout(() => {
             setEmailSent(false);
-            navigate('/');
+            navigate('/login');
         }, 3000);
 
     }catch(error){
@@ -43,7 +43,7 @@ const ForgotPassword = () => {
     }   
     }
     const handleBackToLogin = () => {
-        navigate('/');
+        navigate('/login');
     }
 
     return(

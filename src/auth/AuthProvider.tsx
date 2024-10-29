@@ -40,6 +40,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       role: 'STUDENT' | 'TEACHER' | 'ADMIN';
       isActive: boolean;
       on_vacation: boolean;
+      exp: number;
+      avatar_id: number;
     }>(data.token);
     
     const loggedInUser: User = {
@@ -53,13 +55,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isActive: info.isActive,
       isOnVacation: info.on_vacation,
       token: data.token,
+      avatar_id: info.avatar_id,
+      exp: info.exp,
     };
 
     setUser(loggedInUser);
     localStorage.setItem('user', JSON.stringify(loggedInUser));
     setIsLoggedIn(true);
 
-    // Redirección según el rol del usuario
     const roleRoutes: { [key: string]: string } = {
       STUDENT: '/student-home',
       TEACHER: '/teacher-home',
@@ -84,8 +87,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+
+  const getUserHome = () => {
+    const role = user?.role
+    if (role === 'ADMIN') {
+      return '/admin-home';
+    } else if (role === 'TEACHER') {
+      return '/teacher-home';
+    } else if (role === 'STUDENT') {
+      return '/student-home';
+    } else{
+      return '/';
+    }
+  }
+  const checkSession = () => {
+    if (isLoggedIn) {
+      navigate(getUserHome())
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, login, logout, updateUser, checkSession }}>
       {children}
     </AuthContext.Provider>
   );

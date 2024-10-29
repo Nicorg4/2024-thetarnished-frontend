@@ -4,7 +4,6 @@ import colors from "../../assets/colors";
 
 export const MainContainer = styled.div`
     height: 100vh ;
-    width: 100vw ;
     display: flex;
     align-items: center ;
     background: rgb(43,84,52);
@@ -12,23 +11,40 @@ export const MainContainer = styled.div`
 
     @media (max-width: 1000px){
         flex-direction: column;
-        height: 110vh ;
+        padding-bottom: 100px;
     }
 `
 
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
 export const Content = styled.div`
-    width: 90% ;
-    height: 100% ;
-    margin-left: 100px;
+    width: 80% ;
+    margin-left: 150px;
+    margin-right: 50px;
+    border-radius: 10px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
     justify-content: center;
+    background-color: ${colors.secondary};
+    height: 80%;
+    padding: 30px 20px 70px 20px;
+    color: ${colors.primary};
+    animation: ${slideIn} 0.2s ease-out forwards;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
-        padding-top: 100px;
+        margin-right: 0;
+        margin-top: 100px;
     }
 `
 
@@ -42,7 +58,7 @@ export const ContentTitle = styled.h2`
 
 export const CardsWrapper = styled.div`
     display: grid;
-    grid-template-columns: 230px 230px 230px;
+    grid-template-columns: 230px 230px 230px 230px 230px;
     gap: 30px;
     padding: 20px;
     border-radius: 8px;
@@ -53,8 +69,6 @@ export const CardsWrapper = styled.div`
     @media (max-width: 800px){
       grid-template-columns: 45% 45%;
       max-height: 800px;
-      overflow-y: auto;
-      flex-wrap: wrap;
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -74,11 +88,19 @@ export const CardsWrapper = styled.div`
     }
 
     scrollbar-width: thin;
-    scrollbar-color: white transparent;
+    scrollbar-color: ${colors.primary} transparent;
     }
 
-    @media (max-width: 450px){
+    @media (max-width: 1500px){
+      grid-template-columns: 230px 230px 230px;
+    }
+
+    @media (max-width: 900px){
+      grid-template-columns: 230px 230px;
+    }
+    @media (max-width: 600px){
       grid-template-columns: 100%;
+      margin-bottom: 0px;
     }
 `;
 
@@ -91,7 +113,7 @@ export const Card = styled.div<CardProps>`
   height: 150px;
   border-radius: 8px;
   background-color: ${({ isSkeleton }) => (isSkeleton ? "" : "#fff")};
-  border: 1px solid ${({ isSkeleton }) => (isSkeleton ? " white" : "#ccc")};
+  border: 1px solid ${({ isSkeleton }) => (isSkeleton ? `${colors.primary}` : "#ccc")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -106,17 +128,17 @@ export const Card = styled.div<CardProps>`
     box-shadow: ${({ isSkeleton }) => (isSkeleton ? "none" : "0 8px 16px rgba(0, 0, 0, 0.2);")};
   }
 
-  @media (max-width: 600px){
+  @media (max-width: 900px){
       margin: auto ;
       width: 150px;
       height: 125px;
-    }
+  }
 `;
 
 export const CardSubject = styled.div`
   font-size: 25px;
   color: ${colors.primary};
-  font-weight: 500;
+  font-weight: 350;
   overflow: hidden;
   text-overflow: ellipsis;
 `;

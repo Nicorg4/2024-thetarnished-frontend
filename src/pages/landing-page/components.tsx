@@ -3,11 +3,17 @@ import { createGlobalStyle } from 'styled-components';
 import colors from '../../assets/colors';
 import { FaArrowRightLong } from "react-icons/fa6";
 import { BsTwitterX, BsFacebook, BsInstagram } from "react-icons/bs";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FaRegCircleCheck } from "react-icons/fa6";
 
 export const Content = styled.div`
-  width: 100vw;
+  height: 100vh;
+
+  @media (max-width: 700px) {
+    height: 100%;
+  }
 `;
 
 const HeaderSection = styled.header`
@@ -15,7 +21,12 @@ const HeaderSection = styled.header`
   text-align: center;
   color: white;
   z-index: 0;
-  background-color: ${colors.secondary};
+  background: rgba(0, 0, 0, 0.7);
+  height: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Title = styled.h1`
@@ -23,6 +34,7 @@ const Title = styled.h1`
   font-weight: 700;
   transition: transform 0.3s ease;
   color: ${colors.primary};
+  text-align: center;
 
   &:hover {
     transform: translateY(-5px);
@@ -54,11 +66,23 @@ const GetStartedButton = styled.button`
 
 const FeaturesSection = styled.section`
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 67%;
+  padding: 20px 50px;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 50px;
 `;
+
+const FeaturesTitle = styled.h2`
+  font-size: 2.5rem;
+  margin-bottom: 50px;
+  color: ${colors.secondary};
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+`
 
 const FeatureCard = styled.div`
   background: ${colors.secondary};
@@ -69,6 +93,10 @@ const FeatureCard = styled.div`
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column ;
+  justify-content: center;
 
   &:hover {
     transform: translateY(-10px);
@@ -85,16 +113,18 @@ const FeatureDescription = styled.p`
 `;
 
 const StepsSection = styled.section`
-  margin-top: 100px;
   text-align: center;
   z-index: 10;
+  background-color: ${colors.secondary};
+  padding: 100px;
+  padding-bottom: 150px;
 `;
 
 const StepsTitle = styled.h2`
   font-size: 2.5rem;
-  margin-bottom: 50px;
-  color: ${colors.secondary};
+  color: ${colors.primary};
   transition: transform 0.3s ease;
+  margin-bottom: 50px;
 
   &:hover {
     transform: translateY(-5px);
@@ -103,13 +133,13 @@ const StepsTitle = styled.h2`
 
 const StepsList = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 80px;
 `;
 
-const StepCard = styled.div`
+const StepCard = styled(motion.div)`
   background: ${colors.primary};
   padding: 20px;
   border-radius: 8px;
@@ -133,12 +163,10 @@ const StepDescription = styled.p`
   font-size: 1rem;
 `;
 
-const Arrow = styled.div`
+const Arrow = styled(motion.div)`
   font-size: 2rem;
-  color: ${colors.secondary};
-  margin: 0 20px;
+  color: ${colors.primary};
   transition: transform 0.3s ease;
-
   @media (max-width: 1100px) {
     display: none;
   }
@@ -147,16 +175,20 @@ const Arrow = styled.div`
 const TestimonialsSection = styled.section`
   padding: 50px 20px;
   text-align: center;
+  background-color: ${colors.secondary};
+  border-bottom: 1px solid ${colors.primary};
+  border-top: 1px solid ${colors.primary};
+  padding-bottom: 50px;
 `;
 
 const TestimonialsTitle = styled.h2`
     color: ${colors.primary};
 `
 
-const TestimonialCard = styled.div`
+const TestimonialCard = styled(motion.div)`
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   padding: 20px;
   max-width: 500px;
   margin: 20px auto;
@@ -194,7 +226,8 @@ const PricingSection = styled.section`
 `;
 
 
-const PricingCard = styled.div`
+const PricingCard = styled(motion.div)`
+  position: relative ;
   background: ${colors.primary};
   border-radius: 8px;
   padding: 30px;
@@ -203,6 +236,7 @@ const PricingCard = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: ${colors.secondary};
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 400px;
 
   &:hover {
     transform: translateY(-10px);
@@ -260,14 +294,21 @@ const AlternativeFeatures = styled.ul`
 
 const Feature = styled.li`
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px ;
   &:before {
-    content: '✔️';
     margin-right: 8px;
   }
 `;
 
 
 const ActionButton = styled.div<AlternativeProps>`
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  width: 60%;
+  transform: translateX(-50%);
   padding: 12px 24px;
   font-size: 1rem;
   border: none;
@@ -417,7 +458,13 @@ export const Header = () => {
     };
     return (
         <HeaderSection>
+          <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+          >
             <Title>Welcome to Link & Learn</Title>
+            </motion.div>
             <Subtitle>Seamlessly connect students and teachers. Schedule, manage, and pay for classes, all in one place!</Subtitle>
             <GetStartedButton onClick={getStarted}>Get Started</GetStartedButton>
             <AnimatedStars xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
@@ -435,104 +482,299 @@ export const Header = () => {
     );
 };
 
-export const Features = () => (
-  <FeaturesSection>
-    <FeatureCard>
-      <FeatureTitle>Effortless Class Scheduling</FeatureTitle>
-      <FeatureDescription>Teachers and students can easily coordinate their availability and schedule classes in real-time.</FeatureDescription>
-    </FeatureCard>
-    <FeatureCard>
-      <FeatureTitle>Class Reservation & Payment</FeatureTitle>
-      <FeatureDescription>Reserve classes with just a few clicks and pay upfront to secure your spot in the class.</FeatureDescription>
-    </FeatureCard>
-    <FeatureCard>
-      <FeatureTitle>Real-Time Notifications</FeatureTitle>
-      <FeatureDescription>Receive instant updates about your classes, including confirmation, reminders, and cancellations.</FeatureDescription>
-    </FeatureCard>
-  </FeaturesSection>
-);
+export const Features: React.FC = () => {
+  const featureItems = [
+    {
+      title: "Effortless Class Scheduling",
+      description: "Teachers and students can easily coordinate their availability and schedule classes in real-time.",
+      delay: 0.5,
+    },
+    {
+      title: "Class Reservation & Payment",
+      description: "Reserve classes with just a few clicks and pay upfront to secure your spot in the class.",
+      delay: 0.6,
+    },
+    {
+      title: "Real-Time Notifications",
+      description: "Receive instant updates about your classes, including confirmation, reminders, and cancellations.",
+      delay: 0.7,
+    },
+  ];
 
-export const HowItWorks = () => (
-  <StepsSection>
-    <StepsTitle>How It Works</StepsTitle>
-    <StepsList>
-      <StepCard>
-        <StepTitle>Step 1: Set Your Availability</StepTitle>
-        <StepDescription>Teachers can set their availability in real-time, allowing students to choose the best times.</StepDescription>
-      </StepCard>
-      <Arrow><FaArrowRightLong /></Arrow>
-      <StepCard>
-        <StepTitle>Step 2: Reserve Classes</StepTitle>
-        <StepDescription>Students select their preferred class times and teachers confirm or cancel if needed.</StepDescription>
-      </StepCard>
-      <Arrow><FaArrowRightLong /></Arrow>
-      <StepCard>
-        <StepTitle>Step 3: Learn First, Pay Later</StepTitle>
-        <StepDescription>Once the class is completed, instructors will prompt students to make the payment.</StepDescription>
-      </StepCard>
-    </StepsList>
-  </StepsSection>
-);
+  return (
+    <FeaturesSection>
+      <FeaturesTitle>Key Features</FeaturesTitle>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}
+      >
+        {featureItems.map((item, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: item.delay }}
+          >
+            <FeatureCard>
+              <FeatureTitle>{item.title}</FeatureTitle>
+              <FeatureDescription>{item.description}</FeatureDescription>
+            </FeatureCard>
+          </motion.div>
+        ))}
+      </motion.div>
+    </FeaturesSection>
+  );
+};
 
-export const Testimonials = () => (
-    <TestimonialsSection>
+export const HowItWorks = () => {
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const stepAnimation = {
+    hidden: { opacity: 0, x: 50 },
+    visible: (index: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.5, delay: index * 0.2 },
+    }),
+  };
+
+  const steps = [
+    {
+      title: "Step 1: Set Your Availability",
+      description: "Teachers can set their availability in real-time, allowing students to choose the best times.",
+    },
+    {
+      title: "Step 2: Reserve Classes",
+      description: "Students select their preferred class times and teachers confirm or cancel if needed.",
+    },
+    {
+      title: "Step 3: Learn First, Pay Later",
+      description: "Once the class is completed, instructors will prompt students to make the payment.",
+    },
+  ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    const currentRef = sectionRef.current;
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  return (
+    <StepsSection ref={sectionRef}>
+      <StepsTitle>How It Works</StepsTitle>
+      <StepsList>
+        {steps.map((step, index) => (
+          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '80px' }}>
+            <StepCard
+              variants={stepAnimation}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              custom={index}
+            >
+              <StepTitle>{step.title}</StepTitle>
+              <StepDescription>{step.description}</StepDescription>
+            </StepCard>
+            {index < steps.length - 1 && (
+              <Arrow
+                variants={stepAnimation}
+                initial="hidden"
+                animate={inView ? "visible" : "hidden"}
+                custom={index}
+              >
+                <FaArrowRightLong />
+              </Arrow>
+            )}
+          </div>
+        ))}
+      </StepsList>
+    </StepsSection>
+  );
+};
+
+export const Testimonials = () => {
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const testimonialAnimation = {
+    hidden: { opacity: 0, y: 100 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: index * 0.2 },
+    }),
+  };
+
+  const testimonials = [
+    {
+      text: "Link & Learn made scheduling and paying for my classes so easy. It's a game-changer!",
+      author: "- Jane Doe, Student",
+    },
+    {
+      text: "As a teacher, I love how simple it is to manage my availability and connect with students.",
+      author: "- John Smith, Teacher",
+    },
+  ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    const currentRef = sectionRef.current;
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  return (
+    <TestimonialsSection ref={sectionRef}>
       <TestimonialsTitle>What Our Users Say</TestimonialsTitle>
-      <TestimonialCard>
-        <TestimonialText>"Link & Learn made scheduling and paying for my classes so easy. It's a game-changer!"</TestimonialText>
-        <TestimonialAuthor>- Jane Doe, Student</TestimonialAuthor>
-      </TestimonialCard>
-      <TestimonialCard>
-        <TestimonialText>"As a teacher, I love how simple it is to manage my availability and connect with students."</TestimonialText>
-        <TestimonialAuthor>- John Smith, Teacher</TestimonialAuthor>
-      </TestimonialCard>
+      {testimonials.map((testimonial, index) => (
+        <TestimonialCard
+          key={index}
+          variants={testimonialAnimation}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={index}
+        >
+          <TestimonialText>{testimonial.text}</TestimonialText>
+          <TestimonialAuthor>{testimonial.author}</TestimonialAuthor>
+        </TestimonialCard>
+      ))}
     </TestimonialsSection>
   );
+};
 
-  export const Pricing = () => (
-    <PricingSection>
-      <PricingCard>
+export const Pricing = () => {
+  const navigate = useNavigate();
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const flipAnimation = {
+    hidden: { opacity: 0, rotateY: -180 },
+    visible: {
+      opacity: 1,
+      rotateY: 0,
+      transition: { duration: 0.6, ease: 'easeOut' },
+    },
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    const currentRef = sectionRef.current;
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  return (
+    <div style={{backgroundColor: '#fff', paddingTop: '80px', paddingBottom: '80px', display: 'flex', flexDirection:'column' ,justifyContent: 'center', alignItems: 'center'}}>
+    <PricingTitle alternative>Our special plans for students:</PricingTitle>
+    <PricingSection ref={sectionRef}>
+      <PricingCard
+        variants={flipAnimation}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+      >
         <PricingTitle>Basic Plan</PricingTitle>
         <PricingPrice>Free</PricingPrice>
         <PricingDescription>
           Perfect for newcomers. Start exploring with limited features.
         </PricingDescription>
         <PricingFeatures>
-          <Feature>Access to basic features</Feature>
-          <Feature>Limited usage per month</Feature>
-          <Feature>Email support</Feature>
+          <Feature><FaRegCircleCheck />Access to basic features</Feature>
+          <Feature><FaRegCircleCheck />Limited usage per month</Feature>
+          <Feature><FaRegCircleCheck />Email support</Feature>
         </PricingFeatures>
-        <ActionButton>Start for Free</ActionButton>
+        <ActionButton onClick={() => navigate("/register")}>Start for Free</ActionButton>
       </PricingCard>
-  
-      <AlternativePricingCard>
+
+      <AlternativePricingCard
+        variants={flipAnimation}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+      >
         <PricingTitle alternative>Standard Plan</PricingTitle>
         <PricingPrice alternative>$9.99/month</PricingPrice>
         <PricingDescription alternative>
           Get more flexibility with additional features and better support.
         </PricingDescription>
         <AlternativeFeatures>
-          <Feature>All Basic Plan features</Feature>
-          <Feature>Access to premium tools</Feature>
-          <Feature>Priority email support</Feature>
+          <Feature><FaRegCircleCheck />All Basic Plan features</Feature>
+          <Feature><FaRegCircleCheck />Up to 50 classes per month</Feature>
+          <Feature><FaRegCircleCheck />Priority email support</Feature>
         </AlternativeFeatures>
         <ActionButton alternative>Select Plan</ActionButton>
       </AlternativePricingCard>
-  
-      <PricingCard>
+
+      <PricingCard
+        variants={flipAnimation}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+      >
         <PricingTitle>Premium Plan</PricingTitle>
         <PricingPrice>$19.99/month</PricingPrice>
         <PricingDescription>
           Everything you need for an advanced experience, with full support.
         </PricingDescription>
         <PricingFeatures>
-          <Feature>All Standard Plan features</Feature>
-          <Feature>24/7 support</Feature>
-          <Feature>Dedicated account manager</Feature>
+          <Feature><FaRegCircleCheck />All Standard Plan features</Feature>
+          <Feature><FaRegCircleCheck />24/7 support</Feature>
+          <Feature><FaRegCircleCheck />Unlimited classes</Feature>
         </PricingFeatures>
-        <ActionButton>Get Started</ActionButton>
+        <ActionButton>Select Plan</ActionButton>
       </PricingCard>
     </PricingSection>
+    </div>
   );
+};
   
 
 export const FAQ = () => {
@@ -645,7 +887,7 @@ export const Footer = () => (
       padding: 0;
       background-color: #f4f4f4;
       color: #333;
-      width: 100vw;
+      width: 100%;
       background: rgb(89,185,99);
       background: linear-gradient(143deg, rgba(89,185,99,1) 0%, rgba(38,78,42,1) 35%, rgba(15,41,46,1) 84%);
     }

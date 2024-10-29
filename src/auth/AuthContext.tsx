@@ -23,7 +23,9 @@ export interface User {
   isActive: boolean;
   role: 'STUDENT' | 'TEACHER' | 'ADMIN';
   isOnVacation: boolean;
+  exp: number;
   token: string;
+  avatar_id: number;
 }
 
 export interface AuthContextType {
@@ -32,6 +34,7 @@ export interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   updateUser: (newUserData: Partial<User>) => void;
+  checkSession: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

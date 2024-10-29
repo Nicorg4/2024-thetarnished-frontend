@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { MainContainer, LeftContainer, RightContainer, Image, FormContainer, Form, InputText, Input, FormTitle, Button, ToggleVisibilityButton, ButtonsContainer, AnimatedStars, Star, ForgotPass, TopContainer, StarsContainer } from "./components"
 import { AiTwotoneEyeInvisible, AiOutlineEye } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/comp
 
 const Login = () => {
 
-    const { login } = useAuth();
+    const { login, checkSession } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
@@ -17,6 +17,10 @@ const Login = () => {
     const [invalidCredentials, setInvalidCredentials] = useState(false);
     
     const navigate = useNavigate();
+
+    useEffect(() => {
+        checkSession();
+    }, [checkSession])
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

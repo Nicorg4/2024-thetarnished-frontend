@@ -9,8 +9,13 @@ const rotate = keyframes`
   }
 `;
 
-export const AnimatedLoadingLogo = styled.img`
-  width: 20px;
-  height: 20px;
-  animation: ${rotate} 1s linear infinite;
+interface AnimatedLoadingLogoProps {
+  width?: string;
+  height?: string;
+}
+
+export const AnimatedLoadingLogo = styled.img<AnimatedLoadingLogoProps>`
+  width: ${props => props.width || "20px"};
+  height: ${props => props.height || "20px"};
+  animation: ${rotate} 1s ease infinite;
 `;

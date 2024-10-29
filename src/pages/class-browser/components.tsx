@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import colors from "../../assets/colors";
 
 interface MainContainerProps {
@@ -31,35 +31,59 @@ export const MainContainer = styled.div<MainContainerProps>`
 
     @media (max-width: 1000px){
         height: 100%;
+        justify-content: center;
+        padding-bottom: 30px;
     }
+`;
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 `;
 
 export const Content = styled.div`
     width: 90% ;
-    height: 100% ;
+    height: 80% ;
     margin-left: 100px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
-    justify-content: center;
+    background-color: ${colors.secondary};
+    padding: 30px 20px 70px 20px;
+    margin-left: 150px;
+    margin-right: 50px;
+    border-radius: 10px;
+    animation: ${slideIn} 0.2s ease-out forwards;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
+        width: 90% ;
+        margin-right: 0px;
+        margin-left: 0px;
         margin-top: 100px;
+    }
+
+    @media (max-width: 800px){
+        width: 80% ;
     }
 `
 
 export const BrowserWrapper = styled.div`
-    width: 50%;
+    width: 90%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    border-radius: 30px;
     max-height: 800px;
     overflow-y: auto;
     flex-wrap: wrap;
+    padding: 10px;
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -79,7 +103,7 @@ export const BrowserWrapper = styled.div`
     }
 
     scrollbar-width: thin;
-    scrollbar-color: white transparent;
+    scrollbar-color: ${colors.primary} transparent;
 
     @media (max-width: 1000px){
         width: 80%;
@@ -88,22 +112,21 @@ export const BrowserWrapper = styled.div`
 
 
 export const Card = styled.div`
+    position: relative;
     width: 100%;
     background-color: ${colors.secondary} ;
     border-radius: 8px;
-    height: 80px;
-    margin: 10px;
+    height: 50px;
+    margin: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
-    align-items: flex-start;
     transition: background-color 0.3s;
     cursor: pointer ;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 `;
 
@@ -118,13 +141,18 @@ export const CardInfo = styled.div`
 
 export const Title = styled.h2`
     font-size: 1.5rem;
+    font-weight: 400;
     margin: 0;
     color: ${colors.primary};
+
+    @media (max-width: 600px){
+        font-size: 1.1rem;
+    }
 `;
 
 export const Instructor = styled.p`
-    font-weight: bold;
     color: ${colors.primary};
+    font-weight: 350;
 `;
 
 export const Description = styled.p`
@@ -149,7 +177,7 @@ export const ButtonsContainer = styled.div`
 
 export const LoadingSkeletonCard = styled.div`
     width: 100%;
-    height: 80px;
+    height: 50px;
     background-color: #e0e0e0;
     border-radius: 8px;
     border: 1px solid ${colors.secondary} ;
@@ -175,11 +203,10 @@ export const LoadingSkeletonCard = styled.div`
 
 export const StaticSkeletonCard = styled.div`
     width: 100%;
-    height: 80px;
-    border: 1px solid ${colors.secondary} ;
+    height: 50px;
+    border: 1px solid ${colors.primary} ;
     border-radius: 8px;
-    margin: 10px;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    margin: 5px;
 `;
 
 export const Select = styled.select`
@@ -257,6 +284,7 @@ export const CloseButton = styled.button`
 
     &:hover {
         opacity: 0.7;
+        background-color: transparent;
     }
 `
 
@@ -294,8 +322,44 @@ interface SlotButtonProps {
 
 export const SlotButton = styled.button<SlotButtonProps>`
     background-color: ${props => props.remove ? colors.important : colors.primary};
+    border: none;
+
+    &:hover {
+        background-color: ${props => props.remove ? colors.important : colors.primary};
+        opacity: 0.8;
+    }
 `
 
 export const SummaryContainer = styled.div``
 
 export const SummaryItem = styled.div``
+
+
+export const StarIconContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-left: 10px;
+`
+
+export const SubjectName = styled.h2`
+    margin-top: 0;
+    color: ${colors.primary};
+    font-weight: 300;
+    font-size: 2.5rem;
+    margin-bottom: 0px;
+`
+
+export const NoTeachersFound = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+`
+
+export const NoTeachersFoundMessage = styled.p`
+    color: ${colors.primary};
+    font-size: 1.5rem;
+    margin-top: 50%;
+    font-weight: 300;
+`

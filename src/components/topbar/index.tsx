@@ -1,16 +1,20 @@
 import { useAuth } from "../../auth/useAuth";
-import { FullMenuContainer, FullMenuLink, Logo, MenuButton, MenuWrapper, SingOutLink, TopbarContainer } from './components';
+import { FullMenuContainer, FullMenuLink, Logo, MenuButton, MenuWrapper, PageName, SingOutLink, TopbarContainer, UserImage } from './components';
 import { useState } from "react";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { IoCloseSharp } from "react-icons/io5";
-import LogoSimplified from "../../assets/Logo.png";
-import { AiOutlineHome , AiOutlineForm , AiOutlineUser/* , AiOutlineTool */, AiOutlineSchedule, AiOutlineLogout/* , AiOutlineDatabase */, AiOutlineGroup } from "react-icons/ai";
+import LogoSimplified from "../../assets/Logo transparent alt.png";
+import { AiOutlineHome , AiOutlineForm , AiOutlineUser/* , AiOutlineTool */, AiOutlineSchedule, AiOutlineLogout/* , AiOutlineDatabase */ } from "react-icons/ai";
 import { PiExamLight } from "react-icons/pi";
+import { LiaChalkboardTeacherSolid  } from "react-icons/lia";
+import { MdOutlinePriceChange } from "react-icons/md";
+import { GiChoice } from "react-icons/gi";
+import { useLocation, useNavigate } from "react-router-dom";
+import avatars from '../../assets/avatars/avatars';
+import { IoCloseSharp } from "react-icons/io5";
 
 const Topbar = () => {
-
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMenuOpen = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,16 +24,55 @@ const Topbar = () => {
     logout();
   };
 
+  const pageNames: { [key: string]: string } = {
+    "/teacher-home": "Home",
+    "/manage-schedule": "Manage Schedule",
+    "/manage-classes": "Manage Classes",
+    "/profile": "My Profile",
+    "/student-home": "Home",
+    "/my-classes": "My Classes",
+    "/exam-viewer": "My Exams",
+    "/admin-home": "Home",
+    "/teacher-validation": "Teacher Validation",
+    "/update-subjects": "Update Subjects"
+  };
+
+  const activePageName = pageNames[location.pathname] || "Active Page";
+
+  const navigate = useNavigate();
+
+  const getHome = () => {
+    if (user?.role === 'TEACHER') {
+      return "/teacher-home";
+    } else if (user?.role === 'STUDENT') {
+      return "/student-home";
+    } else if (user?.role === 'ADMIN') {
+      return "/admin-home";
+    }
+    return "/";
+  };
+
+  const getAvatarSource = () => {
+    if (user?.avatar_id) {
+        return avatars[user.avatar_id - 1].src;
+    }else if (user?.role === "ADMIN") {
+        return avatars[8].src;
+    }
+    
+};
+
   return (
     <TopbarContainer>
         <MenuWrapper>
-            <Logo src={LogoSimplified}/>
+            <Logo onClick={() => navigate(getHome())} src={LogoSimplified}/>
+            <PageName>{activePageName}</PageName>
             <MenuButton onClick={toggleMenuOpen}>
-                {isMenuOpen ? <IoCloseSharp /> : <RxHamburgerMenu />}
+                {isMenuOpen ? <IoCloseSharp /> : <UserImage src={getAvatarSource()} alt="User Image" />}
+                
             </MenuButton>
         </MenuWrapper>
         {isMenuOpen && (
-        <FullMenuContainer>
+        <FullMenuContainer isOpen={isMenuOpen}>
           {(user?.role === 'TEACHER') && (
                   <>
                   <FullMenuLink title='Home' to="/teacher-home" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineHome />Home</FullMenuLink>
@@ -48,7 +91,7 @@ const Topbar = () => {
           {(user?.role === 'STUDENT') && (
               <>
               <FullMenuLink title='Home' to="/student-home" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineHome />Home</FullMenuLink>
-              <FullMenuLink title='My classes' to="/my-classes" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineGroup  />My classes</FullMenuLink>
+              <FullMenuLink title='My classes' to="/my-classes" className={({ isActive }) => (isActive ? "active" : "")}><LiaChalkboardTeacherSolid   />My classes</FullMenuLink>
               <FullMenuLink title='My exams' to="/exam-viewer" className={({ isActive }) => (isActive ? "active" : "")}><PiExamLight  />My Exams</FullMenuLink>
               <FullMenuLink title='My profile' to="/profile" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineUser />Profile</FullMenuLink>
               </>
@@ -57,6 +100,8 @@ const Topbar = () => {
           {(user?.role === 'ADMIN') && (
                 <>
                 <FullMenuLink title='Home' to="/admin-home" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineHome />Home</FullMenuLink>
+                <FullMenuLink title='Teacher validation' to="/teacher-validation" className={({ isActive }) => (isActive ? "active" : "")}><GiChoice />Teacher validation</FullMenuLink>
+                <FullMenuLink title='Update subjects' to="/update-subjects" className={({ isActive }) => (isActive ? "active" : "")}><MdOutlinePriceChange />Update subjects</FullMenuLink>
                 </>
             )}
           {/* <FullMenuLink title='Settings' to="/settings" className={({ isActive }) => (isActive ? "active" : "")}>Settings</FullMenuLink> */}

@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { MainContainer, LeftContainer, RightContainer, Image, FormContainer, Form, InputText, Input, FormTitle, Button, ToggleVisibilityButton, ButtonsContainer, AnimatedStars, Star, ForgotPass, AnimatedContainer, Checkbox } from "./components"
+import { useEffect, useState } from "react"
+import { MainContainer, LeftContainer, RightContainer, Image, FormContainer, Form, InputText, Input, FormTitle, Button, ToggleVisibilityButton, ButtonsContainer, AnimatedStars, Star, ForgotPass, AnimatedContainer, Checkbox, TopContainer } from "./components"
 import { AiTwotoneEyeInvisible, AiOutlineEye } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
 import Logo from "../../assets/Logo.png"
@@ -7,6 +7,7 @@ import MultiAutocompleteInput from "../../components/multi-autocomplete-input";
 import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/components";
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { Message } from "../../components/message/components";
+import { useAuth } from "../../auth/useAuth";
 
 const Register = () => {
 
@@ -24,6 +25,11 @@ const Register = () => {
     const URL = import.meta.env.VITE_API_URL;
 
     const navigate = useNavigate();
+    const {checkSession } = useAuth();
+    
+    useEffect(() => {
+        checkSession();
+    }, [checkSession])
 
     const handleSelectOptions = (selected: { id: string; name: string; }[]) => {
         setSelectedOptions(selected);
@@ -85,6 +91,9 @@ const Register = () => {
             <LeftContainer>
                 <Image src={Logo}></Image>
             </LeftContainer>
+            <TopContainer>
+                <Image src={Logo}></Image>
+            </TopContainer>
             <RightContainer>
             <AnimatedStars xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
                 <Star cx="100" cy="100" r="2" delay="2s"/>

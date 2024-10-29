@@ -1,121 +1,228 @@
-import styled from "styled-components";
-import colors from "../../assets/colors";
+import React, { useEffect } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title as ChartTitle, Tooltip, Legend } from 'chart.js';
+import styled, { keyframes } from 'styled-components';
+import colors from '../../assets/colors';
+import { useAuth } from '../../auth/useAuth';
 
-interface MainContainerProps {
-    isPopupOpen: boolean;
-}
+ChartJS.register(CategoryScale, LinearScale, BarElement, ChartTitle, Tooltip, Legend);
 
-export const MainContainer = styled.div<MainContainerProps>`
-    position: relative;
-    height: 100vh;
-    width: 100vw;
+export const MainContainer = styled.div`
+    height: 100vh ;
+    width: 100vw ;
     display: flex;
-    align-items: center;
-    background: rgb(43,130,51);
+    align-items: center ;
+    background: rgb(43,84,52);
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
 
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        opacity: ${({ isPopupOpen }) => (isPopupOpen ? 1 : 0)};
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        backdrop-filter: blur(5px);        
-    }
-
     @media (max-width: 1000px){
-        height: 100%;
+        flex-direction: column;
+        padding-bottom: 100px;
     }
+`
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 `;
 
 export const Content = styled.div`
-    width: 90% ;
-    height: 100% ;
-    margin-left: 100px;
+    width: 85% ;
+    margin-left: 150px;
+    margin-right: 50px;
+    border-radius: 10px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
     justify-content: center;
+    background-color: ${colors.secondary};
+    height: 80%;
+    padding: 30px 20px 70px 20px;
+    color: ${colors.primary};
+    animation: ${slideIn} 0.2s ease-out forwards;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
+        margin-right: 0;
         margin-top: 100px;
     }
 `
 
-export const CardsContainer = styled.div`
+const DashboardContainer = styled.div`
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 100%;
+`;
+
+const StatsContainer = styled.div`
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 90%;
-    max-height: 800px;
-    overflow-y: auto;
-    align-items: center;
-    justify-content: center;
-
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: white;
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #e0e0e0;
-    }
-
-    scrollbar-width: thin;
-    scrollbar-color: white transparent;
-`
-
-export const TeacherCard = styled.div`
-    position: relative;
-    background-color: white;
-    padding: 10px 50px 10px 50px;
-    border-radius: 10px;
-    width: 90%;
-`
-
-export const TeacherInfo = styled.div`
-    display: flex;
-    color: ${colors.primary};
-`
-
-export const TeacherName = styled.h2`
-    color: ${colors.primary};
-    padding-bottom: 0;
-    margin-bottom: 0;
-`
-
-export const ButtonContainer = styled.div`
-    display: flex;
-    position: absolute;
-    right: 50px;
-    top: 50%;
-    transform: translateY(-50%);
-`
-
-export const SearchBar = styled.input`
-    width: 300px;
-    height: 30px;
-    padding: 10px;
-    background-color: ${colors.secondary};
+    justify-content: space-between;
+    flex-wrap: wrap;
     margin-bottom: 20px;
-    border-radius: 5px;
-    border: none;
-    font-size: 1.1rem;
-    color: ${colors.primary};
+    width: 80%;
+    margin:auto;
+    gap: 10px;
+`;
+
+const StatCard = styled.div`
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid ${colors.primary};
+    flex: 1;
+    margin: 0 10px;
+    max-width: 300px;
+
+    h2 {
+        font-size: 18px;
+        margin: 0;
+        color: #555;
+    }
+
+    p {
+        font-size: 24px;
+        margin: 5px 0;
+        font-weight: bold;
+    }
+`;
+
+const ChartContainer = styled.div`
+    height: 80%;
+    max-height: 80%;
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
 `
+
+
+const options = {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: true,
+        },
+        tooltip: {
+            mode: 'index' as const,
+            intersect: false,
+        },
+    },
+    scales: {
+        x: {
+            title: {
+                display: true,
+                text: 'Last 5 months',
+                color: `${colors.primary}`,
+                font: {
+                    size: 20,
+                },
+            },
+        },
+        y: {
+            title: {
+                display: true,
+                text: 'Reservations',
+                color: `${colors.primary}`,
+                font: {
+                    size: 20,
+                },
+            },
+        },
+    },
+};
+
+const Dashboard: React.FC = () => {
+    const URL = import.meta.env.VITE_API_URL;
+    const {user} = useAuth();
+    const [totalReservations, setTotalReservations] = React.useState(0);
+    const [totalStudents, setTotalStudents] = React.useState(0);
+    const [totalTeachers, setTeachers] = React.useState(0);
+    const [monthlyReservationsData, setMonthlyReservationsData] = React.useState<number[]>([]);
+
+    const getLast5Months = () => {
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June', 
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        
+        const currentMonthIndex = new Date().getMonth();
+        const labels = [];
+    
+        for (let i = 0; i < 5; i++) {
+            const monthIndex = (currentMonthIndex - i + 12) % 12;
+            labels.unshift(months[monthIndex]);
+        }
+        
+        return labels;
+    };
+
+    const data = {
+        labels: getLast5Months(),
+        datasets: [
+            {
+                label: 'Total Reservations',
+                backgroundColor: `${colors.primary}`,
+                data: monthlyReservationsData,
+            },
+        ],
+    };
+
+    useEffect(() => {
+      const fetchAppAnalytics = async () => {
+        try{    
+            const response = await fetch(`${URL}information/get-analytics`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${user?.token}`,
+                },
+            });
+            if(!response.ok){
+                throw new Error("Failed to fetch app analytics");
+            }
+            const data = await response.json();
+            setTotalReservations(data.totalReservations);
+            setTotalStudents(data.totalStudents);
+            setTeachers(data.totalTeachers);
+            setMonthlyReservationsData(data.monthlyReservations);
+        }catch(error){ 
+            console.error("Error fetching app analytics: ", error);
+        }
+    }
+    if(user?.token){
+        fetchAppAnalytics();
+    }
+    
+    }, [URL, user?.token])
+    
+    return (
+        <DashboardContainer>
+            <StatsContainer>
+                <StatCard>
+                    <h2>Total Students</h2>
+                    <p>{totalStudents}</p>
+                </StatCard>
+                <StatCard>
+                    <h2>Total Teachers</h2>
+                    <p>{totalTeachers}</p>
+                </StatCard>
+                <StatCard>
+                    <h2>Total Reservations</h2>
+                    <p>{totalReservations}</p>
+                </StatCard>
+            </StatsContainer>
+            <ChartContainer>
+                <Bar data={data} options={options} />
+            </ChartContainer>
+        </DashboardContainer>
+    );
+};
+
+export default Dashboard;

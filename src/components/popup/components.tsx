@@ -15,7 +15,7 @@ export const PopUp = styled.div`
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 50px;
-    border-radius: 8px;
+    border-radius: 10px;
     z-index: 900; 
     color: ${colors.primary};
     border: 2px solid #ccc;

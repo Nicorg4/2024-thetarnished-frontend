@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import colors from "../../assets/colors";
 import { NavLink } from "react-router-dom";
 
@@ -7,7 +7,7 @@ export const TopbarContainer = styled.div`
     top: 0;
     left: 0;
     width: 100%;
-    height: 85px;
+    height: 70px;
     background-color: ${colors.secondary};
     display: flex;
     align-items: center;
@@ -36,27 +36,50 @@ export const MenuButton = styled.button`
     height: 100%;
     border: none;
     border-radius: 0px;
+    transition: background-color 0.3s ease, opacity 0.3s ease, scale 0.3s ease;
 
     &:hover {
         cursor: pointer;
-        background-color: ${colors.primary};
-        color: ${colors.secondary};
+        background-color: transparent;
+        opacity: 0.85;
+        scale: 1.03;
     }
 `
 
-export const FullMenuContainer = styled.div`
-    position: absolute;
-    top: 80px;
-    width: 100%;
-    height: 100vh;
-    background-color: ${colors.secondary};
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    z-index: 100;
-`
+const expandAnimation = keyframes`
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 100vh;
+    opacity: 1;
+  }
+`;
+
+interface FullMenuContainerProps {
+    isOpen: boolean;
+}
+
+export const FullMenuContainer = styled.div<FullMenuContainerProps>`
+  position: absolute;
+  top: 63px;
+  height: 100vh;
+  width: 100%;
+  max-height: ${({ isOpen }) => (isOpen ? '100vh' : '0')};
+  overflow: hidden;
+  background-color: ${colors.secondary};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  z-index: 100;
+  transition: max-height 0.3s ease-in-out, opacity 0.1s ease-in-out;
+  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+  
+  animation: ${({ isOpen }) => (isOpen ? expandAnimation : 'none')} 0.3s ease-in;
+`;
 
 export const FullMenuLink = styled(NavLink)`
     padding: 10px;
@@ -68,6 +91,7 @@ export const FullMenuLink = styled(NavLink)`
     display: flex;
     align-items: center;
     gap: 10px;
+    transition: background-color 0.3s ease;
 
     &:hover {
         background-color: ${colors.primary};
@@ -97,6 +121,26 @@ export const SingOutLink = styled(NavLink)`
 `
 
 export const Logo = styled.img`
-    height: 55px;
-    margin-left: 10px;
+  height: 45px;
+  margin-left: 15px;
+  transition: transform 0.6s ease-in;
+
+  &:hover {
+    cursor: pointer;
+    transform: rotate(360deg);
+  }
+`;
+
+export const PageName = styled.p`
+    color: ${colors.primary};
+    font-size: 22px;
+    font-weight: 500;
+`
+
+export const UserImage = styled.img`
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin-bottom: 10px;
 `

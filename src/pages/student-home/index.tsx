@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "../../components/main-button/components";
 import Topbar from "../../components/topbar";
-import { SearchInput } from "../../components/search-input/components";
-import Logo from "../../components/top-down-logo";
 import { useAuth } from "../../auth/useAuth";
+import { motion } from 'framer-motion';
+import Notification from "../../components/notification";
+import TextInput from "../../components/search-input";
+import { LiaSchoolSolid } from "react-icons/lia";
 
 interface Subject {
   subjectid: number;
@@ -19,15 +21,17 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const widthUmbral1 = 800;
-  const widthUmbral2 = 450;
+  const widthUmbral1 = 1500;
+  const widthUmbral2 = 900;
+  const widthUmbral3 = 600;
   const [pageWidth, setPageWidth] = useState(window.innerWidth);
   const URL = import.meta.env.VITE_API_URL;
   const {user} = useAuth();
 
   const getItemsPerPage = (width: number) => {
-    if (width > widthUmbral1) return 9;
-    if (width > widthUmbral2) return 6;
+    if (width > widthUmbral1) return 15;
+    if (width > widthUmbral2) return 9;
+    if (width > widthUmbral3) return 4;
     return 3;
   };
 
@@ -68,7 +72,7 @@ const Home = () => {
         }
 
         const data = await response.json();
-        setSubjects(data.results);
+        setSubjects([...data.results]);
         setTimeout(() => {
           setIsLoading(false);
         }, 1500);
@@ -96,7 +100,6 @@ const Home = () => {
   return (
     <MainContainer>
       <SideBar />
-      <Logo/>
       <Topbar/>
       <Content>
         {isLoading ? (
@@ -104,37 +107,59 @@ const Home = () => {
             <h2>Loading subjects...</h2>
             <CardsWrapper>
               {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-                <SkeletonCard key={index} />
+                <SkeletonCard key={index}></SkeletonCard>
               ))}
             </CardsWrapper>
           </>
-        ) : (
+        ) : (     
           <>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-              <SearchInput
-                type="text"
-                placeholder="Search by subject name"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
+          {currentSubjects.length > 0 ? (
+            <>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', marginTop: '50px' }}>
+              <TextInput
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  icon = {<LiaSchoolSolid />}
+                  placeholder = "Search for a subject..."
+               />
             </div>
 
             <CardsWrapper>
-              {currentSubjects.map(subject => (
-                <Card key={subject.subjectid} onClick={() => handleSubjectSearch(subject.subjectid, subject.subjectname)}>
-                  <CardSubject>{subject.subjectname}</CardSubject>
-                </Card>
+              {currentSubjects.map((subject, index) => (
+                <motion.div
+                  key={subject.subjectid}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <Card key={subject.subjectid} onClick={() => handleSubjectSearch(subject.subjectid, subject.subjectname)}>
+                    <CardSubject>{subject.subjectname}</CardSubject>
+                  </Card>
+                </motion.div>
               ))}
 
               {Array.from({ length: skeletonCount }).map((_, index) => (
-                <Card key={`skeleton-${index}`} isSkeleton={true} />
+                <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: currentSubjects.length * 0.1 }}
+              >
+                <Card key={`skeleton-${index}`} isSkeleton={true}/>
+                </motion.div>
               ))}
+              
             </CardsWrapper>
 
             <div style={{ display: 'flex', justifyContent: 'center', width: '100px' }}>
               {currentPage > 1 && <Button onClick={handlePrevPage}>Previous</Button>}
               {currentPage < totalPages && <Button onClick={handleNextPage}>Next</Button>}
             </div>
+          </>
+          ) : (
+            <Notification alternative message='No subjects available at the moment.'/>
+          )
+          }
           </>
         )}
       </Content>

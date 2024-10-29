@@ -1,7 +1,7 @@
 import SideBar from '../../components/sidebar/sidebar'
-import { MainContainer, Content, ProfileCard, UserImage, UserInfo, UserName, UserEmail, UserSubjects, Subject, CardButtons, Form, Input, InputText, ButtonsContainer, FormTitle, FormContainer, PasswordInput, VacationButtonContainer, VacationButton, CalendarContainer, UserRole, Role } from './components';
+import { MainContainer, Content, ProfileCard, UserImage, UserInfo, UserName, UserSubjects, Subject, CardButtons, Form, Input, InputText, ButtonsContainer, FormTitle, FormContainer, PasswordInput, VacationButtonContainer, VacationButton, CalendarContainer, ProfileCover, UserData, BadgesContainer, Badge, BadgeTitle, Badges, BadgeInfo, BadgeName, BadgeDescription, DeleteAccountButtonsContainer, CheckmarkIcon, EditIcon, AvatarContainer } from './components';
 import { Button } from '../../components/main-button/components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { Message } from '../../components/message/components';
@@ -14,8 +14,45 @@ import MultiAutocompleteInput from '../../components/multi-autocomplete-input';
 import { FaUmbrellaBeach } from "react-icons/fa";
 import DateRangeCalendarComponent from './calendar';
 import dayjs from 'dayjs';
+import { motion } from 'framer-motion';
+import TeachingBronze from "../../assets/Teaching Bronze.png";
+import TeachingSilver from "../../assets/Teaching Silver.png";
+import TeachingGold from "../../assets/Teaching Gold.png";
+import avatars from '../../assets/avatars/avatars';
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 
-const Profile = () => {
+
+
+
+interface Badge {
+  id: string;
+  name: string;
+  imageUrl: string;
+  description: string;
+}
+
+const badges: Badge[] = [
+  {
+      id: '1',
+      name: 'Teaching Bronze',
+      imageUrl: TeachingBronze,
+      description: 'Awarded for completing 5 lessons'
+  },
+  {
+      id: '2',
+      name: 'Teaching Silver',
+      imageUrl: TeachingSilver,
+      description: 'Awarded for completing 10 lessons'
+  },
+  {
+      id: '3',
+      name: 'Teaching Gold',
+      imageUrl: TeachingGold,
+      description: 'Awarded for completing 50 lessons'
+  }
+] 
+ const Profile = () => {
 
     const navigate = useNavigate();
     const { user, updateUser, logout } = useAuth();
@@ -35,8 +72,15 @@ const Profile = () => {
     const [isConfirmingVacation, setIsConfirmingVacation] = useState(false);
     const [showTerminateVacationPopup, setShowTerminateVacationPopup] = useState(false);
     const [isConfirmingTerminateVacation, setIsConfirmingTerminateVacation] = useState(false);
+    const [hoveredBadgeId, setHoveredBadgeId] = useState<string | null>(null);
+    const [showAvatarSelectorPopup, setShowAvatarSelectorPopup] = useState(false);
 
     const URL = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        setFirstName(user?.firstName || '');
+        setLastName(user?.lastName || '');
+    }, [user?.firstName, user?.lastName])
 
     const handlePasswordChange = () => {
         navigate('/change-password');
@@ -58,6 +102,9 @@ const Profile = () => {
     }
 
     const handleDeleteAccount = async () => {
+        if(!password){
+            return
+        }
         try {
             setIsDeleting(true);
             const res = await fetch(`${URL}authentication/delete-account/${user?.email}`, {
@@ -263,6 +310,61 @@ const Profile = () => {
         setDateRange(formattedDateRange);
     };
 
+    const getAvatarSource = () => {
+        if (user?.avatar_id) {
+            return `../../../src/assets/avatars/${user?.avatar_id}.png`;
+        }  
+    };
+
+    const [selectedAvatarId, setSelectedAvatarId] = useState<number>(0);
+    const [isSelectingAvatar, setIsSelectingAvatar] = useState(false);
+
+    const handleConfirm = async () => {
+        setIsSelectingAvatar(true);
+        let suffix
+        if(user?.role === 'TEACHER'){
+            suffix = 'teachers';
+        }else if(user?.role === 'STUDENT'){
+            suffix = 'students';
+        }
+        try{
+            const response = await fetch(`${URL + suffix}/update-avatar/${user?.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`,
+                },
+                body: JSON.stringify({
+                    avatarId: selectedAvatarId,
+                }),
+            });
+            if (!response.ok) {
+                setMessage("Could not update avatar");
+                throw new Error('Failed to update avatar');
+            }
+            updateUser({ avatar_id: selectedAvatarId });
+            setIsSelectingAvatar(false);
+            setShowAvatarSelectorPopup(false);
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 3000);
+        }catch(error){   
+            setIsSelectingAvatar(false);
+            setShowAvatarSelectorPopup(false);
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, 3000);
+            console.error(error);
+        }
+    };
+
+    const handleCancel = () => {
+        setSelectedAvatarId(user?.avatar_id || 0);
+        setShowAvatarSelectorPopup(false);
+    };
+
     return (
         <>
         {showTerminateVacationPopup && (
@@ -270,7 +372,7 @@ const Profile = () => {
                 <PopUp>
                     <h2>Are you sure you want to terminate your vacation?</h2>
                     <ButtonsContainer>
-                        <Button onClick={handleConfirmTerminateVacation}>{isConfirmingTerminateVacation ? <AnimatedLoadingLogo/> : "Terminate vacation" }</Button>
+                        <Button onClick={handleConfirmTerminateVacation}>{isConfirmingTerminateVacation ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Terminate vacation" }</Button>
                         <Button secondary onClick={handleCancelTerminateVacation}>Cancel</Button>
                     </ButtonsContainer>
                 </PopUp>
@@ -284,7 +386,7 @@ const Profile = () => {
                         <DateRangeCalendarComponent onDateChange={handleDateChange} />
                     </CalendarContainer>
                     <ButtonsContainer>
-                        <Button onClick={handleConfirmVacation}>{isConfirmingVacation ? <AnimatedLoadingLogo/> : "Take vacation"}</Button>
+                        <Button onClick={handleConfirmVacation}>{isConfirmingVacation ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Take vacation"}</Button>
                         <Button secondary onClick={handleCancelTakeVacation}>Cancel</Button>
                     </ButtonsContainer>
                 </PopUp>
@@ -296,36 +398,80 @@ const Profile = () => {
                     <h2>Are you sure you want to delete your account?</h2>
                     <p>Confirm your password:</p>
                     <PasswordInput placeholder="Password.." type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <ButtonsContainer>
-                        <Button important onClick={handleDeleteAccount}>{isDeleting ? <AnimatedLoadingLogo/> : "Delete account"}</Button>
+                    <DeleteAccountButtonsContainer>
+                        <Button important onClick={handleDeleteAccount}>{isDeleting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Delete account"}</Button>
                         <Button secondary onClick={handleClosePopup}>Cancel</Button>
-                    </ButtonsContainer>
+                    </DeleteAccountButtonsContainer>
                 </PopUp>
             </PopUpContainer>
             )}
-        <MainContainer isPopupOpen={isPopupOpen} showTakeVacationPopup={showTakeVacationPopup} showDeleteAccountConfirmation={showDeleteAccountConfirmation} showTerminateVacationPopup={showTerminateVacationPopup}>
+            {showAvatarSelectorPopup && (
+                <PopUpContainer>
+                    <PopUp>
+                        <h2>Select your avatar:</h2>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '50px' }}>
+                            {avatars.map(avatar => (
+                                <div
+                                    key={avatar.id}
+                                    onClick={() => setSelectedAvatarId(avatar.id)}
+                                    style={{
+                                        cursor: 'pointer',
+                                        margin: '5px',
+                                        position: 'relative'
+                            
+                                    }}
+                                >
+                                    {selectedAvatarId === avatar.id && (
+                                        <CheckmarkIcon><IoCheckmarkCircleOutline/></CheckmarkIcon>
+                                    )}
+                                    <img src={avatar.src} alt={`Avatar ${avatar.id}`} style={{ width: '80px', height: '80px', opacity: selectedAvatarId === avatar.id ? 0.5 : 1, }} />
+                                </div>
+                            ))}
+                        </div>
+                        <ButtonsContainer>
+                            <Button onClick={handleConfirm}>
+                                {isSelectingAvatar ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Confirm"}
+                            </Button>
+                            <Button secondary onClick={handleCancel}>Cancel</Button>
+                        </ButtonsContainer>
+                    </PopUp>
+                </PopUpContainer>
+            )}
+        <MainContainer isPopupOpen={isPopupOpen} showTakeVacationPopup={showTakeVacationPopup} showDeleteAccountConfirmation={showDeleteAccountConfirmation} showTerminateVacationPopup={showTerminateVacationPopup} showAvatarSelectorPopup={showAvatarSelectorPopup}>
             {showSuccessMessage && <Message>Your profile has been updated.</Message>}
             {showErrorMessage && <Message error>{message}</Message>}
             <SideBar/>
             <Topbar/>
             <Content>
-                {!isEditing ? ( 
+                {!isEditing ? (
+                <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3}}
+                style={{ width: "90%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
                 <ProfileCard>
-                    <UserImage src="https://imgs.search.brave.com/CidPMbEerqHyYiRV-k0nX7jmRCWkpObwF5BxWwlJKog/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNjE5/NDAwODEwL3Bob3Rv/L21yLXdoby5qcGc_/cz02MTJ4NjEyJnc9/MCZrPTIwJmM9aGFy/VHhXX0lSbDA2Q25o/LTRrbkNudHh3WWlx/V282eWlBeEpUcld5/U0ppRT0" alt="User Image" />
+                    <ProfileCover/>
                     <UserInfo>
+                        <AvatarContainer style={{ position: "absolute", top: "115px", left: "5%" }}>
+                            <UserImage onClick={() => setShowAvatarSelectorPopup(true)} src={getAvatarSource()} alt="User Image" />
+                            <EditIcon><HiOutlinePencilSquare /></EditIcon>
+                        </AvatarContainer>
                         <UserName>{user?.firstName + ' ' + user?.lastName}</UserName>
-                        <UserEmail>{user?.email}</UserEmail>
-                        {user?.role === 'TEACHER' ? ( 
+                        <UserData>{user?.email}</UserData>
+                        <UserData>{user?.role}</UserData>
+                        {user?.role === 'TEACHER' && ( 
                             <UserSubjects>
                                 {user?.subjects?.map((subject) => (
                                     <Subject key={subject.subjectid}>{subject.subjectname}</Subject>
                                 ))}
                             </UserSubjects>
-                        ) : (
-                            <UserRole>
-                                <Role>{user?.role}</Role>
-                            </UserRole>
                         )}
+                        <CardButtons>
+                        <Button onClick={() => setIsEditing(true)}>Edit your profile</Button>
+                            <Button secondary onClick={handlePasswordChange}>Change password</Button>
+                            <Button crucial onClick={handleDeleteAccountClick}>Delete account</Button>
+                        </CardButtons>
                     </UserInfo>
                     {user?.role === 'TEACHER' && (
                         <VacationButtonContainer>
@@ -335,30 +481,43 @@ const Profile = () => {
                             <VacationButton important onClick={handleTerminateVacation}><FaUmbrellaBeach /></VacationButton>}
                         </VacationButtonContainer>
                     )}
-                    <CardButtons>
-                        <Button onClick={() => setIsEditing(true)}>Edit your profile</Button>
-                        <Button important onClick={handlePasswordChange}>Change password</Button>
-                        <Button important onClick={handleDeleteAccountClick}>Delete account</Button>
-                    </CardButtons>
+                    <BadgesContainer>
+                        <BadgeTitle>Achievements:</BadgeTitle>
+                        <Badges>
+                            {badges.map(badge => (
+                                <div onMouseEnter={() => setHoveredBadgeId(badge.id)} onMouseLeave={() => setHoveredBadgeId(null)} style={{ position: 'relative' }}>
+                                    <Badge key={badge.id} src={badge.imageUrl}/>
+                                    <BadgeInfo visible={hoveredBadgeId === badge.id}>
+                                        <BadgeName>{badge.name}</BadgeName>
+                                        <BadgeDescription>{badge.description}</BadgeDescription>
+                                    </BadgeInfo>
+                                </div>
+                            ))} 
+                        </Badges>
+                    </BadgesContainer>
                 </ProfileCard>
+                </motion.div>
                 ) : (
-                <FormContainer>
-                    <FormTitle>Edit your profile</FormTitle>
-                    <Form onSubmit={handleProfileSave}>
-                        <InputText>First name:</InputText>
-                        <Input type="text" id="username" placeholder="Username..." value={firstName} onChange={(e) => setFirstName(e.target.value)} required ></Input>
-                        <InputText>Last name:</InputText>
-                        <Input type="text" id="username" placeholder="Username..." value={lastName} onChange={(e) => setLastName(e.target.value)} required ></Input>
-                        {user?.role === 'TEACHER' && (
-                        <MultiAutocompleteInput defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname }))} onSelect={handleSubjectsChange}/>
-                        )}
-                        <ButtonsContainer>
-                            <Button type="submit">{isSaving ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Save"}</Button>
-                            <Button type="button" onClick={() => setIsEditing(false)} important>Cancel</Button>
-                        </ButtonsContainer>
-                    </Form>
-                </FormContainer> 
+                <ProfileCard>
+                    <FormContainer>
+                        <FormTitle>Edit your profile</FormTitle>
+                        <Form onSubmit={handleProfileSave}>
+                            <InputText>First name:</InputText>
+                            <Input type="text" id="username" placeholder="Username..." value={firstName} onChange={(e) => setFirstName(e.target.value)} required ></Input>
+                            <InputText>Last name:</InputText>
+                            <Input type="text" id="username" placeholder="Username..." value={lastName} onChange={(e) => setLastName(e.target.value)} required ></Input>
+                            {user?.role === 'TEACHER' && (
+                            <MultiAutocompleteInput defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname }))} onSelect={handleSubjectsChange}/>
+                            )}
+                            <ButtonsContainer>
+                                <Button type="submit">{isSaving ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Save"}</Button>
+                                <Button type="button" onClick={() => setIsEditing(false)} secondary>Cancel</Button>
+                            </ButtonsContainer>
+                        </Form>
+                    </FormContainer> 
+                </ProfileCard>
                 )}
+            
             </Content>
             <Logo/>
         </MainContainer>

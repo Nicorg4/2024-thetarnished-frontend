@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, Title, Instructor, BrowserWrapper, CardInfo, ButtonsContainer, LoadingSkeletonCard, StaticSkeletonCard, Select, InputsContainer, PaymentButton, CashFlowProLogo, CloseButton, LeftContainer, SlotButton, RightContainer, SummaryContainer } from './components';
+import { MainContainer, Content, Card, Title, Instructor, BrowserWrapper, CardInfo, ButtonsContainer, LoadingSkeletonCard, StaticSkeletonCard, Select, InputsContainer, PaymentButton, CashFlowProLogo, CloseButton, LeftContainer, SlotButton, RightContainer, SummaryContainer, StarIconContainer, SubjectName, NoTeachersFound } from './components';
 import { Button } from '../../components/main-button/components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { Message } from '../../components/message/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
-import { SearchInput } from '../../components/search-input/components';
 import Logo from '../../components/top-down-logo';
 import { PopUp, PopUpContainer } from '../../components/payment-popup/components';
 import Topbar from '../../components/topbar';
@@ -15,6 +14,10 @@ import CashFlowLogo from '../../assets/Cash Flow Logo.jpeg';
 import { RiCloseLargeFill } from "react-icons/ri";
 import { GoPlus, GoDash  } from "react-icons/go";
 import { InteractionBlocker } from '../../components/interaction-blocker/components';
+import { IoMdStar } from "react-icons/io";
+import TextInput from '../../components/search-input';
+import Notification from '../../components/notification';
+import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 
 interface Teacher {
     teacherid: string;
@@ -49,7 +52,7 @@ const ClassBrowser = () => {
     const [isBookingTimeout, setIsBookingTimeout] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isBookingWithCashFlow, setIsBookingWithCashFlow] = useState(false);
-    const [prevTeachersDictatingSubject, setPrevTeachersDictatingSubject] = useState<{ teacher: Teacher; schedule: Schedule[] }[]>([]);
+    const [subjectPrice, setSubjectPrice] = useState(100);
 
     const { subjectId, subjectName } = useParams();
     const { user } = useAuth();
@@ -57,6 +60,23 @@ const ClassBrowser = () => {
     const URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
+        const getSubjectPrice = async () => {
+            if (subjectId) {
+                try {
+                    const response = await fetch(`${URL}subject/get-price/${subjectId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${user?.token}`,
+                        },
+                    });
+                    const subject_price = await response.json();
+                    setSubjectPrice(subject_price);
+                } catch (error) {
+                    console.error('Error fetching subject price:', error);
+                }
+            }
+        };
         const getTeachersDictatingSubject = async () => {
             if (subjectId) {
                 try {
@@ -68,7 +88,7 @@ const ClassBrowser = () => {
                         },
                     });
                     const teachers = await response.json();
-
+    
                     const schedules = await Promise.all(
                         teachers.map(async (teacher: Teacher) => {
                             const scheduleResponse = await fetch(`${URL}classes/get-monthly-schedule-by/${teacher.teacherid}`, {
@@ -79,21 +99,19 @@ const ClassBrowser = () => {
                                 },
                             });
                             const teacherSchedule = await scheduleResponse.json();
-                            return { teacher, schedule: teacherSchedule };
+                            return { teacher: { ...teacher, isPrevTeacher: false }, schedule: teacherSchedule };
                         })
                     );
-                    const filteredSchedules = schedules.filter(({ schedule }) => schedule.length > 0);
-
-                    setTeachersDictatingSubject(filteredSchedules);
-                    setIsLoading(false);
-                    
+    
+                    return schedules.filter(({ schedule }) => schedule.length > 0);
                 } catch (error) {
-                    console.error('Error fetching teachers dictating subjects:', error);
-                    setIsLoading(false);
+                    console.error('Error fetching current teachers:', error);
+                    return [];
                 }
             }
+            return [];
         };
-
+    
         const getPrevTeachersDictatingSubject = async () => {
             if (subjectId && user?.id) {
                 try {
@@ -105,7 +123,7 @@ const ClassBrowser = () => {
                         },
                     });
                     const teachers = await response.json();
-
+    
                     const schedules = await Promise.all(
                         teachers.map(async (teacher: Teacher) => {
                             const scheduleResponse = await fetch(`${URL}classes/get-monthly-schedule-by/${teacher.teacherid}`, {
@@ -116,24 +134,43 @@ const ClassBrowser = () => {
                                 },
                             });
                             const teacherSchedule = await scheduleResponse.json();
-                            return { teacher, schedule: teacherSchedule };
+                            return { teacher: { ...teacher, isPrevTeacher: true }, schedule: teacherSchedule };
                         })
                     );
-                    const filteredSchedules = schedules.filter(({ schedule }) => schedule.length > 0);
-
-                    setPrevTeachersDictatingSubject(filteredSchedules);
-                    setIsLoading(false);
-                    
+    
+                    return schedules.filter(({ schedule }) => schedule.length > 0);
                 } catch (error) {
-                    console.error('Error fetching teachers dictating subjects:', error);
-                    setIsLoading(false);
+                    console.error('Error fetching previous teachers:', error);
+                    return [];
                 }
             }
+            return [];
         };
-
-        getTeachersDictatingSubject();
-        getPrevTeachersDictatingSubject();
+    
+        const fetchTeachers = async () => {
+            
+            const currentTeachers = await getTeachersDictatingSubject();
+            const prevTeachers = await getPrevTeachersDictatingSubject();
+    
+            const uniqueTeachersMap = new Map();
+    
+            [...currentTeachers, ...prevTeachers].forEach(({ teacher, schedule }) => {
+                if (!uniqueTeachersMap.has(teacher.teacherid)) {
+                    uniqueTeachersMap.set(teacher.teacherid, { teacher, schedule });
+                }
+            });
+    
+            const teachersArray = Array.from(uniqueTeachersMap.values());
+            setTeachersDictatingSubject(teachersArray);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 2000);   
+        };
+    
+        getSubjectPrice();
+        fetchTeachers();
     }, [URL, subjectId, user?.id, user?.token]);
+    
 
     const handleCardClick = (teacher: Teacher) => {
         const selectedTeacher = teachersDictatingSubject.find(t => t.teacher.teacherid === teacher.teacherid);
@@ -292,13 +329,8 @@ const ClassBrowser = () => {
        `${teacher.teacher.firstname} ${teacher.teacher.lastname}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filteredPrevTeachers = prevTeachersDictatingSubject.filter(teacher =>
-        `${teacher.teacher.firstname} ${teacher.teacher.lastname}`.toLowerCase().includes(searchQuery.toLowerCase())
-     );
-
-    const numStaticSkeletonCards = Math.max(0, 5 - filteredTeachers.length - prevTeachersDictatingSubject.length);
+    const numStaticSkeletonCards = Math.max(0, 9 - filteredTeachers.length);
     const cardsToDisplay = [...filteredTeachers.map(item => item.teacher), ...Array(numStaticSkeletonCards).fill(null)];
-    const prevTeacherscardsToDisplay = [...filteredPrevTeachers.map(item => item.teacher)];
 
     const handleCancelBooking = async () => {
         setSelectedSlots([{ day: '', time: '' }]);
@@ -319,7 +351,6 @@ const ClassBrowser = () => {
                                     <Select required onChange={(e) => handleDayChange(index, e)} value={slot.day}>
                                         <option value="">Select a day</option>
                                         {Array.from(new Set(teacherSchedule.map(schedule => `${schedule.dayofweek} ${schedule.dayofmonth}`)))
-                                            .filter(day => !selectedSlots.some((selectedSlot, selectedIndex) => selectedIndex !== index && selectedSlot.day === day))
                                             .map(day => (
                                                 <option key={day} value={day}>
                                                     {`${dayNames[day.split(' ')[0]]} ${day.split(' ')[1]}`}
@@ -356,12 +387,12 @@ const ClassBrowser = () => {
                                         .filter(slot => slot.day && slot.time)
                                         .map((slot, index) => (
                                             <div key={index}>
-                                                <p>Day: {dayNames[slot.day.split(' ')[0]]} | Time: {slot.time} | Price: $300</p>
+                                                <p>Day: {dayNames[slot.day.split(' ')[0]]} | Time: {slot.time} | Price: ${subjectPrice}</p>
                                             </div>
                                         ))}
                                         {selectedSlots.filter(slot => slot.day && slot.time).length !== 0 && (
                                             <div style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                                                <p>Total Price: ${selectedSlots.length * 300}</p>
+                                                <p>Total Price: ${selectedSlots.length * subjectPrice}</p>
                                             </div>
                                         )}
                                     
@@ -369,7 +400,7 @@ const ClassBrowser = () => {
                                 <ButtonsContainer>
                                     <Button onClick={() => handleBook("CASH")}>{isBooking ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Book"}</Button>
                                     <PaymentButton onClick={() => handleBook("CASHFLOW")}>{isBookingWithCashFlow ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Book with Cash Flow"}<CashFlowProLogo src={CashFlowLogo}/></PaymentButton>
-                                    <Button important onClick={handleCancelBooking}>Cancel</Button>
+                                    <Button secondary onClick={handleCancelBooking}>Cancel</Button>
                                 </ButtonsContainer>
                             </RightContainer>
                     </PopUp>
@@ -383,55 +414,31 @@ const ClassBrowser = () => {
                 {isBookingTimeout && <InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>}
                     <SideBar />
                     <Content>
-                    <h2 style={{textAlign:'center'}}>Available teachers dictating {subjectName}:</h2>
+                    <SubjectName>{subjectName}</SubjectName>
                         <BrowserWrapper>
                             {isLoading ? (
                                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
-                                    {Array.from({ length: 7 }).map((_, index) => (
+                                    {Array.from({ length: 9 }).map((_, index) => (
                                         <LoadingSkeletonCard key={index} />
                                     ))}
                                 </div>
                             ) : (
                                 (teachersDictatingSubject.length === 0) ? 
-                                <>
-                                <h1 style={{textAlign: "center"}}>No teachers available for this subject.</h1>
-                                <Button secondary onClick={handleGoBack}>Go back</Button>
-                                </> 
+                                <NoTeachersFound>
+                                    <Notification alternative={true} message={"No teachers available for this subject."} />
+                                    <Button secondary onClick={handleGoBack}>Go back</Button>
+                                </NoTeachersFound>
                                 : (
                                 <>
-                                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-                                    <SearchInput
-                                        type="text"
-                                        placeholder="Search by teacher name"
+                                <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
+                                    <TextInput
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
+                                        icon={<LiaChalkboardTeacherSolid />}
+                                        placeholder='Search for a teacher...'
                                     />
                                 </div>
-                                {prevTeacherscardsToDisplay.length > 0 && (
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%', borderBottom: '2px solid #ccc', marginBottom: '10px', paddingBottom: '10px' }}>
-                                    <h2 style={{textAlign: "center"}}>My previous teachers</h2>
-                                        {prevTeacherscardsToDisplay.map((teacher, index) => (
-                                            teacher ? (
-                                                <Card 
-                                                    key={teacher.teacherid}
-                                                    onClick={() => handleCardClick(teacher)} 
-                                                    role="button" 
-                                                    tabIndex={0}
-                                                    aria-label={`Teacher: ${teacher.firstname} ${teacher.lastname}`}
-                                                >
-                                                    <CardInfo>
-                                                        <Title>{teacher.firstname} {teacher.lastname}</Title>
-                                                        <Instructor>{getAvailableDays(teachersDictatingSubject.find(t => t.teacher.teacherid === teacher.teacherid)?.schedule || [])}</Instructor>
-                                                    </CardInfo>
-                                                </Card>
-                                            ) : (
-                                                <StaticSkeletonCard key={`skeleton-${index}`} />
-                                            )
-                                        ))}
-                                    </div>
-                                )}
-                                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
-                                <h2 style={{textAlign: "center"}}>All teachers</h2>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
                                     {cardsToDisplay.map((teacher, index) => (
                                         teacher ? (
                                             <Card 
@@ -440,7 +447,13 @@ const ClassBrowser = () => {
                                                 role="button" 
                                                 tabIndex={0}
                                                 aria-label={`Teacher: ${teacher.firstname} ${teacher.lastname}`}
-                                            >
+                                            > 
+                                            {teacher.isPrevTeacher && 
+                                                <StarIconContainer>
+                                                    <IoMdStar style={{color: "#ffd700"}} />
+                                                </StarIconContainer>
+                                            }  
+                                            
                                                 <CardInfo>
                                                     <Title>{teacher.firstname} {teacher.lastname}</Title>
                                                     <Instructor>{getAvailableDays(teachersDictatingSubject.find(t => t.teacher.teacherid === teacher.teacherid)?.schedule || [])}</Instructor>

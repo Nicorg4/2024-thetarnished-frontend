@@ -6,6 +6,7 @@ import Topbar from '../../components/topbar';
 import Logo from '../../components/top-down-logo';
 import { CiChat1 } from "react-icons/ci";
 import Chat from '../chat-manager/Chat';
+import Notification from '../../components/notification';
 
 
 interface Teacher {
@@ -67,17 +68,19 @@ const MyClasses = () => {
     const skeletonCards = totalCards - reservations.length;
 
     return (
+        <>
+        {isChatOpen ? (
+            <Chat
+                teacherId={selectedTeacherId || ''}
+                studentId={`${user?.id}` || ''}
+                closeChat={() => setIsChatOpen(false)}
+            />
+        ) : (
         <MainContainer>
             <SideBar />
             <Logo/>
             <Topbar/>
-            {isChatOpen ? (
-                <Chat
-                    teacherId={selectedTeacherId || ''}
-                    studentId={`${user?.id}` || ''}
-                    closeChat={() => setIsChatOpen(false)}
-                />
-            ) : (
+            
                 <Content>
                 {isLoading ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -109,12 +112,13 @@ const MyClasses = () => {
                         ))}
                     </div>
                 ) : (
-                    <h2 style={{textAlign:"center"}}>You haven’t booked any class yet.</h2>
+                    <Notification alternative={true} message="You haven’t booked any class yet."/>
                 )}
             </Content>
-            )}
             
         </MainContainer>
+        )}
+    </>
     );
 };
 

@@ -9,4 +9,5 @@ export const SearchInput = styled.input`
   border-radius: 5px;
   font-size: 16px;
   color: ${colors.primary};
+  border: 1px solid ${colors.primary};
 `

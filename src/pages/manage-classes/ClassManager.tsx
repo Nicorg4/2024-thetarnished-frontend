@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, LoadingSkeletonCard, CardsContainer, ChatButton } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, CardsContainer, ChatButton, PageNumber, ButtonContainer, NotificationContainer, HeaderText } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
 import Logo from '../../components/top-down-logo';
@@ -13,6 +13,8 @@ import CreateExamForm from '../../components/create-exam-form';
 import { CiChat1 } from "react-icons/ci";
 import Chat from '../chat-manager/Chat';
 import Notification from '../../components/notification';
+import { IoIosArrowForward } from "react-icons/io";
+import { motion } from 'framer-motion';
 
 
 interface Reservation {
@@ -25,7 +27,7 @@ interface Reservation {
     group: boolean;
 }
 
-const ClassManager = () => {
+const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
     const { user } = useAuth();
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
@@ -44,6 +46,8 @@ const ClassManager = () => {
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [message, setMessage] = useState('');
     const [isCreateExamPopupOpen, setIsCreateExamPopupOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0);
+    const cardsPerPage = 3; 
     const URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
@@ -61,7 +65,10 @@ const ClassManager = () => {
                     throw new Error('Failed to fetch teacher reservations');
                 }
                 const data = await response.json();
-                setReservations(data);
+                setReservations([...data,...data,...data,...data]);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 1000);
                 setIsLoading(false);
             } catch (error) {
                 console.error(error);
@@ -71,9 +78,6 @@ const ClassManager = () => {
 
         getReservationsForTeacher();
     }, [URL, user?.id, user?.token]);
-
-    const totalCards = 4;
-    const skeletonCards = totalCards - reservations.length;
 
     const handleFinishedClass = async (reservationId: string, subject_id: string) => {
         setSelectedClassId(reservationId);
@@ -118,6 +122,25 @@ const ClassManager = () => {
         }
     };
 
+    const totalPages = Math.ceil(reservations.length / cardsPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const paginatedReservations = reservations.slice(
+        currentPage * cardsPerPage,
+        (currentPage + 1) * cardsPerPage
+    );
+
     const cancelClass = async () => {
         try {
             setIsCanceling(true);
@@ -161,6 +184,9 @@ const ClassManager = () => {
         setIsCreateExamPopupOpen(true);
     };
 
+    const totalCards = 3;
+    const skeletonCards = totalCards - paginatedReservations.length;
+
   return (
     <>
     {isChatOpen ? (
@@ -191,18 +217,20 @@ const ClassManager = () => {
         <CreateExamForm reservation={currentReservation} closePopup={() => setIsCreateExamPopupOpen(false)} />
         )}
         <Content>
+            <ButtonContainer>
+                <Button secondary onClick={toggleContainer}>Show class history <IoIosArrowForward /></Button>
+            </ButtonContainer>
             {isLoading ? (
-                <CardsContainer style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {Array.from({ length: totalCards }).map((_, index) => (
-                        <LoadingSkeletonCard key={index} />
-                    ))}
-                </CardsContainer>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                    <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
+                </div>
             ) : reservations.length > 0 ? (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                 <CardsContainer>
-                    {reservations.map((reservation) => (
+                    {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>
                             <CardHeader style={{ backgroundColor: reservation.group ? '#f2b36f' : '#3e7d44' }}>
-                                <p>{reservation.subject_name}</p>
+                                <HeaderText>{reservation.subject_name}</HeaderText>
                             </CardHeader>
                             <CardBody>
                                 <CardInfo>
@@ -222,9 +250,11 @@ const ClassManager = () => {
                                 
                                 )}
                                 <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}><CiChat1/></ChatButton> 
+                                
                                 {new Date(reservation.datetime) > new Date() && (
                                     <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
                                 )}
+                                <Button secondary title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}>Chat</Button> 
                                 <Button secondary onClick={() => handleClassCancelation(reservation.id)}>Cancel</Button>
                             </CardFooter>
                         </Card>
@@ -233,9 +263,17 @@ const ClassManager = () => {
                         Array.from({ length: skeletonCards }).map((_, index) => (
                             <StaticSkeletonCard key={`skeleton-${index}`} />
                     ))}
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
+                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
+                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                        </div>
                 </CardsContainer>
+                </motion.div>
             ) : (
-                <Notification alternative={false} message={"You don't have any class to manage."} />
+                <NotificationContainer>
+                    <Notification alternative={true} message={"You don't have any class to manage."} />
+                </NotificationContainer>
             )}
         </Content>
     </MainContainer>
