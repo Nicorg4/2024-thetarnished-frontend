@@ -8,7 +8,7 @@ import { Button } from '../../components/main-button/components';
 import { PopUp, PopUpContainer } from '../../components/popup/components';
 import { Message } from '../../components/message/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
-import SimplifiedLogo from "../../assets/Logo transparent.png";
+import SimplifiedLogo from "../../assets/Logo transparent alt.png";
 import CreateExamForm from '../../components/create-exam-form';
 import { CiChat1 } from "react-icons/ci";
 import Chat from '../chat-manager/Chat';
@@ -254,7 +254,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                                 {new Date(reservation.datetime) > new Date() && (
                                     <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
                                 )}
-                                <Button secondary title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}>Chat</Button> 
+                                <Button widthRestricted={true} secondary title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}>Chat</Button> 
                                 <Button secondary onClick={() => handleClassCancelation(reservation.id)}>Cancel</Button>
                             </CardFooter>
                         </Card>

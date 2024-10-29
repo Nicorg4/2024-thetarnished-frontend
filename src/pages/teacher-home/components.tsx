@@ -13,6 +13,7 @@ export const MainContainer = styled.div`
 
     @media (max-width: 1000px){
         justify-content: center;
+        padding-bottom: 50px;
     }
 `;
 
@@ -178,6 +179,10 @@ export const TimeFilterButton = styled.button<{ active?: boolean }>`
   &:hover {
     background-color: #cccccc;
   }
+
+  @media (max-width: 600px){
+        font-size: 0.8rem;
+  }
 `;
 
 
@@ -193,6 +198,10 @@ export const GreetingText = styled.h1`
     width: 100%;
     margin: 0px;
     padding-left: 50px;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
 `
 
 export const Subtitle = styled.h2`

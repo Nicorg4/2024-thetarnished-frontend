@@ -34,6 +34,10 @@ export const MainContainer =  styled.div<MainContainerProps>`
         pointer-events: none;
         backdrop-filter: blur(5px);        
     }
+
+    @media (max-width: 1000px){
+        padding-bottom: 80px;
+    }
 `
 
 export const Content = styled.div`
@@ -53,7 +57,7 @@ export const Content = styled.div`
 export const ProfileCard = styled.div`
     position: relative;
     width: 800px;
-    height: 90%;
+    height: 92%;
     background-color: ${colors.secondary};
     display: flex;
     flex-direction: column;
@@ -63,7 +67,9 @@ export const ProfileCard = styled.div`
 
     @media (max-width: 1000px){
         width: 100%;
-        height: 900px;
+        margin-top: 150px;
+        max-height: 800px;
+        padding-bottom: 80px;
     }
 `
 
@@ -294,6 +300,11 @@ export const Badge = styled.img`
     &:hover {
         transform: scale(1.1);
     }
+
+    @media screen {
+        width: 50px;
+        height: 50px;
+    }   
 `;
 
 interface BadgeProps {

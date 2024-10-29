@@ -15,7 +15,7 @@ import ChangePassword from './pages/change-password';
 import ResetPassword from './pages/reset-password';
 import AdminHome from './pages/admin-home';
 import LandingPage from './pages/landing-page';
-import ExamViewer from './pages/exam-viewer';
+import ExamViewer from './pages/my-exams';
 import ExamDetail from './pages/exam-detail';
 import ClassConfirm from './pages/confirm-class';
 import SessionExpHandler from './auth/SessionExpHandler';
@@ -42,7 +42,7 @@ const App: React.FC = () => {
           <Route path="/manage-schedule" element={<ProtectedRoute element={<ManageSchedule />} roles={['TEACHER']} />} />
           <Route path="/manage-classes" element={<ProtectedRoute element={<ManageClasses />} roles={['TEACHER']} />} />
           <Route path="/my-classes" element={<ProtectedRoute element={<MyClasses />} roles={['STUDENT']} />} />
-          <Route path="/exam-viewer" element={<ProtectedRoute element={<ExamViewer />} roles={['STUDENT']} />} />
+          <Route path="/my-exams" element={<ProtectedRoute element={<ExamViewer />} roles={['STUDENT']} />} />
           <Route path="/class-browser/:subjectId/:subjectName" element={<ProtectedRoute element={<ClassBrowser />} roles={['STUDENT']} />} />
           <Route path="/profile" element={<ProtectedRoute element={<Profile />} roles={['STUDENT', 'TEACHER']} />} />
           <Route path="/settings" element={<ProtectedRoute element={<Settings />} roles={['STUDENT', 'TEACHER']} />} />

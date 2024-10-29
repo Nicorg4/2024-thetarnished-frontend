@@ -47,7 +47,7 @@ const TeacherHome = () => {
                     throw new Error('Failed to fetch teacher reservations');
                 }
                 const data = await response.json();
-                setReservations(data);
+                setReservations([...data, ...data, ...data, ...data, ...data]);
                 setIsLoading(false);
                 
             } catch (error) {

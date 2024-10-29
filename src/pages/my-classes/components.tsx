@@ -8,81 +8,94 @@ export const MainContainer = styled.div`
     align-items: center ;
     background: rgb(43,84,52);
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
+
+    @media (max-width: 1000px){
+        padding-bottom: 80px;
+        align-items: center;
+        justify-content: center;
+    }
 `
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 export const Content = styled.div`
     width: 90% ;
-    height: 100% ;
+    height: 80% ;
     margin-left: 100px;
     display: flex ;
+    flex-direction: column;
     align-items: center ;
-    justify-content: center;
-
-    max-height: 800px;
-    overflow-y: auto;
-    flex-wrap: wrap;
-
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: white;
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #e0e0e0;
-    }
-
-    scrollbar-width: thin;
-    scrollbar-color: white transparent;
+    background-color: ${colors.secondary};
+    padding: 30px 20px 70px 20px;
+    margin-left: 150px;
+    margin-right: 50px;
+    border-radius: 10px;
+    animation: ${slideIn} 0.2s ease-out forwards;
+    position: relative;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
-        padding-top: 100px;
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-top: 100px;
+        height: 700px;
+        margin-top: 150px;
+        width: 80% ;
     }
 `
 
 export const Card = styled.div`
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin-bottom: 10px;
     padding-bottom: 5px;
     transition: transform 0.2s ease;
     width: 500px ;
-    position: relative;
 
     &:hover {
         transform: translateY(-5px);
     }
 
-    @media (max-width: 550px){
+    @media (max-width: 600px){
         margin: auto ;
         margin-bottom: 20px;
-        width: 300px ;
+        width: 330px ;
     }
 `;
 
 export const CardHeader = styled.div`
+    background-color: ${colors.primary};
     color: #fff;
     border-radius: 6px 6px 0 0;
     font-size: 18px;
     font-weight: bold;
     text-align: center ;
     padding: 0px;
-    background-color: ${colors.primary} ;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
+
+export const HeaderText = styled.p`
+    margin: 0;
+`
 
 export const CardBody = styled.div`
     padding: 10px;
-    height: 90%;
 `;
 
 export const CardInfo = styled.div`
@@ -126,7 +139,7 @@ const skeletonLoading = keyframes`
 export const StaticSkeletonCard = styled.div`
   width: 500px ;
   height: 150px;
-  border: 1px solid ${colors.secondary};
+  border: 1px solid ${colors.primary};
   border-radius: 8px;
   background-color: transparent;
   padding-bottom: 5px;
@@ -167,4 +180,20 @@ export const ChatButton = styled.button`
         cursor: pointer;
         
     }
+
+    @media (max-width: 1000px){
+        display: none;
+    }
+`
+
+export const PageNumber = styled.span`
+    color: ${colors.primary};
+    font-weight: 400;
+`
+
+export const NotificationContainer = styled.div`
+    height: 100%;
+    display: flex;
+    justify-content: center ;
+    align-items: center;
 `

@@ -62,12 +62,10 @@ export const CardsWrapper = styled.div`
     gap: 30px;
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 40px;
     align-items: center;
     justify-content: center;
 
     @media (max-width: 800px){
-      grid-template-columns: 45% 45%;
       max-height: 800px;
 
     ::-webkit-scrollbar {
@@ -130,7 +128,7 @@ export const Card = styled.div<CardProps>`
 
   @media (max-width: 900px){
       margin: auto ;
-      width: 150px;
+      width: 180px;
       height: 125px;
   }
 `;
