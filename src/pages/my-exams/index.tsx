@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { ButtonsContainer, CardsContainer, Content, ExamCard, ExamInfo, ExamTitle, MainContainer, PageNumber } from './components';
+import { ButtonsContainer, CardsContainer, Content, ExamCard, ExamInfo, ExamTitle, MainContainer, PageNumber, PageTitle } from './components';
 import SideBar from '../../components/sidebar/sidebar';
-import Logo from '../../components/top-down-logo';
 import Topbar from '../../components/topbar';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../auth/useAuth';
@@ -10,9 +9,11 @@ import { motion } from 'framer-motion';
 import Notification from '../../components/notification';
 import { Button } from '../../components/main-button/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
-import SimplifiedLogo from "../../assets/Logo transparent alt.png";
+import SimplifiedLogo from "../../assets/Logo transparent.png";
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 import { PopUp, PopUpContainer } from '../../components/popup/components';
 import { Message } from '../../components/message/components';
+import Logo from '../../components/top-down-logo';
 
 interface Choice {
   choice_id: string;
@@ -60,7 +61,7 @@ const ExamViewer = () => {
     }
 
     try{
-      const response = await fetch(`${URL}exam/initiate-exam//${examId}`, {
+      const response = await fetch(`${URL}exam/initiate-exam/${examId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -117,6 +118,11 @@ const ExamViewer = () => {
   }
 
   const paginatedExams = exams.slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage)
+
+  const handleExamCardClick = (examId: string) => {
+    setSelectedExamId(examId);
+    setShowConfirmationPopup(true);
+  };
   
   return (
     <>
@@ -126,13 +132,13 @@ const ExamViewer = () => {
               <h2>Are you sure you want to initiate the exam?</h2>
               <p>You won't be able to close the window or go back. You will failed the exam if you do.</p>
               <ButtonsContainer>
-                  <Button onClick={() => handleExamClick(selectedExamId)}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Initiate exam" }</Button>
-                  <Button secondary>Cancel</Button>
+                  <Button onClick={() => handleExamClick(selectedExamId)}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogoAlt}/> : "Initiate exam" }</Button>
+                  <Button secondary onClick={() => setShowConfirmationPopup(false)}>Cancel</Button>
               </ButtonsContainer>
           </PopUp>
       </PopUpContainer>
   )}
-    <MainContainer>
+    <MainContainer isPopupOpen={showConfirmationPopUp}>
         {showErrorMessage && <Message error>Error initiating exam. Please try again later.</Message>}
       <SideBar/>
       <Topbar/>
@@ -150,15 +156,28 @@ const ExamViewer = () => {
               <Notification alternative={true} message='No exams available at the moment.'/>
           </div>
         ) : (
+          <>
+          <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 }}
+              style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+              }}
+          >
+          <PageTitle>My exams</PageTitle>
+          </motion.div>
           <CardsContainer>
             {paginatedExams.map((exam, index) => (
               <motion.div
                 key={exam.exam_id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.2, delay: (index + 1) * 0.4 }}
               >
-                <ExamCard onClick={() => {setSelectedExamId(exam.exam_id), setShowConfirmationPopup(true)}}>
+                <ExamCard onClick={() => handleExamCardClick(exam.exam_id)}>
                   <ExamTitle>{exam.exam_name}</ExamTitle>
                   <ExamInfo>
                     <FaChalkboardTeacher />
@@ -176,6 +195,7 @@ const ExamViewer = () => {
               </motion.div>
             ))}
           </CardsContainer>
+          </>
         )}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
             <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>

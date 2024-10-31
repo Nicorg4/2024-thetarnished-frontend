@@ -1,13 +1,32 @@
 import styled, { keyframes } from "styled-components";
 import colors from "../../assets/colors";
 
-export const MainContainer = styled.div`
+interface MainContainerProps {
+    isPopupOpen: boolean;
+}
+
+export const MainContainer = styled.div<MainContainerProps>`
     height: 100vh ;
     width: 100vw ;
     display: flex;
     align-items: center ;
     background: rgb(43,84,52);
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: ${({ isPopupOpen }) => (isPopupOpen ? 1 : 0)};
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        backdrop-filter: blur(5px);      
+    }
 
     @media (max-width: 1000px){
         padding-bottom: 80px;
@@ -115,8 +134,19 @@ export const PageNumber = styled.span`
 
 export const ButtonsContainer = styled.div`
     display: flex;
-    bottom: 20px;
-    right: 20px;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    padding-left: 50px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
+
 `

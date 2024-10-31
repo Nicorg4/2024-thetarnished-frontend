@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { Message } from '../../components/message/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
-import Logo from '../../components/top-down-logo';
 import { PopUp, PopUpContainer } from '../../components/payment-popup/components';
 import Topbar from '../../components/topbar';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
@@ -18,6 +17,7 @@ import { IoMdStar } from "react-icons/io";
 import TextInput from '../../components/search-input';
 import Notification from '../../components/notification';
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
+import Logo from '../../components/top-down-logo';
 
 interface Teacher {
     teacherid: string;
@@ -55,7 +55,7 @@ const ClassBrowser = () => {
     const [subjectPrice, setSubjectPrice] = useState(100);
 
     const { subjectId, subjectName } = useParams();
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const navigate = useNavigate();
     const URL = import.meta.env.VITE_API_URL;
 
@@ -148,25 +148,24 @@ const ClassBrowser = () => {
         };
     
         const fetchTeachers = async () => {
-            
-            const currentTeachers = await getTeachersDictatingSubject();
             const prevTeachers = await getPrevTeachersDictatingSubject();
-    
+            const currentTeachers = await getTeachersDictatingSubject();
+        
             const uniqueTeachersMap = new Map();
-    
-            [...currentTeachers, ...prevTeachers].forEach(({ teacher, schedule }) => {
-                if (!uniqueTeachersMap.has(teacher.teacherid)) {
-                    uniqueTeachersMap.set(teacher.teacherid, { teacher, schedule });
-                }
+        
+            currentTeachers.forEach(({ teacher, schedule }) => {
+                uniqueTeachersMap.set(teacher.teacherid, { teacher, schedule });
             });
-    
+        
+            prevTeachers.forEach(({ teacher, schedule }) => {
+                uniqueTeachersMap.set(teacher.teacherid, { teacher, schedule });
+            });
+        
             const teachersArray = Array.from(uniqueTeachersMap.values());
             setTeachersDictatingSubject(teachersArray);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 2000);   
+            setIsLoading(false);
         };
-    
+        
         getSubjectPrice();
         fetchTeachers();
     }, [URL, subjectId, user?.id, user?.token]);
@@ -277,6 +276,14 @@ const ClassBrowser = () => {
 
             setIsPopupOpen(false);
             setClickedClass(null);
+            if (user) {          
+                const xpToLvlUp = 1000 * Math.pow(1.2, user?.lvl - 1); 
+                updateUser({ 
+                    xp: (Number(user?.xp) || 0) + 50 * selectedSlots.length, 
+                    lvl: Number(user?.xp) > xpToLvlUp ? user?.lvl + 1 : user?.lvl 
+                  });
+            }
+                
             setMessage('Classes booked successfully');
             if (paymentMethod === 'CASH') {
                 setIsBooking(false);
@@ -406,8 +413,8 @@ const ClassBrowser = () => {
                     </PopUp>
                 </PopUpContainer>
             }
-                <Logo/>
                 <Topbar/>
+                <Logo/>
                 <MainContainer isPopupOpen={isPopupOpen}>
                 {showSuccessMessage && <Message>{message}</Message>}
                 {showErrorMessage && <Message error>{message}</Message>}

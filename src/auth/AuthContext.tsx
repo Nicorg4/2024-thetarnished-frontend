@@ -10,6 +10,12 @@ export interface ScheduleEntry {
   dayofweek: string;
 }
 
+interface Stats {
+  total_reservations: number;
+  total_exams: number;
+  total_time: number;
+}
+
 export interface User {
   id: BigInteger;
   firstName: string;
@@ -23,9 +29,12 @@ export interface User {
   isActive: boolean;
   role: 'STUDENT' | 'TEACHER' | 'ADMIN';
   isOnVacation: boolean;
-  exp: number;
   token: string;
   avatar_id: number;
+  xp: number;
+  lvl: number;
+  stats: Stats;
+  hasFoundEasterEgg?: boolean;
 }
 
 export interface AuthContextType {

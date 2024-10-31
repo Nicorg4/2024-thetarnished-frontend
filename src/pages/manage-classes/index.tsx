@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ClassManager from "./ClassManager";
 import ClassHistory from "./ClassHistory";
+import Logo from "../../components/top-down-logo";
 
 
 const ManageClasses = () => {
@@ -13,6 +14,7 @@ const ManageClasses = () => {
 
     return (
         <>
+        <Logo/>
         {showContainer ? <ClassManager toggleContainer={toggleContainer}/> :  <ClassHistory toggleContainer={toggleContainer}/>}
         </>
     );

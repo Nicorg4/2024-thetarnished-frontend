@@ -40,9 +40,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       role: 'STUDENT' | 'TEACHER' | 'ADMIN';
       isActive: boolean;
       on_vacation: boolean;
-      exp: number;
       avatar_id: number;
+      xp: number;
+      hasFoundEasterEgg: boolean;
     }>(data.token);
+
+
+    let userLevel
+
+    if(info.xp > 0){
+      const adjustedXp = Math.max(info.xp, 1000);
+      userLevel = Math.floor(1 + Math.log(adjustedXp / 1000) / Math.log(1.2));
+    }
+    else{
+      userLevel = 1
+    }
+
+    let sufix = ''
+
+    if(info.role === 'TEACHER'){
+      sufix = 'teacher'
+    }
+    else{
+        sufix = 'student'
+    }
+
+      const getUserStats = await fetch(`${URL}information/get-${sufix}-stats/${info.id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+      if(!getUserStats.ok){
+        throw new Error('Login failed');
+      }
+      
+    
+    
+    const userStats = await getUserStats.json();
     
     const loggedInUser: User = {
       id: info.id,
@@ -56,7 +93,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isOnVacation: info.on_vacation,
       token: data.token,
       avatar_id: info.avatar_id,
-      exp: info.exp,
+      xp: info.xp,
+      lvl: userLevel,
+      stats: userStats
     };
 
     setUser(loggedInUser);

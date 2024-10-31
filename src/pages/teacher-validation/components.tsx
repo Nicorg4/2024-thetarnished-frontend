@@ -30,9 +30,9 @@ export const MainContainer = styled.div<MainContainerProps>`
     }
 
     @media (max-width: 1000px){
-        height: 100%;
+        min-height: 100%;
         justify-content: center;
-        padding-bottom: 30px;
+        padding-bottom: 35px;
     }
 `;
 
@@ -120,6 +120,7 @@ export const BrowserWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 10px;
+    height: 100%;
 `;
 
 export const Card = styled.div`

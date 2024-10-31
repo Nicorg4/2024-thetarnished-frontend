@@ -1,13 +1,31 @@
 import styled, { keyframes } from "styled-components";
 import colors from "../../assets/colors";
 
+interface MainContainerProps {
+  isPopupOpen: boolean;
+}
 
-export const MainContainer = styled.div`
+export const MainContainer = styled.div<MainContainerProps>`
     height: 100vh ;
     display: flex;
     align-items: center ;
     background: rgb(43,84,52);
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: ${({ isPopupOpen }) => (isPopupOpen ? 1 : 0)};
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        backdrop-filter: blur(5px);      
+    }
 
     @media (max-width: 1000px){
         flex-direction: column;
@@ -27,7 +45,7 @@ const slideIn = keyframes`
 `;
 
 export const Content = styled.div`
-    width: 80% ;
+    width: 90% ;
     margin-left: 150px;
     margin-right: 50px;
     border-radius: 10px;
@@ -183,3 +201,28 @@ export const SkeletonCard = styled.div`
   padding: 16px;
   text-align: center;
 `;
+
+export const ButtonsContainer = styled.div`
+    padding-top: 50px;
+    display: flex;  
+    flex-direction: column ;
+`
+
+export const TutorialButtonContainer = styled.div`
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    
+`
+
+export const TutorialButton = styled.button`
+    background-color: transparent;
+    color: ${colors.primary};
+    font-size: 2.5rem;
+    padding: 0px;
+
+    &:hover{
+      background-color: #cccccc;
+    }
+`

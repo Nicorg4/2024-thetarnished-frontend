@@ -30,7 +30,7 @@ export const MainContainer = styled.div<MainContainerProps>`
     }
 
     @media (max-width: 1000px){
-        height: 100%;
+        min-height: 100%;
         justify-content: center;
         padding-bottom: 30px;
     }
@@ -118,7 +118,6 @@ export const Card = styled.div`
     border-radius: 8px;
     height: 50px;
     margin: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     transition: background-color 0.3s;
     cursor: pointer ;

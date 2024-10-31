@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, CardsContainer, NoScheduleAlertContainer, TimeFilterButton, FilterButtonsContainer, GreetingText, Subtitle, PageNumber } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, CardsContainer, NoScheduleAlertContainer, TimeFilterButton, FilterButtonsContainer, GreetingText, Subtitle, PageNumber, StaticSkeletonCard } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
 import { Button } from '../../components/main-button/components';
@@ -47,7 +47,7 @@ const TeacherHome = () => {
                     throw new Error('Failed to fetch teacher reservations');
                 }
                 const data = await response.json();
-                setReservations([...data, ...data, ...data, ...data, ...data]);
+                setReservations(data);
                 setIsLoading(false);
                 
             } catch (error) {
@@ -78,10 +78,10 @@ const TeacherHome = () => {
         });
     };
 
-    const totalCards = 3;
+    const totalCards = 2;
     const filteredReservations = filterReservationsByTime();
     const totalPages = Math.ceil(filteredReservations.length / cardsPerPage);
-    const skeletonCards = totalCards - filteredReservations.length;
+    
 
     const handleNextPage = () => {
         if (currentPage < totalPages - 1) {
@@ -100,6 +100,8 @@ const TeacherHome = () => {
         (currentPage + 1) * cardsPerPage
     );
 
+    const skeletonCards = totalCards - paginatedReservations.length;
+
     return (
         <MainContainer >
             <SideBar />
@@ -111,7 +113,7 @@ const TeacherHome = () => {
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.3 }}
+                        transition={{ duration: 0.2, delay: 0.3 }}
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -120,7 +122,7 @@ const TeacherHome = () => {
                             width: '100%',
                         }}
                     >
-                    <GreetingText style={{marginBottom:"30px", fontWeight:'300'}}>Welcome back, {user?.firstName}!</GreetingText>
+                    <GreetingText style={{fontWeight:'300'}}>Welcome back, {user?.firstName}!</GreetingText>
                     </motion.div>
                 )}
                 {(user?.schedule)?.length === 0 ? (
@@ -137,10 +139,10 @@ const TeacherHome = () => {
                       </div>
                   ) : (
                         <motion.div
-                            initial={{ opacity: 0, y: 0 }}
-                            animate={{ opacity: 1, y: 20 }}
-                            transition={{ duration: 0.3, delay: 0.3 }}
-                            style={{ display: 'flex', flexDirection:'column', alignItems:"center", textAlign: "center" }}
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2, delay: 0.4 }}
+                            style={{ display: 'flex', flexDirection:'column', alignItems:"center", textAlign: "center", height: '100%', justifyContent: 'center'}}
                         >
                           {reservations.length > 0 ? (
                             <>
@@ -176,18 +178,19 @@ const TeacherHome = () => {
                                           </CardFooter>
                                       </Card>
                                   ))}
+                                  {skeletonCards > 0 && 
+                                        Array.from({ length: skeletonCards }).map((_, index) => (
+                                            <StaticSkeletonCard key={`skeleton-${index}`} />
+                                    ))}
                                    {skeletonCards === 3 && 
                                     <Notification alternative={true} message='You don’t have any pending classes for this time scale.' />
                                    }
                               </CardsContainer>
-                              {filteredReservations.length > 2 && (
                                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center' }}>
                                     <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
                                     <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
                                     <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
                                 </div>
-                              )}
-                              
                             </>
                           ) : (
                             <NoScheduleAlertContainer>

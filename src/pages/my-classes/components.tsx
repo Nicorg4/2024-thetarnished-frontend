@@ -197,3 +197,15 @@ export const NotificationContainer = styled.div`
     justify-content: center ;
     align-items: center;
 `
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    padding-left: 50px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
+`

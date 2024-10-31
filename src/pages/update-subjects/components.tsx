@@ -11,9 +11,9 @@ export const MainContainer = styled.div`
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
 
     @media (max-width: 1000px){
-        height: 100%;
+        min-height: 100%;
         justify-content: center;
-        padding-bottom: 30px;
+        padding-bottom: 35px;
     }
 `;
 

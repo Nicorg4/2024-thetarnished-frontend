@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import colors from "../../assets/colors";
 
 interface NavContainerProps {
-    isOpen: boolean;
+    isOpen?: boolean;
 }
 
 export const NavbarContainer = styled.nav<NavContainerProps>`
@@ -99,6 +99,10 @@ export const UserLevel = styled.p`
     font-size: 15px;
     color: ${colors.primary};
     margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 `
 
 export const MainContentWrapper = styled.div`
@@ -138,3 +142,23 @@ export const LinkName = styled.label`
 `
 
 export const UserXP = styled.progress``
+
+interface XpTutorialProps {
+    visible?: boolean;
+}
+
+export const XpTutorial = styled.div<XpTutorialProps>`
+    position: absolute;
+    left: 200px;
+    width: 300px;
+    z-index: 1;
+    pointer-events: none;
+    background-color: white;
+    color: ${colors.primary};
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: ${({ visible }) => (visible ? 'flex' : 'none')};
+    flex-direction: column;
+    border-radius: 10px;
+`

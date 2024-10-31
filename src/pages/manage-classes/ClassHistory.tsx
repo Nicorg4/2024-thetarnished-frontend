@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, StaticSkeletonCard, LoadingSkeletonCard, CardFooter, PaidInfo, CardsContainer, ButtonContainer, NotificationContainer, PageNumber } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, StaticSkeletonCard, CardFooter, PaidInfo, CardsContainer, ButtonContainer, NotificationContainer, PageNumber } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
 import Notification from '../../components/notification';
 import { Button } from '../../components/main-button/components';
 import { IoIosArrowBack  } from "react-icons/io";
+import { motion } from 'framer-motion';
+import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
+import SimplifiedLogo from "../../assets/Logo transparent alt.png";
 
 interface Student {
     firstname: string;
@@ -59,8 +62,7 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
         getReservationsForTeacher();
     }, [URL, user?.id, user?.token]);
 
-    const totalCards = 4;
-    const skeletonCards = totalCards - reservations.length;
+    
 
     const totalPages = Math.ceil(reservations.length / cardsPerPage);
 
@@ -81,21 +83,23 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
         (currentPage + 1) * cardsPerPage
     );
 
+    const totalCards = 3;
+    const skeletonCards = totalCards - paginatedReservations.length;
+
   return (
     <MainContainer isCreateExamPopupOpen={false} isPopupOpen={false}>
         <SideBar />
         <Topbar/>
         <Content>
             <ButtonContainer>
-                <Button secondary onClick={toggleContainer}><IoIosArrowBack /> Show class history</Button>
+                <Button secondary onClick={toggleContainer}><IoIosArrowBack /> Show class manager</Button>
             </ButtonContainer>
             {isLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {Array.from({ length: totalCards }).map((_, index) => (
-                        <LoadingSkeletonCard key={index} />
-                    ))}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                    <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 20 }} transition={{ duration: 0.5 }}>
                 <CardsContainer>
                     {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>
@@ -117,14 +121,13 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
                         Array.from({ length: skeletonCards }).map((_, index) => (
                             <StaticSkeletonCard key={`skeleton-${index}`} />
                     ))}
-                    {reservations.length > 3 && (
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center', position: 'absolute', bottom: '15px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
                             <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
                             <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
                             <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
                         </div>
-                    )}
                 </CardsContainer>
+                </motion.div>
             ) : (
                 <NotificationContainer>
                     <Notification alternative={true} message={"You have not dictated a class yet."} />

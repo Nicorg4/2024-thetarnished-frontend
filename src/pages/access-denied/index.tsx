@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/main-button/components';
 import Notification from '../../components/notification';
 import { Content, MainContainer } from './components';
+import Logo from '../../components/top-down-logo';
 
 
 const AccessDenied = () => {
@@ -24,6 +25,7 @@ const AccessDenied = () => {
     
     return (
         <MainContainer>
+            <Logo/>
             <Content>
                 <Notification message="Access Denied. Please go back." />
                 <Button secondary onClick={() => navigate(getUserHome())}>Go back</Button>

@@ -96,6 +96,7 @@ export const Card = styled.div`
     padding-bottom: 5px;
     transition: transform 0.2s ease;
     width: 500px ;
+    min-height: 170px;
 
     &:hover {
         transform: translateY(-5px);
@@ -151,6 +152,7 @@ export const CardFooter = styled.div`
     justify-content: flex-end;
     text-align: center;
     width: 97%;
+    margin-top: 20px;
 `
 
 const skeletonLoading = keyframes`
@@ -263,10 +265,24 @@ export const PageNumber = styled.span`
 
 export const ButtonContainer = styled.div`
     width: 100%;
+    display: flex;
+    justify-content: space-between;
 `
 export const NotificationContainer = styled.div`
     height: 100%;
     display: flex;
     justify-content: center ;
     align-items: center;
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    padding-left: 50px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
 `

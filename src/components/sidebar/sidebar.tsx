@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavbarContainer, NavbarLink, LogOutNavbarLink, UserInfo, UserImage, UserName, UserLevel, MainLinksContainer, LogOutLinkContainer, OpenNavBar, LinkName, MainContentWrapper, UserXP } from './components';
+import { NavbarContainer, NavbarLink, LogOutNavbarLink, UserInfo, UserImage, UserName, UserLevel, MainLinksContainer, LogOutLinkContainer, OpenNavBar, LinkName, MainContentWrapper, UserXP, XpTutorial } from './components';
 import { AiOutlineHome , AiOutlineForm , AiOutlineUser/* , AiOutlineTool */, AiOutlineSchedule, AiOutlineLogout/* , AiOutlineDatabase */ } from "react-icons/ai";
 import { PiExamLight } from "react-icons/pi";
 import { useAuth } from '../../auth/useAuth';
@@ -8,6 +8,8 @@ import { LiaChalkboardTeacherSolid  } from "react-icons/lia";
 import avatars from '../../assets/avatars/avatars';
 import { MdOutlinePriceChange } from "react-icons/md";
 import { GiChoice } from "react-icons/gi";
+import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
+import { PiRanking } from "react-icons/pi";
 
 
 const SideBar: React.FC = () => {
@@ -15,6 +17,7 @@ const SideBar: React.FC = () => {
     const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = React.useState(false);
     const [showContent, setShowContent] = React.useState(false);
+    const [showXpTutorial, setShowXpTutorial] = React.useState(false);
 
     const handleOpen = () => {
         setIsOpen(!isOpen);
@@ -32,12 +35,34 @@ const SideBar: React.FC = () => {
         if (user?.avatar_id) {
             return avatars[user.avatar_id - 1].src;
         }else if (user?.role === "ADMIN") {
-            return avatars[8].src;
+            return avatars[9].src;
         }
         
     };
 
+    const getLevelProgress = () => {
+        if (user) {
+            const xpNeededForCurrentLvl = 1000 * Math.pow(1.2, user?.lvl - 1);
+            const currentProgress = user?.xp / xpNeededForCurrentLvl * 100
+            return currentProgress;
+        }
+        else {
+            return 0;
+        }
+    };
+
+    const getXpNeededForCurrentLvl = () => {
+        if (user) {
+            const xpNeededForCurrentLvl = 1000 * Math.pow(1.2, user?.lvl - 1);
+            return xpNeededForCurrentLvl;
+        }
+        else {
+            return 0;
+        }
+      };
+
     return (
+        <>
         <NavbarContainer isOpen={isOpen}>
             <MainContentWrapper>
             <UserInfo>
@@ -45,8 +70,25 @@ const SideBar: React.FC = () => {
                 {(user?.role !== 'ADMIN') && (
                 <>
                     <UserName>{showContent && user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : ''}</UserName>
-                    <UserLevel>Lvl 1</UserLevel>
-                    {showContent && <UserXP value="70" max="100"/>}
+                    <UserLevel>Lvl {user?.lvl}</UserLevel>
+                    {showContent && <UserXP value={getLevelProgress()} max="100"/>}
+                    {showContent && <UserLevel>{user?.xp + '/' + getXpNeededForCurrentLvl()}<HiOutlineQuestionMarkCircle onMouseEnter={() => setShowXpTutorial(true)} onMouseLeave={() => setShowXpTutorial(false)} style={{color: "grey"}}/></UserLevel>}     
+                    <XpTutorial visible={showXpTutorial}>
+                        <div className="xp-tutorial-content">
+                            <h2>How to Earn Experience Points (XP)</h2>
+                            <ul>
+                                <li>
+                                    <strong>Reserve a Class:</strong> Earn 50 XP for each class reserved.
+                                </li>
+                                <li>
+                                    <strong>Complete a Class:</strong> Earn 100 XP for each class completed.
+                                </li>
+                                <li>
+                                    <strong>Pass an Exam:</strong> Earn 200 XP for each exam passed.
+                                </li>
+                            </ul>
+                        </div>
+                    </XpTutorial>
                 </>
                 )}
                 
@@ -67,6 +109,7 @@ const SideBar: React.FC = () => {
                 <>
                 <NavbarLink isOpen={showContent} title='Manage schedule' to="/manage-schedule" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineSchedule />{showContent && <LinkName>Manage Schedule</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='Manage classes' to="/manage-classes" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineForm  />{showContent && <LinkName>Manage Classes</LinkName>}</NavbarLink>
+                <NavbarLink isOpen={showContent} title='Leaderboard' to="/leaderboard" className={({ isActive }) => (isActive ? "active" : "")}><PiRanking />{showContent && <LinkName>Leaderboard</LinkName>}</NavbarLink>
                 </>
                 )}
 
@@ -79,6 +122,7 @@ const SideBar: React.FC = () => {
                 <NavbarLink isOpen={showContent} title='Home' to="/student-home" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineHome />{showContent && <LinkName>Home</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='My classes' to="/my-classes" className={({ isActive }) => (isActive ? "active" : "")}><LiaChalkboardTeacherSolid   />{showContent && <LinkName>My Classes</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='My exams' to="/my-exams" className={({ isActive }) => (isActive ? "active" : "")}><PiExamLight  />{showContent && <LinkName>Exams</LinkName>}</NavbarLink>
+                <NavbarLink isOpen={showContent} title='Leaderboard' to="/leaderboard" className={({ isActive }) => (isActive ? "active" : "")}><PiRanking />{showContent && <LinkName>Leaderboard</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='My profile' to="/profile" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineUser />{showContent && <LinkName>Profile</LinkName>}</NavbarLink>
                 </>
             )}
@@ -92,12 +136,14 @@ const SideBar: React.FC = () => {
                 </>
             )}
             {/* <NavbarLink title='Settings' to="/settings" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineTool />{showContent && <LinkName>Manage Classes</LinkName>}</NavbarLink> */}
+            
             </MainLinksContainer>
             </MainContentWrapper>
             <LogOutLinkContainer>
                 <LogOutNavbarLink to="/" onClick={logout}><AiOutlineLogout/>{showContent && <LinkName>Logout</LinkName>}</LogOutNavbarLink>
             </LogOutLinkContainer>
         </NavbarContainer>
+        </>
     );
 };
 export default SideBar;

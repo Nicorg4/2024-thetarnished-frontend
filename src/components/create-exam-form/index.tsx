@@ -57,7 +57,7 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
   const [message, setMessage] = useState<string>('');
   const [showError, setShowError] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const URL = import.meta.env.VITE_API_URL;
 
    const handleAddOption = () => {
@@ -120,6 +120,11 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
           throw new Error('Failed to create exam');
         } 
         setMessage("Exam created successfully");
+        const xpToLvlUp = 1000 * Math.pow(1.2, user?.lvl - 1); 
+        updateUser({ 
+          xp: (Number(user?.xp) || 0) + 50, 
+          lvl: Number(user?.xp) > xpToLvlUp ? user?.lvl + 1 : user?.lvl 
+      });
         setShowSuccess(true);
         setIsCreatingExam(false);
         setTimeout(() => {

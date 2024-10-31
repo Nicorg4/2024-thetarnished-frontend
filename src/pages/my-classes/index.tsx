@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, ChatButton, PageNumber, NotificationContainer } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, ChatButton, PageNumber, NotificationContainer, PageTitle } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
-import Logo from '../../components/top-down-logo';
 import { CiChat1 } from "react-icons/ci";
 import Chat from '../chat-manager/Chat';
 import Notification from '../../components/notification';
@@ -11,6 +10,7 @@ import { Button } from '../../components/main-button/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent alt.png";
 import { motion } from 'framer-motion';
+import Logo from '../../components/top-down-logo';
 
 
 interface Teacher {
@@ -59,10 +59,8 @@ const MyClasses = () => {
                     throw new Error('Failed to fetch student reservations');
                 }
                 const data = await response.json();
-                setReservations([...data,...data,...data,...data]);
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 3000);
+                setReservations(data);
+                setIsLoading(false);
             } catch (error) {
                 console.error(error);
                 setIsLoading(false);
@@ -107,17 +105,29 @@ const MyClasses = () => {
         ) : (
         <MainContainer>
             <SideBar />
-            <Logo/>
             <Topbar/>
-            
+            <Logo/>
                 <Content>
                 {isLoading ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                         <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                     </div>
                 ) : reservations.length > 0 ? (
+                    <>
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2, delay: 0.3 }}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '100%',
+                        }}
+                    >
+                    <PageTitle>My upcoming classes</PageTitle>
+                    </motion.div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }}>
                         {paginatedReservations.map((reservation) => (
                             <Card key={reservation.id}>
                                 <CardHeader>
@@ -146,6 +156,7 @@ const MyClasses = () => {
                         </div>
                     </motion.div>
                     </div>
+                    </>
                 ) : (
                     <NotificationContainer>
                         <Notification alternative={true} message="You haven’t booked any class yet."/>

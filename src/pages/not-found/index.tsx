@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/main-button/components';
 import Notification from '../../components/notification/index.tsx';
 import { Content, MainContainer} from './components.tsx';
+import { Logo } from '../../components/topbar/components.tsx';
 
 
 const NotFound = () => {
@@ -25,6 +26,7 @@ const NotFound = () => {
     
     return (
         <MainContainer>
+            <Logo/>
             <Content>
                 <Notification message={'404 page not found.'}/>
                 <Button secondary onClick={() => navigate(getUserHome())}>Go back</Button>

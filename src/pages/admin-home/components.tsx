@@ -69,6 +69,12 @@ const StatsContainer = styled.div`
     width: 80%;
     margin:auto;
     gap: 10px;
+
+    @media (max-width: 1000px){
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
 `;
 
 const StatCard = styled.div`
@@ -91,6 +97,10 @@ const StatCard = styled.div`
         font-size: 24px;
         margin: 5px 0;
         font-weight: bold;
+    }
+
+    @media (max-width: 1000px){
+        width: 100%;
     }
 `;
 
@@ -145,8 +155,9 @@ const Dashboard: React.FC = () => {
     const [totalStudents, setTotalStudents] = React.useState(0);
     const [totalTeachers, setTeachers] = React.useState(0);
     const [monthlyReservationsData, setMonthlyReservationsData] = React.useState<number[]>([]);
+    const [width, setWidth] = React.useState(window.innerWidth);
 
-    const getLast5Months = () => {
+    const getLastMonths = () => {
         const months = [
             'January', 'February', 'March', 'April', 'May', 'June', 
             'July', 'August', 'September', 'October', 'November', 'December'
@@ -154,22 +165,31 @@ const Dashboard: React.FC = () => {
         
         const currentMonthIndex = new Date().getMonth();
         const labels = [];
+        let numberOfMonths = 5;
+
+        if (width < 1000) {
+            numberOfMonths = 3;
+        }
     
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < numberOfMonths; i++) {
             const monthIndex = (currentMonthIndex - i + 12) % 12;
             labels.unshift(months[monthIndex]);
         }
         
-        return labels;
+        const adjustedData = monthlyReservationsData.slice(-numberOfMonths);
+    
+        return { labels, adjustedData };
     };
 
+    const { labels, adjustedData } = getLastMonths();
+
     const data = {
-        labels: getLast5Months(),
+        labels: labels,
         datasets: [
             {
                 label: 'Total Reservations',
                 backgroundColor: `${colors.primary}`,
-                data: monthlyReservationsData,
+                data: adjustedData,
             },
         ],
     };
@@ -199,7 +219,13 @@ const Dashboard: React.FC = () => {
     if(user?.token){
         fetchAppAnalytics();
     }
-    
+    const handleResize = () => {
+        setWidth(window.innerWidth);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
     }, [URL, user?.token])
     
     return (

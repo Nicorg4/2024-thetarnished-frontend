@@ -15,43 +15,12 @@ import { FaUmbrellaBeach } from "react-icons/fa";
 import DateRangeCalendarComponent from './calendar';
 import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
-import TeachingBronze from "../../assets/Teaching Bronze.png";
-import TeachingSilver from "../../assets/Teaching Silver.png";
-import TeachingGold from "../../assets/Teaching Gold.png";
 import avatars from '../../assets/avatars/avatars';
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import badges from '../../assets/badges/badges';
+import EasterEggRiddle from '../../components/riddle';
 
-
-
-
-interface Badge {
-  id: string;
-  name: string;
-  imageUrl: string;
-  description: string;
-}
-
-const badges: Badge[] = [
-  {
-      id: '1',
-      name: 'Teaching Bronze',
-      imageUrl: TeachingBronze,
-      description: 'Awarded for completing 5 lessons'
-  },
-  {
-      id: '2',
-      name: 'Teaching Silver',
-      imageUrl: TeachingSilver,
-      description: 'Awarded for completing 10 lessons'
-  },
-  {
-      id: '3',
-      name: 'Teaching Gold',
-      imageUrl: TeachingGold,
-      description: 'Awarded for completing 50 lessons'
-  }
-] 
  const Profile = () => {
 
     const navigate = useNavigate();
@@ -74,13 +43,73 @@ const badges: Badge[] = [
     const [isConfirmingTerminateVacation, setIsConfirmingTerminateVacation] = useState(false);
     const [hoveredBadgeId, setHoveredBadgeId] = useState<string | null>(null);
     const [showAvatarSelectorPopup, setShowAvatarSelectorPopup] = useState(false);
+    const [userBadges, setUserBadges] = useState<{ id: string; name: string; description: string; imageUrl: string; }[]>([]);
+    const [openRiddlePopUp, setOpenRiddlePopUp] = useState(false);
+    const [successEasterEggMessage, setSuccessEasterEggMessage] = useState(false);
 
     const URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         setFirstName(user?.firstName || '');
         setLastName(user?.lastName || '');
-    }, [user?.firstName, user?.lastName])
+        
+        const getUserBadges = () => {
+            if(user && user?.role === 'TEACHER'){
+                if(user?.stats?.total_reservations >= 5 && user?.stats?.total_reservations < 50){
+                    setUserBadges(badges.filter(badge => badge.id === '1'));
+                }
+                else if(user?.stats?.total_reservations >= 50 && user?.stats?.total_reservations < 100){
+                    setUserBadges(badges.filter(badge => badge.id === '2'));
+                }
+                else if(user?.stats?.total_reservations >= 100){
+                    setUserBadges(badges.filter(badge => badge.id === '3'));
+                }
+                if(user?.stats?.total_exams >= 5 && user?.stats?.total_exams < 10){
+                    setUserBadges(badges.filter(badge => badge.id === '10'));
+                }
+                else if(user?.stats?.total_exams >= 10 && user?.stats?.total_exams < 50){
+                    setUserBadges(badges.filter(badge => badge.id === '11'));
+                }
+                else if(user?.stats?.total_exams >= 50){
+                    setUserBadges(badges.filter(badge => badge.id === '12'));
+                }
+            }
+            if(user && user?.role === 'STUDENT'){
+                if(user?.stats?.total_reservations >= 10 && user?.stats?.total_reservations < 50){
+                    setUserBadges(badges.filter(badge => badge.id === '4'));
+                }
+                else if(user?.stats?.total_reservations >= 50 && user?.stats?.total_reservations < 100){
+                    setUserBadges(badges.filter(badge => badge.id === '5'));
+                }
+                else if(user?.stats?.total_reservations >= 100){
+                    setUserBadges(badges.filter(badge => badge.id === '6'));
+                }
+                if(user?.stats?.total_exams > 5 && user?.stats?.total_exams < 10){
+                    setUserBadges(badges.filter(badge => badge.id === '7'));
+                }
+                else if(user?.stats?.total_exams >= 10 && user?.stats?.total_exams < 50){
+                    setUserBadges(badges.filter(badge => badge.id === '8'));
+                }
+                else if(user?.stats?.total_exams >= 50){
+                    setUserBadges(badges.filter(badge => badge.id === '9'));
+                }
+            }
+            if(user){
+                if(user?.stats?.total_time > 10 && user?.stats?.total_time < 50){
+                    setUserBadges(badges.filter(badge => badge.id === '13'));
+                }
+                else if(user?.stats?.total_time > 50 && user?.stats?.total_time < 100){
+                    setUserBadges(badges.filter(badge => badge.id === '14'));
+                }
+                else if(user?.stats?.total_time > 100){
+                    setUserBadges(badges.filter(badge => badge.id === '15'));
+                }
+            }
+        }
+
+        getUserBadges();
+        
+    }, [user, user?.firstName, user?.lastName, user?.stats?.total_exams])
 
     const handlePasswordChange = () => {
         navigate('/change-password');
@@ -216,9 +245,14 @@ const badges: Badge[] = [
 
     const handleCancelTakeVacation = () => {
         setShowTakeVacationPopup(false);
+        setDateRange([null, null]);
     }
 
     const handleConfirmVacation = async () => {
+        if(dateRange[0] === null || dateRange[1] === null) {
+            setMessage('Please select a date range');
+            throw new Error('Please select a date range');
+        }
         try{
             setIsConfirmingVacation(true);
             const response = await fetch(`${URL}classes/assign-vacation`, {
@@ -311,6 +345,9 @@ const badges: Badge[] = [
     };
 
     const getAvatarSource = () => {
+        if (user?.avatar_id == 9) {
+            return `../../../src/assets/avatars/ee.png`;
+        }
         if (user?.avatar_id) {
             return `../../../src/assets/avatars/${user?.avatar_id}.png`;
         }  
@@ -365,8 +402,25 @@ const badges: Badge[] = [
         setShowAvatarSelectorPopup(false);
     };
 
+    const showSuccessEasterEggMessage = () => {
+        setSuccessEasterEggMessage(true);
+        setTimeout(() => {
+            setSuccessEasterEggMessage(false);
+        }, 3000);
+    };
+
     return (
         <>
+        {successEasterEggMessage &&
+            <Message>You have unlocked a new secret avatar!</Message>
+        }
+        {openRiddlePopUp && (
+            <PopUpContainer>
+                <PopUp>
+                    <EasterEggRiddle closeRiddle={() => setOpenRiddlePopUp(false)} successEasterEggMessage={showSuccessEasterEggMessage}/>
+                </PopUp>
+            </PopUpContainer>
+        )}
         {showTerminateVacationPopup && (
             <PopUpContainer>
                 <PopUp>
@@ -410,7 +464,8 @@ const badges: Badge[] = [
                     <PopUp>
                         <h2>Select your avatar:</h2>
                         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '50px' }}>
-                            {avatars.map(avatar => (
+                            {avatars.map((avatar, index) => (
+                                index < avatars.length - (user?.hasFoundEasterEgg ? 1 : 2) &&(
                                 <div
                                     key={avatar.id}
                                     onClick={() => setSelectedAvatarId(avatar.id)}
@@ -426,6 +481,7 @@ const badges: Badge[] = [
                                     )}
                                     <img src={avatar.src} alt={`Avatar ${avatar.id}`} style={{ width: '80px', height: '80px', opacity: selectedAvatarId === avatar.id ? 0.5 : 1, }} />
                                 </div>
+                                )
                             ))}
                         </div>
                         <ButtonsContainer>
@@ -437,7 +493,7 @@ const badges: Badge[] = [
                     </PopUp>
                 </PopUpContainer>
             )}
-        <MainContainer isPopupOpen={isPopupOpen} showTakeVacationPopup={showTakeVacationPopup} showDeleteAccountConfirmation={showDeleteAccountConfirmation} showTerminateVacationPopup={showTerminateVacationPopup} showAvatarSelectorPopup={showAvatarSelectorPopup}>
+        <MainContainer openRiddlePopUp={openRiddlePopUp} isPopupOpen={isPopupOpen} showTakeVacationPopup={showTakeVacationPopup} showDeleteAccountConfirmation={showDeleteAccountConfirmation} showTerminateVacationPopup={showTerminateVacationPopup} showAvatarSelectorPopup={showAvatarSelectorPopup}>
             {showSuccessMessage && <Message>Your profile has been updated.</Message>}
             {showErrorMessage && <Message error>{message}</Message>}
             <SideBar/>
@@ -484,7 +540,7 @@ const badges: Badge[] = [
                     <BadgesContainer>
                         <BadgeTitle>Achievements:</BadgeTitle>
                         <Badges>
-                            {badges.map(badge => (
+                            {userBadges.map(badge => (
                                 <div onMouseEnter={() => setHoveredBadgeId(badge.id)} onMouseLeave={() => setHoveredBadgeId(null)} style={{ position: 'relative' }}>
                                     <Badge key={badge.id} src={badge.imageUrl}/>
                                     <BadgeInfo visible={hoveredBadgeId === badge.id}>
@@ -519,7 +575,7 @@ const badges: Badge[] = [
                 )}
             
             </Content>
-            <Logo/>
+            <Logo onClick={() => !user?.hasFoundEasterEgg ? setOpenRiddlePopUp(true) : null}/>
         </MainContainer>
         </>
     )

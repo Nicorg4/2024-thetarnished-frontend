@@ -7,6 +7,7 @@ interface MainContainerProps {
     showDeleteAccountConfirmation: boolean;
     showTerminateVacationPopup: boolean;
     showAvatarSelectorPopup: boolean;
+    openRiddlePopUp: boolean;
 }
 
 
@@ -27,8 +28,8 @@ export const MainContainer =  styled.div<MainContainerProps>`
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         z-index: 999;
-        opacity: ${({ isPopupOpen, showTakeVacationPopup, showDeleteAccountConfirmation, showTerminateVacationPopup, showAvatarSelectorPopup }) =>
-            isPopupOpen || showTakeVacationPopup || showDeleteAccountConfirmation || showTerminateVacationPopup || showAvatarSelectorPopup ? 1 : 0
+        opacity: ${({ isPopupOpen, showTakeVacationPopup, showDeleteAccountConfirmation, showTerminateVacationPopup, showAvatarSelectorPopup, openRiddlePopUp }) =>
+            isPopupOpen || showTakeVacationPopup || showDeleteAccountConfirmation || showTerminateVacationPopup || showAvatarSelectorPopup || openRiddlePopUp? 1 : 0
         };
         transition: opacity 0.3s ease;
         pointer-events: none;
@@ -57,7 +58,7 @@ export const Content = styled.div`
 export const ProfileCard = styled.div`
     position: relative;
     width: 800px;
-    height: 92%;
+    height: 90%;
     background-color: ${colors.secondary};
     display: flex;
     flex-direction: column;
@@ -208,12 +209,9 @@ export const DeleteAccountButtonsContainer = styled.div`
 `
 
 export const ButtonsContainer = styled.div`
-    position: absolute;
     display: flex;
-    bottom: 20px;
-    right: 20px;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
 `
 
 export const PasswordInput = styled.input`

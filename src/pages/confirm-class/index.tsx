@@ -5,6 +5,7 @@ import { InteractionBlocker } from '../../components/interaction-blocker/compone
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { IoCheckmarkCircleOutline, IoCloseCircleOutline  } from "react-icons/io5";
+import Logo from '../../components/top-down-logo';
 
 
 const ClassConfirm = ({ mode }: { mode: string }) => {    
@@ -73,6 +74,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
     
     return (
         <MainContainer>
+            <Logo/>
             <Content>
                 {isLoading ? (
                     <InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>

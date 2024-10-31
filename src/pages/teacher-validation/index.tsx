@@ -50,7 +50,7 @@ const TeacherValidation = () => {
                     
                 });
                 const data = await response.json();
-                setTeachers([...data]);
+                setTeachers(data);
                 setIsLoading(false);
             }catch (error) {
                 setTeachers([]);

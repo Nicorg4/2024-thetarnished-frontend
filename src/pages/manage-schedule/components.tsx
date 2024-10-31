@@ -116,4 +116,8 @@ export const TutorialButton = styled.button`
     color: ${colors.primary};
     font-size: 2.5rem;
     padding: 0px;
+
+    &:hover{
+      background-color: #cccccc;
+    }
 `

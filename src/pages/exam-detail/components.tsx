@@ -1,34 +1,83 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import colors from "../../assets/colors";
 
 
-export const MainContainer =  styled.div`
-    height: 100vh ;
-    width: 100vw ;
-    display: flex;
-    align-items: center ;
-    background: rgb(43,84,52);
-    background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
+interface MainContainerProps {
+  isPopupOpen: boolean;
+}
+
+export const MainContainer = styled.div<MainContainerProps>`
+  height: 100vh ;
+  width: 100vw ;
+  display: flex;
+  align-items: center ;
+  background: rgb(43,84,52);
+  background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
+
+  &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: ${({ isPopupOpen }) => (isPopupOpen ? 1 : 0)};
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      backdrop-filter: blur(5px);      
+  }
+
+  @media (max-width: 1000px){
+      padding-bottom: 80px;
+      align-items: center;
+      justify-content: center;
+  }
 `
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 export const Content = styled.div`
     width: 90% ;
-    height: 100% ;
+    height: 80% ;
     margin-left: 100px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
-    justify-content: center;
+    background-color: ${colors.secondary};
+    padding: 30px 20px 70px 20px;
+    margin-left: 150px;
+    margin-right: 50px;
+    border-radius: 10px;
+    animation: ${slideIn} 0.2s ease-out forwards;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
+        width: 90% ;
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-top: 100px;
+    }
+
+    @media (max-width: 800px){
+        width: 80% ;
     }
 `
 
 export const ExamHeader = styled.div`
   margin-bottom: 20px;
   text-align: center;
+  color: ${colors.primary};
   
   @media (max-width: 1000px) {
     padding-top: 100px; 
@@ -38,6 +87,7 @@ export const ExamHeader = styled.div`
 export const ExamInfo = styled.div`
     display: flex;
     gap: 20px;
+    color: ${colors.primary};
 `
 
 export const QuestionList = styled.div`
@@ -50,6 +100,7 @@ export const QuestionList = styled.div`
     white-space: nowrap;
     scrollbar-width: thin;
     margin-bottom: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 
     ::-webkit-scrollbar {
         width: 8px;
@@ -77,6 +128,7 @@ export const QuestionCard = styled.div`
   background-color: ${colors.secondary};
   border-radius: 8px;
   color: ${colors.primary};
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 `;
 
 export const QuestionText = styled.h4`
@@ -125,12 +177,21 @@ export const ResultText = styled.p`
   text-align: center;
 `;
 
-export const ScoreContainer = styled.div`
+interface ScoreProps {
+  hasPassed: boolean;
+}
+
+export const ScoreContainer = styled.div<ScoreProps>`
     padding: 10px;
     background-color: ${colors.secondary};
-    color: ${colors.primary};
+    color: ${({ hasPassed }) => (hasPassed ? `${colors.primary}` : `${colors.important}`)};
     text-align: center;
     border-radius: 10px;
     font-size: 1.2rem;
     font-weight: bold;
+`
+export const ButtonsContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 `

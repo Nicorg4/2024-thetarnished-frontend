@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, CardsContainer, ChatButton, PageNumber, ButtonContainer, NotificationContainer, HeaderText } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, CardsContainer, ChatButton, PageNumber, ButtonContainer, NotificationContainer, HeaderText, PageTitle } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
-import Logo from '../../components/top-down-logo';
 import { Button } from '../../components/main-button/components';
 import { PopUp, PopUpContainer } from '../../components/popup/components';
 import { Message } from '../../components/message/components';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
-import SimplifiedLogo from "../../assets/Logo transparent alt.png";
+import SimplifiedLogo from "../../assets/Logo transparent.png";
 import CreateExamForm from '../../components/create-exam-form';
 import { CiChat1 } from "react-icons/ci";
 import Chat from '../chat-manager/Chat';
@@ -28,7 +27,7 @@ interface Reservation {
 }
 
 const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
     const navigateToChat = (teacherid:string) =>{
@@ -65,7 +64,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                     throw new Error('Failed to fetch teacher reservations');
                 }
                 const data = await response.json();
-                setReservations([...data,...data,...data,...data]);
+                setReservations(data);
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 1000);
@@ -105,6 +104,13 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                 throw new Error('Failed to update reservation');
             }
             setReservations((prevReservations) => prevReservations.filter((reservation) => reservation.id !== reservationId));
+            if (user) {          
+                const xpToLvlUp = 1000 * Math.pow(1.2, user?.lvl - 1); 
+                updateUser({ 
+                    xp: (Number(user?.xp) || 0) + 100, 
+                    lvl: Number(user?.xp) > xpToLvlUp ? user?.lvl + 1 : user?.lvl 
+                });
+            }
             setIsFinishing(false);
             setMessage('Class finished successfully');
             setShowMessage(true);
@@ -199,8 +205,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
     <MainContainer isCreateExamPopupOpen={isCreateExamPopupOpen} isPopupOpen={isPopupOpen}>
         {showMessage && <Message>{message}</Message>}
         {showErrorMessage && <Message error>{message}</Message>}
-        <SideBar />
-        <Logo/>
+        <SideBar />     
         <Topbar/>
         {isPopupOpen && (
         <PopUpContainer>
@@ -218,14 +223,26 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
         )}
         <Content>
             <ButtonContainer>
+                <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.2, delay: 0.3 }}
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                    <PageTitle>Class manager</PageTitle>
+                </motion.div>
                 <Button secondary onClick={toggleContainer}>Show class history <IoIosArrowForward /></Button>
             </ButtonContainer>
+            
             {isLoading ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                     <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }}>
                 <CardsContainer>
                     {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>

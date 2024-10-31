@@ -7,7 +7,8 @@ const avatars = [
     { id: 6, src: `../../../src/assets/avatars/6.png` },
     { id: 7, src: `../../../src/assets/avatars/7.png` },
     { id: 8, src: `../../../src/assets/avatars/8.png` },
-    { id: 9, src: `../../../src/assets/avatars/admin.png` },
+    { id: 9, src: `../../../src/assets/avatars/ee.png` },
+    { id: 10, src: `../../../src/assets/avatars/admin.png` },
 ];
 
 export default avatars;

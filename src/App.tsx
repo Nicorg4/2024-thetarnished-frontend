@@ -24,6 +24,7 @@ import ProtectedRoute from './auth/ProtectedRoute';
 import NotFound from './pages/not-found';
 import UpdateSubjects from './pages/update-subjects';
 import TeacherValidation from './pages/teacher-validation'
+import Leaderboard from './pages/leaderboard';
 
 const App: React.FC = () => {
     return (
@@ -52,6 +53,7 @@ const App: React.FC = () => {
           <Route path="/confirm-class/:reservationId/:teacherId" element={<ProtectedRoute element={<ClassConfirm mode={"confirm"}/>} roles={['TEACHER']} />} />
           <Route path="/reject-class/:reservationId/:teacherId" element={<ProtectedRoute element={<ClassConfirm mode={"reject"} />} roles={['TEACHER']} />} />
           <Route path='/update-subjects' element={<UpdateSubjects />} />
+          <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="/access-denied" element={<AccessDenied />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
