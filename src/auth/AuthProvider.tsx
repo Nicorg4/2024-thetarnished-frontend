@@ -17,6 +17,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoggedIn(true);
     }
   }, []);
+
+  console.log(URL);
   const login = async (email: string, password: string) => {
     const response = await fetch(`${URL}authentication/login`, {
       method: 'POST',
