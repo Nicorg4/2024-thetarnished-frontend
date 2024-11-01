@@ -8,7 +8,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const URL = import.meta.env.VITE_API_URL;
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
