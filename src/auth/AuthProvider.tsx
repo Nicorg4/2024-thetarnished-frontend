@@ -41,6 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isActive: boolean;
       on_vacation: boolean;
       avatar_id: number;
+      exp: number;
       xp: number;
       hasFoundEasterEgg: boolean;
     }>(data.token);
@@ -95,7 +96,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       avatar_id: info.avatar_id,
       xp: info.xp,
       lvl: userLevel,
-      stats: userStats
+      stats: userStats,
+      hasFoundEasterEgg: info.hasFoundEasterEgg,
+      exp: info.exp
     };
 
     setUser(loggedInUser);

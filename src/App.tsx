@@ -25,6 +25,7 @@ import NotFound from './pages/not-found';
 import UpdateSubjects from './pages/update-subjects';
 import TeacherValidation from './pages/teacher-validation'
 import Leaderboard from './pages/leaderboard';
+import Quiz from './pages/daily-trivia';
 
 const App: React.FC = () => {
     return (
@@ -56,6 +57,7 @@ const App: React.FC = () => {
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="/access-denied" element={<AccessDenied />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="daily-trivia" element={<Quiz/>} />
         </Routes>
       </AuthProvider>
     </Router>

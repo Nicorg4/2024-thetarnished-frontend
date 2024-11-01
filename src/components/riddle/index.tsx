@@ -10,7 +10,9 @@ const Highlight = styled.span`
     cursor: pointer;
 
     &:hover {
-        background-color: yellow;
+        background-color: ${colors.primary};
+        color: ${colors.secondary};
+        border-radius: 5px;
     }
 `;
 
@@ -29,19 +31,39 @@ const CloseButton = styled.button`
     }
 `;
 
-const EasterEggRiddle = ({ closeRiddle, successEasterEggMessage }: { closeRiddle?: () => void, successEasterEggMessage?: () => void}) => {
+const EasterEggRiddle = ({ closeRiddle, successEasterEggMessage, errorEasterEggMessage }: { closeRiddle?: () => void, successEasterEggMessage?: () => void, errorEasterEggMessage?: () => void }) => {
     const [isRevealed, setIsRevealed] = useState(false);
-    const { updateUser} = useAuth();
+    const { user, updateUser} = useAuth();
 
     const handleReveal = () => {
         setIsRevealed(true);
     };
 
+    const URL = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
         const handleKeyCombination = async (event: KeyboardEvent) => {
             if (event.ctrlKey && event.shiftKey && event.key === 'E') {
-                successEasterEggMessage?.();
-                updateUser({hasFoundEasterEgg: true})
+                try{
+                    const response = await fetch(`${URL}authentication/easteregg/${user?.id}`, 
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${user?.token}`,
+                            },
+                        }
+                    )
+                    if(!response.ok){
+                        throw new Error('Failed to update user');
+                    }
+                    successEasterEggMessage?.();
+                    closeRiddle?.();
+                    updateUser({hasFoundEasterEgg: true})
+                }catch(error){
+                    errorEasterEggMessage?.();
+                    console.error(error)
+                }
             }
         };
         window.addEventListener('keyup', handleKeyCombination);

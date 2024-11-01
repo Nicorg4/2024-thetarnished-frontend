@@ -377,3 +377,9 @@ export const AvatarContainer = styled.div`
     }
 
 `
+
+export const NoBadgesMessage = styled.div`
+    color: ${colors.primary};
+    font-size: 1.3rem;
+    font-weight: 300;
+`

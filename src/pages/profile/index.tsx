@@ -1,5 +1,5 @@
 import SideBar from '../../components/sidebar/sidebar'
-import { MainContainer, Content, ProfileCard, UserImage, UserInfo, UserName, UserSubjects, Subject, CardButtons, Form, Input, InputText, ButtonsContainer, FormTitle, FormContainer, PasswordInput, VacationButtonContainer, VacationButton, CalendarContainer, ProfileCover, UserData, BadgesContainer, Badge, BadgeTitle, Badges, BadgeInfo, BadgeName, BadgeDescription, DeleteAccountButtonsContainer, CheckmarkIcon, EditIcon, AvatarContainer } from './components';
+import { MainContainer, Content, ProfileCard, UserImage, UserInfo, UserName, UserSubjects, Subject, CardButtons, Form, Input, InputText, ButtonsContainer, FormTitle, FormContainer, PasswordInput, VacationButtonContainer, VacationButton, CalendarContainer, ProfileCover, UserData, BadgesContainer, Badge, BadgeTitle, Badges, BadgeInfo, BadgeName, BadgeDescription, DeleteAccountButtonsContainer, CheckmarkIcon, EditIcon, AvatarContainer, NoBadgesMessage } from './components';
 import { Button } from '../../components/main-button/components';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +46,7 @@ import EasterEggRiddle from '../../components/riddle';
     const [userBadges, setUserBadges] = useState<{ id: string; name: string; description: string; imageUrl: string; }[]>([]);
     const [openRiddlePopUp, setOpenRiddlePopUp] = useState(false);
     const [successEasterEggMessage, setSuccessEasterEggMessage] = useState(false);
+    const [errorEasterEggMessage, setErrorEasterEggMessage] = useState(false);
 
     const URL = import.meta.env.VITE_API_URL;
 
@@ -409,15 +410,25 @@ import EasterEggRiddle from '../../components/riddle';
         }, 3000);
     };
 
+    const showErrorEasterEggMessage = () => {
+        setErrorEasterEggMessage(true);
+        setTimeout(() => {
+            setErrorEasterEggMessage(false);
+        }, 3000);
+    };
+
     return (
         <>
         {successEasterEggMessage &&
             <Message>You have unlocked a new secret avatar!</Message>
         }
+        {errorEasterEggMessage &&
+            <Message error>An error has ocurred, try again later.</Message>
+        }
         {openRiddlePopUp && (
             <PopUpContainer>
                 <PopUp>
-                    <EasterEggRiddle closeRiddle={() => setOpenRiddlePopUp(false)} successEasterEggMessage={showSuccessEasterEggMessage}/>
+                    <EasterEggRiddle closeRiddle={() => setOpenRiddlePopUp(false)} successEasterEggMessage={showSuccessEasterEggMessage} errorEasterEggMessage={showErrorEasterEggMessage} />
                 </PopUp>
             </PopUpContainer>
         )}
@@ -540,15 +551,28 @@ import EasterEggRiddle from '../../components/riddle';
                     <BadgesContainer>
                         <BadgeTitle>Achievements:</BadgeTitle>
                         <Badges>
-                            {userBadges.map(badge => (
-                                <div onMouseEnter={() => setHoveredBadgeId(badge.id)} onMouseLeave={() => setHoveredBadgeId(null)} style={{ position: 'relative' }}>
-                                    <Badge key={badge.id} src={badge.imageUrl}/>
-                                    <BadgeInfo visible={hoveredBadgeId === badge.id}>
-                                        <BadgeName>{badge.name}</BadgeName>
-                                        <BadgeDescription>{badge.description}</BadgeDescription>
-                                    </BadgeInfo>
-                                </div>
-                            ))} 
+                            {userBadges.length === 0 ? 
+                            (          
+                            <>
+                                <NoBadgesMessage>You haven't unlocked any achievement yet.</NoBadgesMessage>
+                            </>
+                            ) 
+                            : 
+                            (
+                                <>
+                                    {userBadges.map(badge => (
+                                    <div onMouseEnter={() => setHoveredBadgeId(badge.id)} onMouseLeave={() => setHoveredBadgeId(null)} style={{ position: 'relative' }}>
+                                        <Badge key={badge.id} src={badge.imageUrl}/>
+                                        <BadgeInfo visible={hoveredBadgeId === badge.id}>
+                                            <BadgeName>{badge.name}</BadgeName>
+                                            <BadgeDescription>{badge.description}</BadgeDescription>
+                                        </BadgeInfo>
+                                    </div>
+                                ))} 
+                                
+                                </>
+                        
+                            )}
                         </Badges>
                     </BadgesContainer>
                 </ProfileCard>
