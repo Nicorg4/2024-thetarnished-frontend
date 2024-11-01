@@ -59,6 +59,7 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${user?.token}`,
+            'ngrok-skip-browser-warning': 'true',
           },
         });
         const student = await response.json();
@@ -77,6 +78,7 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
             headers: {
               "Content-Type": "application/json",
               'Authorization': `Bearer ${user?.token}`,
+              'ngrok-skip-browser-warning': 'true',
             },
           });
         const teacher = await response.json();

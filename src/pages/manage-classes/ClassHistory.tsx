@@ -44,6 +44,7 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 });
 
@@ -99,7 +100,7 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
                     <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 20 }} transition={{ duration: 0.5 }}>
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                 <CardsContainer>
                     {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>

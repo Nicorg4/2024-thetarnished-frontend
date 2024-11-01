@@ -65,6 +65,7 @@ const ExamViewer = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
       });
       if (!response.ok){
@@ -89,7 +90,15 @@ const ExamViewer = () => {
     const getAllExamsByStudentId = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${URL}exam/get-student-exams-by/${user?.id}`);
+        const response = await fetch(`${URL}exam/get-student-exams-by/${user?.id}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+            },
+          }
+        );
         const data = await response.json();
         setExams(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -132,7 +141,7 @@ const ExamViewer = () => {
               <h2>Are you sure you want to initiate the exam?</h2>
               <p>You won't be able to close the window or go back. You will failed the exam if you do.</p>
               <ButtonsContainer>
-                  <Button onClick={() => handleExamClick(selectedExamId)}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogoAlt}/> : "Initiate exam" }</Button>
+                  <Button onClick={() => handleExamClick(selectedExamId)}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Initiate exam" }</Button>
                   <Button secondary onClick={() => setShowConfirmationPopup(false)}>Cancel</Button>
               </ButtonsContainer>
           </PopUp>
@@ -146,7 +155,7 @@ const ExamViewer = () => {
       {loading ? (
         <Content>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
-              <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
+              <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
           </div>
         </Content>
       ) : 
@@ -160,7 +169,7 @@ const ExamViewer = () => {
           <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.2, delay: 0.3 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
               style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -175,7 +184,7 @@ const ExamViewer = () => {
                 key={exam.exam_id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: (index + 1) * 0.4 }}
+                transition={{ duration: 0.2, delay: (index + 1) * 0.2 }}
               >
                 <ExamCard onClick={() => handleExamCardClick(exam.exam_id)}>
                   <ExamTitle>{exam.exam_name}</ExamTitle>

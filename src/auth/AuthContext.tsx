@@ -35,7 +35,8 @@ export interface User {
   lvl: number;
   stats: Stats;
   hasFoundEasterEgg?: boolean;
-  exp: number;
+  exp?: number;
+  dailyQuizCompleted?: boolean;
 }
 
 export interface AuthContextType {

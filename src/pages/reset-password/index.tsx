@@ -28,6 +28,7 @@ const ResetPassword = () => {
                 const response = await fetch(`${URL}reset/reset-password/${userId}/${token}`, {
                     method: 'GET',
                     headers: {
+                        'ngrok-skip-browser-warning': 'true',
                         'Content-Type': 'application/json'
                     }
             });
@@ -53,7 +54,8 @@ const ResetPassword = () => {
             const response = await fetch(`${URL}reset/reset-password/${userId}/${token}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     newPassword: newPassword,

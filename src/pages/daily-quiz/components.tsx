@@ -2,7 +2,7 @@ import styled, { keyframes } from "styled-components";
 import colors from "../../assets/colors";
 
 export const MainContainer = styled.div`
-    min-height: 100%;
+    height: 100vh;
     width: 100vw ;
     display: flex;
     align-items: center ;
@@ -34,7 +34,6 @@ export const Content = styled.div`
     display: flex ;
     flex-direction: column;
     align-items: center ;
-    justify-content: center;
     background-color: ${colors.secondary};
     height: 80%;
     padding: 30px 20px 70px 20px;
@@ -47,3 +46,16 @@ export const Content = styled.div`
         margin-top: 100px;
     }
 `
+
+export const QuizTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    padding-left: 50px;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
+`
+
+export const QuizInfoContainer = styled.div``

@@ -10,7 +10,6 @@ import Notification from '../../components/notification';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent alt.png";
 import { motion } from 'framer-motion';
-// import { PopUp, PopUpContainer } from '../../components/popup/components';
 
 interface Reservations {
     id: string;
@@ -40,6 +39,7 @@ const TeacherHome = () => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 });
 
@@ -204,7 +204,9 @@ const TeacherHome = () => {
               </Content>
             ) : (
                 <Content>
-                    <Notification alternative={false} message='Your account is under evaluation, please be patient and await for approval.' />
+                    <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                        <Notification alternative={true} message='Your account is under evaluation, please be patient and await for approval.' />
+                    </div>
                 </Content>
             )}
             

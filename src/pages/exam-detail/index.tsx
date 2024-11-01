@@ -46,6 +46,7 @@ interface SelectedAnswers {
 const ExamDetail: React.FC = () => {
   const [exam, setExam] = useState<Exam | null>(null);
   const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [message, setMessage] = useState("");
   const [showErrorMessage, setShowErrorMessage] = useState(false);
@@ -55,44 +56,63 @@ const ExamDetail: React.FC = () => {
   const [finalGrade, setFinalGrade] = useState(0);
   const URL = import.meta.env.VITE_API_URL;
   const { examId } = useParams();
-  const {user} = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchExam = async () => {
       try {
-        const response = await fetch(`${URL}exam/get-exams-by/${examId}`);
+        const response = await fetch(`${URL}exam/get-exams-by/${examId}`,
+          {
+            method: 'GET',
+            headers: {
+              'ngrok-skip-browser-warning': 'true',
+              'Content-Type': 'application/json',
+            },
+          }
+        );
         const data = await response.json();
-        console.log(data);
         setExam(data[0]);
       } catch (error) {
         console.error('Error fetching exam:', error);
       }
-    }
+    };
     fetchExam();
     if (exam?.state && exam?.state.trim() !== "INITIATED") {
-        navigate('/my-exams');
+      navigate('/my-exams');
     }
-
-  }, [URL, exam?.state, examId, navigate])
-  
+  }, [URL, exam?.state, examId, navigate]);
 
   const handleAnswerSelect = (questionId: string, choiceId: string) => {
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [questionId]: choiceId
-    }));
+    if (!showResults) {
+      setSelectedAnswers((prev) => ({
+        ...prev,
+        [questionId]: choiceId
+      }));
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < (exam?.questions?.length || 1) - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
   };
 
   const handleSubmit = () => {
     setShowConfirmationPopup(true);
-  }
+  };
 
   const handleSendSubmitedExam = async () => {
     setIsAccepting(true);
-    try{
-      const allAnswered = exam?.questions.every((question) => selectedAnswers[question.question_id]);
-  
+    try {
+      const allAnswered = exam?.questions?.every((question) => selectedAnswers[question.question_id]);
+
       if (!allAnswered) {
         setMessage("Please answer all questions before submitting.");
         setShowErrorMessage(true);
@@ -101,10 +121,10 @@ const ExamDetail: React.FC = () => {
         }, 3000);
         return;
       }
-    
+
       const result: Results = {};
       let correctAnswersCount = 0;
-      exam?.questions.forEach((question) => {
+      exam?.questions?.forEach((question) => {
         const userAnswer = selectedAnswers[question.question_id];
         const correctAnswer = question.choices.find(choice => choice.is_correct)?.choice_id;
         result[question.question_id] = userAnswer === correctAnswer;
@@ -113,24 +133,24 @@ const ExamDetail: React.FC = () => {
           correctAnswersCount += 1;
         }
       });
-      
-      const totalQuestions = exam?.questions.length || 0;
+
+      const totalQuestions = exam?.questions?.length || 0;
       const percentage = (correctAnswersCount / totalQuestions) * 100;
       const grade = Math.round(percentage);
       setFinalGrade(grade);
 
-      const response = await fetch(`${URL}exam/submit-exam/${examId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user?.token}`,
-          },
-          body: JSON.stringify({
-            score: grade,
-          }),
-        }
-      )
+      const response = await fetch(`${URL}exam/submit-exam/${examId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user?.token}`,
+          'ngrok-skip-browser-warning': 'true',
+        },
+        body: JSON.stringify({
+          score: grade,
+        }),
+      });
+
       if (!response.ok) {
         setMessage("Failed to submit exam");
         throw new Error('Failed to submit exam');
@@ -138,12 +158,19 @@ const ExamDetail: React.FC = () => {
       setIsAccepting(false);
       setShowConfirmationPopup(false);
       setShowSuccessMessage(true);
+      if(grade >= 60 && user){
+        const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 200;
+        updateUser({ xp: (Number(user.xp) + 200 ),  lvl: (Number(user.xp)) > xpToLvlUp ? (user.lvl) + 1 : (user.lvl)})
+      }
+      setTimeout(() => {
+        setShowSuccessMessage(true);
+      }, 3000);
       setShowResults(true);
-    }catch(error){
+    } catch (error) {
       console.error('Error submitting exam:', error);
       setIsAccepting(false);
       setShowConfirmationPopup(false);
-      setShowErrorMessage(true)
+      setShowErrorMessage(true);
       setTimeout(() => {
         setShowErrorMessage(false);
       }, 3000);
@@ -152,67 +179,69 @@ const ExamDetail: React.FC = () => {
 
   return (
     <>
-    {showConfirmationPopup && 
-      <PopUpContainer>
-        <PopUp>
+      {showConfirmationPopup &&
+        <PopUpContainer>
+          <PopUp>
             <h2>Are you sure you want to submit the exam?</h2>
             <p>You won't be able to change your answers once you confirm.</p>
             <ButtonsContainer>
-                <Button onClick={() => handleSendSubmitedExam()}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Submit exam" }</Button>
-                <Button secondary onClick={() => setShowConfirmationPopup(false)}>Cancel</Button>
+              <Button onClick={handleSendSubmitedExam}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogo} /> : "Submit exam"}</Button>
+              <Button secondary onClick={() => setShowConfirmationPopup(false)}>Cancel</Button>
             </ButtonsContainer>
-        </PopUp>
-    </PopUpContainer>
-    }
-    <MainContainer isPopupOpen={showConfirmationPopup}>
-    <Logo/>
+          </PopUp>
+        </PopUpContainer>
+      }
+      <MainContainer isPopupOpen={showConfirmationPopup}>
+        <Logo />
         {showErrorMessage && <Message error>{message}</Message>}
         {showSuccessMessage && <Message>Exam submitted successfully!</Message>}
-        <SideBar/>
-        <Topbar/>
+        <SideBar />
+        <Topbar />
         <Content>
-            <ExamHeader>
-                <h2>{exam?.exam_name}</h2>
-                <ExamInfo>
-                    <p>Teacher: {exam?.teacher.firstname} {exam?.teacher.lastname}</p>
-                    <p>Subject: {exam?.subject}</p>
-                </ExamInfo>
-            </ExamHeader>
-            <QuestionList>
-                {exam?.questions.map((question) => (
-                <QuestionCard key={question.question_id}>
-                    <QuestionText>{question.question_text}</QuestionText>
-                    <ChoiceList>
-                    {question.choices.map((choice) => (
-                        <Choice
-                        key={choice.choice_id}
-                        onClick={() => handleAnswerSelect(question.question_id, choice.choice_id)}
-                        selected={selectedAnswers[question.question_id] === choice.choice_id}
-                        showResults={showResults}
-                        correct={choice.is_correct}
-                        >
-                        {choice.choice_text}
-                        </Choice>
-                    ))}
-                    </ChoiceList>
-
-                </QuestionCard>
-                ))}
-            </QuestionList>
-            {!showResults ? (
-                <Button onClick={handleSubmit}>Submit Exam</Button> ) : 
-                (
-                  <>
-                    <ScoreContainer hasPassed={finalGrade >= 60}>Your final score is {finalGrade}%</ScoreContainer>
-                    <Button secondary onClick={() => navigate("/my-exams")}>Back to exams</Button>
-                  </>
-
-                )
-            }
-      </Content>
-    </MainContainer>
+          <ExamHeader>
+            <h2>{exam?.exam_name}</h2>
+            <ExamInfo>
+              <p>Teacher: {exam?.teacher.firstname} {exam?.teacher.lastname}</p>
+              <p>Subject: {exam?.subject}</p>
+            </ExamInfo>
+          </ExamHeader>
+          <QuestionList>
+            {exam?.questions && exam.questions.length > 0 && (
+              <QuestionCard>
+                <QuestionText>{exam.questions[currentQuestionIndex].question_text}</QuestionText>
+                <ChoiceList>
+                  {exam.questions[currentQuestionIndex].choices.map((choice) => (
+                    <Choice
+                      key={choice.choice_id}
+                      onClick={() => handleAnswerSelect(exam.questions[currentQuestionIndex].question_id, choice.choice_id)}
+                      selected={selectedAnswers[exam.questions[currentQuestionIndex].question_id] === choice.choice_id}
+                      showResults={showResults}
+                      correct={choice.is_correct}
+                    >
+                      {choice.choice_text}
+                    </Choice>
+                  ))}
+                </ChoiceList>
+              </QuestionCard>
+            )}
+          </QuestionList>
+          <ButtonsContainer>
+            <Button disabled={currentQuestionIndex === 0} onClick={handlePreviousQuestion}>Previous</Button>
+            {currentQuestionIndex < (exam?.questions?.length || 1) - 1 ? (
+              <Button onClick={handleNextQuestion}>Next</Button>
+            ) : (
+              !showResults && <Button onClick={handleSubmit}>Submit Exam</Button>
+            )}
+          </ButtonsContainer>
+          {showResults && (
+            <ScoreContainer hasPassed={finalGrade >= 60}>Your final score is {finalGrade}%</ScoreContainer>
+          )}
+          {showResults && (
+            <Button secondary onClick={() => navigate("/my-exams")}>Back to exams</Button>
+          )}
+        </Content>
+      </MainContainer>
     </>
   );
 };
-
 export default ExamDetail;

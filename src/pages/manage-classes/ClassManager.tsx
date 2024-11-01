@@ -57,6 +57,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 });
 
@@ -87,6 +88,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
             });
             const subject_price = await price.json();
@@ -95,6 +97,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     valor: subject_price,
@@ -104,12 +107,9 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                 throw new Error('Failed to update reservation');
             }
             setReservations((prevReservations) => prevReservations.filter((reservation) => reservation.id !== reservationId));
-            if (user) {          
-                const xpToLvlUp = 1000 * Math.pow(1.2, user?.lvl - 1); 
-                updateUser({ 
-                    xp: (Number(user?.xp) || 0) + 100, 
-                    lvl: Number(user?.xp) > xpToLvlUp ? user?.lvl + 1 : user?.lvl 
-                });
+            if(user){
+                const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 100;
+                updateUser({ xp: (Number(user.xp) + 100 ),  lvl: (Number(user.xp)) > xpToLvlUp ? (user.lvl) + 1 : (user.lvl)})
             }
             setIsFinishing(false);
             setMessage('Class finished successfully');
@@ -155,6 +155,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
             });
             if (!response.ok) {
@@ -242,12 +243,12 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                     <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }}>
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                 <CardsContainer>
                     {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>
-                            <CardHeader style={{ backgroundColor: reservation.group ? '#f2b36f' : '#3e7d44' }}>
-                                <HeaderText>{reservation.subject_name}</HeaderText>
+                            <CardHeader style={{ backgroundColor: '#3e7d44' }}>
+                                <HeaderText>{reservation.subject_name} {reservation.group ? '(Group class)' : ''}</HeaderText>
                             </CardHeader>
                             <CardBody>
                                 <CardInfo>
@@ -257,7 +258,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                             </CardBody>
                             <CardFooter>
                                 {new Date(reservation.datetime) < new Date() && (
-                                <Button onClick={() => handleFinishedClass(reservation.id, reservation.subject_id)}>
+                                <Button disabled={isFinishing} onClick={() => handleFinishedClass(reservation.id, reservation.subject_id)}>
                                     {isFinishing && selectedClassId === reservation.id ? (
                                         <AnimatedLoadingLogo src={SimplifiedLogo} />
                                     ) : (

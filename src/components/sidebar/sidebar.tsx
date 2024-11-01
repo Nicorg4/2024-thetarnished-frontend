@@ -10,6 +10,7 @@ import { MdOutlinePriceChange } from "react-icons/md";
 import { GiChoice } from "react-icons/gi";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { PiRanking } from "react-icons/pi";
+import { MdOutlineQuiz } from "react-icons/md";
 
 
 const SideBar: React.FC = () => {
@@ -42,24 +43,21 @@ const SideBar: React.FC = () => {
 
     const getLevelProgress = () => {
         if (user) {
-            const xpNeededForCurrentLvl = 1000 * Math.pow(1.2, user?.lvl - 1);
-            const currentProgress = user?.xp / xpNeededForCurrentLvl * 100
-            return currentProgress;
-        }
-        else {
+            const xpNeededForNextLvl = 1000 * Math.pow(1.2, user.lvl);
+            const progress = (user.xp / xpNeededForNextLvl) * 100;
+            return Math.min(progress, 100);
+        } else {
             return 0;
         }
     };
-
-    const getXpNeededForCurrentLvl = () => {
+    
+    const getXpNeededForNextLvl = () => {
         if (user) {
-            const xpNeededForCurrentLvl = 1000 * Math.pow(1.2, user?.lvl - 1);
-            return xpNeededForCurrentLvl;
-        }
-        else {
+            return Math.floor(1000 * Math.pow(1.2, user.lvl));
+        } else {
             return 0;
         }
-      };
+    };
 
     return (
         <>
@@ -71,8 +69,17 @@ const SideBar: React.FC = () => {
                 <>
                     <UserName>{showContent && user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : ''}</UserName>
                     <UserLevel>Lvl {user?.lvl}</UserLevel>
-                    {showContent && <UserXP value={getLevelProgress()} max="100"/>}
-                    {showContent && <UserLevel>{user?.xp + '/' + getXpNeededForCurrentLvl()}<HiOutlineQuestionMarkCircle onMouseEnter={() => setShowXpTutorial(true)} onMouseLeave={() => setShowXpTutorial(false)} style={{color: "grey"}}/></UserLevel>}     
+                    {showContent && <UserXP value={getLevelProgress()} max="100" />}
+                    {showContent && (
+                        <UserLevel>
+                            {user?.xp + '/' + getXpNeededForNextLvl()}
+                            <HiOutlineQuestionMarkCircle 
+                                onMouseEnter={() => setShowXpTutorial(true)} 
+                                onMouseLeave={() => setShowXpTutorial(false)} 
+                                style={{ color: "grey" }} 
+                            />
+                        </UserLevel>
+                    )}   
                     <XpTutorial visible={showXpTutorial}>
                         <div className="xp-tutorial-content">
                             <h2>How to Earn Experience Points (XP)</h2>
@@ -110,6 +117,7 @@ const SideBar: React.FC = () => {
                 <NavbarLink isOpen={showContent} title='Manage schedule' to="/manage-schedule" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineSchedule />{showContent && <LinkName>Manage Schedule</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='Manage classes' to="/manage-classes" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineForm  />{showContent && <LinkName>Manage Classes</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='Leaderboard' to="/leaderboard" className={({ isActive }) => (isActive ? "active" : "")}><PiRanking />{showContent && <LinkName>Leaderboard</LinkName>}</NavbarLink>
+                <NavbarLink isOpen={showContent} title='Daily quiz' to="/daily-quiz" className={({ isActive }) => (isActive ? "active" : "")}><MdOutlineQuiz />{showContent && <LinkName>Daily quiz</LinkName>}</NavbarLink>
                 </>
                 )}
 
@@ -123,6 +131,7 @@ const SideBar: React.FC = () => {
                 <NavbarLink isOpen={showContent} title='My classes' to="/my-classes" className={({ isActive }) => (isActive ? "active" : "")}><LiaChalkboardTeacherSolid   />{showContent && <LinkName>My Classes</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='My exams' to="/my-exams" className={({ isActive }) => (isActive ? "active" : "")}><PiExamLight  />{showContent && <LinkName>Exams</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='Leaderboard' to="/leaderboard" className={({ isActive }) => (isActive ? "active" : "")}><PiRanking />{showContent && <LinkName>Leaderboard</LinkName>}</NavbarLink>
+                <NavbarLink isOpen={showContent} title='Daily quiz' to="/daily-quiz" className={({ isActive }) => (isActive ? "active" : "")}><MdOutlineQuiz />{showContent && <LinkName>Daily quiz</LinkName>}</NavbarLink>
                 <NavbarLink isOpen={showContent} title='My profile' to="/profile" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineUser />{showContent && <LinkName>Profile</LinkName>}</NavbarLink>
                 </>
             )}

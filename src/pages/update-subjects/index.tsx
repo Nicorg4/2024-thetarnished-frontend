@@ -35,6 +35,7 @@ const UpdateSubjects = () => {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
                 },
             });
             const data = await response.json();
@@ -72,6 +73,7 @@ const UpdateSubjects = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({ class_price: subject.class_price }),
             });

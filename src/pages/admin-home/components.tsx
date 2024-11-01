@@ -110,6 +110,8 @@ const ChartContainer = styled.div`
     display: flex;
     justify-content: center;
     margin-top: 30px;
+    align-items: center;
+    width: 95%;
 `
 
 
@@ -202,6 +204,7 @@ const Dashboard: React.FC = () => {
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
             });
             if(!response.ok){

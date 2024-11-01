@@ -29,7 +29,8 @@ const Leaderboard = () => {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user?.token}`
+                        'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 }
             )

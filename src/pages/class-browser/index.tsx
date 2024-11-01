@@ -68,6 +68,7 @@ const ClassBrowser = () => {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${user?.token}`,
+                            'ngrok-skip-browser-warning': 'true',
                         },
                     });
                     const subject_price = await response.json();
@@ -85,6 +86,7 @@ const ClassBrowser = () => {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${user?.token}`,
+                            'ngrok-skip-browser-warning': 'true',
                         },
                     });
                     const teachers = await response.json();
@@ -96,6 +98,7 @@ const ClassBrowser = () => {
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${user?.token}`,
+                                    'ngrok-skip-browser-warning': 'true',
                                 },
                             });
                             const teacherSchedule = await scheduleResponse.json();
@@ -120,6 +123,7 @@ const ClassBrowser = () => {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${user?.token}`,
+                            'ngrok-skip-browser-warning': 'true',
                         },
                     });
                     const teachers = await response.json();
@@ -131,6 +135,7 @@ const ClassBrowser = () => {
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${user?.token}`,
+                                    'ngrok-skip-browser-warning': 'true',
                                 },
                             });
                             const teacherSchedule = await scheduleResponse.json();
@@ -276,12 +281,9 @@ const ClassBrowser = () => {
 
             setIsPopupOpen(false);
             setClickedClass(null);
-            if (user) {          
-                const xpToLvlUp = 1000 * Math.pow(1.2, user?.lvl - 1); 
-                updateUser({ 
-                    xp: (Number(user?.xp) || 0) + 50 * selectedSlots.length, 
-                    lvl: Number(user?.xp) > xpToLvlUp ? user?.lvl + 1 : user?.lvl 
-                  });
+            if(user){
+                const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 50 * selectedSlots.length;
+                updateUser({ xp: (Number(user.xp) + 50 * selectedSlots.length ),  lvl: (Number(user.xp)) > xpToLvlUp ? (user.lvl) + 1 : (user.lvl)})
             }
                 
             setMessage('Classes booked successfully');

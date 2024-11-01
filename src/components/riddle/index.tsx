@@ -51,6 +51,7 @@ const EasterEggRiddle = ({ closeRiddle, successEasterEggMessage, errorEasterEggM
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${user?.token}`,
+                                'ngrok-skip-browser-warning': 'true',
                             },
                         }
                     )
@@ -71,7 +72,7 @@ const EasterEggRiddle = ({ closeRiddle, successEasterEggMessage, errorEasterEggM
         return () => {
             window.removeEventListener('keyup', handleKeyCombination);
         };
-    }, [successEasterEggMessage, updateUser]);
+    }, [URL, closeRiddle, errorEasterEggMessage, successEasterEggMessage, updateUser, user?.id, user?.token]);
 
     return (
         <>

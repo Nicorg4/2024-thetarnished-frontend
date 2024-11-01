@@ -13,6 +13,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { IoCloseOutline } from "react-icons/io5";
 import { PiRanking } from "react-icons/pi";
+import { MdOutlineQuiz } from "react-icons/md";
 
 const Topbar = () => {
   const { user, logout } = useAuth();
@@ -68,24 +69,21 @@ const Topbar = () => {
 
   const getLevelProgress = () => {
     if (user) {
-        const xpNeededForCurrentLvl = 1000 * Math.pow(1.2, user?.lvl - 1);
-        const currentProgress = user?.xp / xpNeededForCurrentLvl * 100
-        return currentProgress;
-    }
-    else {
+        const xpNeededForNextLvl = 1000 * Math.pow(1.2, user.lvl);
+        const progress = (user.xp / xpNeededForNextLvl) * 100;
+        return Math.min(progress, 100);
+    } else {
         return 0;
     }
-  };
+};
 
-  const getXpNeededForCurrentLvl = () => {
+const getXpNeededForNextLvl = () => {
     if (user) {
-        const xpNeededForCurrentLvl = 1000 * Math.pow(1.2, user?.lvl - 1);
-        return xpNeededForCurrentLvl;
-    }
-    else {
+        return Math.floor(1000 * Math.pow(1.2, user.lvl));
+    } else {
         return 0;
     }
-  };
+};
 
   return (
     <TopbarContainer>
@@ -105,7 +103,7 @@ const Topbar = () => {
                     <UserName>{user && `${user.firstName} ${user.lastName}`}</UserName>
                     <UserLevel>Lvl {user?.lvl}</UserLevel>
                     <UserXP value={getLevelProgress()} max="100"/>
-                    <UserLevel>{user?.xp + '/' + getXpNeededForCurrentLvl()}<HiOutlineQuestionMarkCircle onClick={() => setShowXpTutorial(true)} style={{color: "grey"}}/></UserLevel>
+                    <UserLevel>{user?.xp + '/' + getXpNeededForNextLvl()}<HiOutlineQuestionMarkCircle onClick={() => setShowXpTutorial(true)} style={{color: "grey"}}/></UserLevel>
                     <XpTutorial visible={showXpTutorial}>
                         <CloseButton onClick={() => setShowXpTutorial(false)}><IoCloseOutline /></CloseButton>
                         <div>
@@ -136,6 +134,7 @@ const Topbar = () => {
                   <FullMenuLink title='Manage schedule' to="/manage-schedule" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineSchedule />Manage schedule</FullMenuLink>
                   <FullMenuLink title='Manage classes' to="/manage-classes" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineForm  />Manage classes</FullMenuLink>
                   <FullMenuLink title='Leaderboard' to="/leaderboard" className={({ isActive }) => (isActive ? "active" : "")}><PiRanking />Leaderboard</FullMenuLink>
+                  <FullMenuLink title='Daily quiz' to="/daily-quiz" className={({ isActive }) => (isActive ? "active" : "")}><MdOutlineQuiz />Daily quiz</FullMenuLink>
                   </>
                   )}
   
@@ -149,6 +148,7 @@ const Topbar = () => {
               <FullMenuLink title='My classes' to="/my-classes" className={({ isActive }) => (isActive ? "active" : "")}><LiaChalkboardTeacherSolid   />My classes</FullMenuLink>
               <FullMenuLink title='My exams' to="/my-exams" className={({ isActive }) => (isActive ? "active" : "")}><PiExamLight  />My Exams</FullMenuLink>
               <FullMenuLink title='Leaderboard' to="/leaderboard" className={({ isActive }) => (isActive ? "active" : "")}><PiRanking />Leaderboard</FullMenuLink>
+              <FullMenuLink title='Daily quiz' to="/daily-quiz" className={({ isActive }) => (isActive ? "active" : "")}><MdOutlineQuiz />Daily quiz</FullMenuLink>
               <FullMenuLink title='My profile' to="/profile" className={({ isActive }) => (isActive ? "active" : "")}><AiOutlineUser />Profile</FullMenuLink>
               </>
           )}

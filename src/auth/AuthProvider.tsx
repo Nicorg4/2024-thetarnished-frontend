@@ -17,11 +17,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoggedIn(true);
     }
   }, []);
-
   const login = async (email: string, password: string) => {
     const response = await fetch(`${URL}authentication/login`, {
       method: 'POST',
       headers: {
+        'ngrok-skip-browser-warning': 'true',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
@@ -44,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       exp: number;
       xp: number;
       hasFoundEasterEgg: boolean;
+      hascompletedquiz: boolean;
     }>(data.token);
 
 
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       userLevel = Math.floor(1 + Math.log(adjustedXp / 1000) / Math.log(1.2));
     }
     else{
-      userLevel = 1
+      userLevel = 0
     }
 
     let sufix = ''
@@ -65,11 +66,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     else{
         sufix = 'student'
     }
-
+    let userStats = []
+    if(info.role !== 'ADMIN'){
       const getUserStats = await fetch(`${URL}information/get-${sufix}-stats/${info.id}`,
       {
         method: 'GET',
         headers: {
+          'ngrok-skip-browser-warning': 'true',
           'Content-Type': 'application/json',
         },
       }
@@ -77,10 +80,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if(!getUserStats.ok){
         throw new Error('Login failed');
       }
-      
     
-    
-    const userStats = await getUserStats.json();
+    userStats = await getUserStats.json();
+    }
     
     const loggedInUser: User = {
       id: info.id,
@@ -98,7 +100,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       lvl: userLevel,
       stats: userStats,
       hasFoundEasterEgg: info.hasFoundEasterEgg,
-      exp: info.exp
+      exp: info.exp,
+      dailyQuizCompleted:  info.hascompletedquiz,
     };
 
     setUser(loggedInUser);

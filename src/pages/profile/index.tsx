@@ -141,6 +141,7 @@ import EasterEggRiddle from '../../components/riddle';
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     password: password,
@@ -156,6 +157,7 @@ import EasterEggRiddle from '../../components/riddle';
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     email: user?.email
@@ -208,6 +210,7 @@ import EasterEggRiddle from '../../components/riddle';
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify(body),
             });
@@ -261,6 +264,7 @@ import EasterEggRiddle from '../../components/riddle';
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     teacherid: user?.id,
@@ -309,6 +313,7 @@ import EasterEggRiddle from '../../components/riddle';
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     teacherid: user?.id,
@@ -371,6 +376,7 @@ import EasterEggRiddle from '../../components/riddle';
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     avatarId: selectedAvatarId,
