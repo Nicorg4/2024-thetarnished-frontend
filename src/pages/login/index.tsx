@@ -17,10 +17,12 @@ const Login = () => {
     const [invalidCredentials, setInvalidCredentials] = useState(false);
     
     const navigate = useNavigate();
-
+    const URL  = import.meta.env.VITE_API_URL;
+    
     useEffect(() => {
+        console.log(URL);
         checkSession();
-    }, [checkSession])
+    }, [URL, checkSession])
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
