@@ -18,7 +18,7 @@ const Login = () => {
     
     const navigate = useNavigate();
     const URL  = import.meta.env.VITE_API_URL;
-    
+    console.log('URL de la API:', `${URL}authentication/login`);
     useEffect(() => {
         checkSession();
     }, [URL, checkSession])

@@ -8,7 +8,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const navigate = useNavigate();
 
-
+  const URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -17,9 +17,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoggedIn(true);
     }
   }, []);
-
+  
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${"https://fc95-190-231-195-9.ngrok-free.app/"}authentication/login`, {
+    
+    const response = await fetch(`${URL}authentication/login`, {
       method: 'POST',
       headers: {
         'ngrok-skip-browser-warning': 'true',
@@ -69,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     let userStats = []
     if(info.role !== 'ADMIN'){
-      const getUserStats = await fetch(`${"https://fc95-190-231-195-9.ngrok-free.app/"}information/get-${sufix}-stats/${info.id}`,
+      const getUserStats = await fetch(`${URL}information/get-${sufix}-stats/${info.id}`,
       {
         method: 'GET',
         headers: {
