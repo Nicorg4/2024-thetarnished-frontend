@@ -10,6 +10,7 @@ import { useAuth } from '../../auth/useAuth';
 import Notification from '../../components/notification';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
+import styled from 'styled-components';
 
 type Question = {
     question: string;
@@ -17,6 +18,19 @@ type Question = {
     incorrect_answers: string[];
     shuffledAnswers?: string[];
 };
+
+const Card = styled.div`
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    width: 500px;
+    height: 280px;
+
+    @media (max-width: 800px) {
+        width: 80%;
+    }
+`;
 
 const QuestionCard = ({
     questionData,
@@ -30,7 +44,7 @@ const QuestionCard = ({
     const { question, shuffledAnswers } = questionData;
 
     return (
-        <div style={{ border: '1px solid #ddd', padding: '20px', marginBottom: '20px', borderRadius: '8px'}}>
+        <Card>
             <h3 dangerouslySetInnerHTML={{ __html: question }}></h3>
             <div>
                 {shuffledAnswers && shuffledAnswers.map((answer, index) => (
@@ -50,7 +64,7 @@ const QuestionCard = ({
                     ></Button>
                 ))}
             </div>
-        </div>
+        </Card>
     );
 };
 
@@ -61,10 +75,12 @@ const Quiz = () => {
     const [completed, setCompleted] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
 
     const {user, updateUser} = useAuth();
  
     const fetchQuestions = async () => {
+        setIsFetchingQuestions(true);
         fetch('https://opentdb.com/api.php?amount=3&difficulty=easy&type=multiple')
             .then((response) => response.json())
             .then((data) => {
@@ -73,10 +89,7 @@ const Quiz = () => {
                     shuffledAnswers: [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5)
                 }));
                 setQuestions(questionsWithShuffledAnswers);
-                setCurrentQuestionIndex(0);
-                setScore(0);
-                setCompleted(false);
-                setSelectedAnswer(null);
+                setIsFetchingQuestions(false);
             })
             .catch((error) => console.error('Error fetching data:', error));
     };
@@ -114,7 +127,7 @@ const Quiz = () => {
                     if(user){
                         const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 10 * Number(score);
                         updateUser({ xp: (Number(user.xp) + 10 * score),  lvl: (Number(user.xp)) > xpToLvlUp ? Number(user.lvl) + 1 : (user.lvl)})
-                        
+                        updateUser({ dailyQuizCompleted : true })
                     }
                 }catch(error){
                     console.error(error)
@@ -165,7 +178,7 @@ const Quiz = () => {
                         alignItems: 'center',
                         justifyContent: 'center',
                         width: '100%',
-                        height: '80%'
+                        height: '100%'
                     }}
                 >
                 <Notification alternative={true} message='You have already completed the daily quiz today! Come back tomorrow.'></Notification>
@@ -193,7 +206,7 @@ const Quiz = () => {
                         <p>Once you hit the <strong>"Start Quiz"</strong> button, you can answer the questions in order and change your previous responses as needed.</p>
                         <p>Get ready to test your knowledge and earn points!</p>
                     </div>
-                    <Button onClick={fetchQuestions}>Start Quiz</Button>
+                    <Button onClick={fetchQuestions}>{isFetchingQuestions ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : 'Start Quiz'}</Button>
                     </QuizInfoContainer>
                     
                 ) : completed ? (
@@ -212,6 +225,7 @@ const Quiz = () => {
                             <Button
                                 onClick={goToPreviousQuestion}
                                 disabled={currentQuestionIndex === 0}
+                                secondary
                             >
                                 Previous
                             </Button>

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { FaMedal } from 'react-icons/fa';
 import SideBar from '../../components/sidebar/sidebar';
 import Topbar from '../../components/topbar';
-import { ButtonsContainer, Container, Content, MainContainer, MainTitle, ScrollableContainer, Table, TableCell, TableHeader, TableRow } from './components';
+import { ButtonsContainer, Container, Content, MainContainer, MainTitle, PageTitle, ScrollableContainer, Table, TableCell, TableHeader, TableRow } from './components';
 import { Button } from '../../components/main-button/components';
 import { IoIosArrowDown, IoIosArrowUp  } from "react-icons/io";
 import { motion } from 'framer-motion';
@@ -86,13 +86,26 @@ const Leaderboard = () => {
             <Topbar />
             <Logo/>
             <Content>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: 0.3 }}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '95%'
+                    }}
+                >
+                    <PageTitle>Leaderboard</PageTitle>
+                </motion.div>
                 <Container>
-                    <MainTitle>{showStudents ? 'Top 50 Students on the Platform' : 'Top 50 Teachers on the Platform'}</MainTitle>
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2, delay: 0.2 }}
+                        style={{marginTop: '30px'}}
                     >
+                    <MainTitle>{showStudents ? 'Top 50 Students on the Platform' : 'Top 50 Teachers on the Platform'}</MainTitle>
                     <ScrollableContainer ref={scrollContainerRef}>
                         <Table>
                             <thead>

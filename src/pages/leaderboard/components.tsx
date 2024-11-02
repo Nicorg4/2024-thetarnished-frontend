@@ -90,7 +90,7 @@ export const TableCell = styled.td`
 `;
 
 export const ScrollableContainer = styled.div`
-    max-height: 600px;
+    max-height: 580px;
     overflow-y: auto;
     width: 100%;
     border-radius: 5px;
@@ -122,10 +122,25 @@ export const MainTitle = styled.h1`
     font-weight: 400;
     font-size: 30px;
     margin-top: 10px;
+
+    @media (max-width: 700px){
+        font-size: 1.5rem;
+  }
 `
 
 export const ButtonsContainer = styled.div`
     position: absolute;
     display: flex;
     bottom: 30px;
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
 `

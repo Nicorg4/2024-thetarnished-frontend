@@ -38,6 +38,7 @@ export const MainContainer =  styled.div<MainContainerProps>`
 
     @media (max-width: 1000px){
         padding-bottom: 80px;
+        min-height: 100%;
     }
 `
 
@@ -57,8 +58,8 @@ export const Content = styled.div`
 
 export const ProfileCard = styled.div`
     position: relative;
-    width: 800px;
-    height: 90%;
+    width: 850px;
+    height: 89%;
     background-color: ${colors.secondary};
     display: flex;
     flex-direction: column;
@@ -67,7 +68,7 @@ export const ProfileCard = styled.div`
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
     @media (max-width: 1000px){
-        width: 100%;
+        width: 90%;
         margin-top: 150px;
         max-height: 800px;
         padding-bottom: 80px;
@@ -168,6 +169,8 @@ export const FormContainer = styled.div`
 
 export const FormTitle = styled.h2`
     color: ${colors.primary};
+    font-weight: 500;
+    padding-top: 50px;
 `
 
 export const Form = styled.form`

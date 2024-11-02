@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       userLevel = Math.floor(1 + Math.log(adjustedXp / 1000) / Math.log(1.2));
     }
     else{
-      userLevel = 0
+      userLevel = 1
     }
 
     let sufix = ''

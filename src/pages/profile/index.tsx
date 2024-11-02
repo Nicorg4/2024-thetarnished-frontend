@@ -352,10 +352,10 @@ import EasterEggRiddle from '../../components/riddle';
 
     const getAvatarSource = () => {
         if (user?.avatar_id == 9) {
-            return `../../../src/assets/avatars/ee.png`;
+            return avatars[8].src;
         }
         if (user?.avatar_id) {
-            return `../../../src/assets/avatars/${user?.avatar_id}.png`;
+            return avatars[user?.avatar_id - 1].src;
         }  
     };
 
@@ -593,7 +593,7 @@ import EasterEggRiddle from '../../components/riddle';
                             <InputText>Last name:</InputText>
                             <Input type="text" id="username" placeholder="Username..." value={lastName} onChange={(e) => setLastName(e.target.value)} required ></Input>
                             {user?.role === 'TEACHER' && (
-                            <MultiAutocompleteInput defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname }))} onSelect={handleSubjectsChange}/>
+                            <MultiAutocompleteInput alternative={true} defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname }))} onSelect={handleSubjectsChange}/>
                             )}
                             <ButtonsContainer>
                                 <Button type="submit">{isSaving ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Save"}</Button>

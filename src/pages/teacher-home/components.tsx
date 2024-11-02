@@ -198,7 +198,6 @@ export const GreetingText = styled.h1`
     color: ${colors.primary};
     width: 100%;
     margin: 0px;
-    padding-left: 50px;
 
     @media (max-width: 550px){
         font-size: 2.3rem;

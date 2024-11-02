@@ -58,4 +58,8 @@ export const QuizTitle = styled.h1`
   }
 `
 
-export const QuizInfoContainer = styled.div``
+export const QuizInfoContainer = styled.div`
+    border: 1px solid ${colors.primary};
+    padding: 30px;
+    border-radius: 10px;
+`

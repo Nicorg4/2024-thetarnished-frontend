@@ -21,7 +21,7 @@ export const MainContainer = styled.div`
     @media (max-width: 1200px){
       flex-direction: column;
       justify-content: flex-start;
-      height: 100%;
+      min-height: 100%;
     }
 `
 
