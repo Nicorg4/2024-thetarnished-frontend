@@ -66,6 +66,7 @@ const ExamViewer = () => {
         headers: {
           'Content-Type': 'application/json',
           'ngrok-skip-browser-warning': 'true',
+          'Authorization': `Bearer ${user?.token}`,
         },
       });
       if (!response.ok){
@@ -96,6 +97,7 @@ const ExamViewer = () => {
             headers: {
               'Content-Type': 'application/json',
               'ngrok-skip-browser-warning': 'true',
+              'Authorization': `Bearer ${user?.token}`,
             },
           }
         );
@@ -110,7 +112,7 @@ const ExamViewer = () => {
     if (user?.id) {
       getAllExamsByStudentId();
     }
-  }, [URL, user?.id]);
+  }, [URL, user?.id, user?.token]);
 
   const totalPages = Math.ceil(exams.length / cardsPerPage)
 
@@ -139,7 +141,8 @@ const ExamViewer = () => {
       <PopUpContainer>
           <PopUp>
               <h2>Are you sure you want to initiate the exam?</h2>
-              <p>You won't be able to close the window or go back. You will failed the exam if you do.</p>
+              <p>You won't be able to close the window or go back. You will <strong>fail</strong> the exam if you do.</p>
+              <p>Also, you will only have <strong>30 minutes</strong> to finish the exam and submit our answers.</p>
               <ButtonsContainer>
                   <Button onClick={() => handleExamClick(selectedExamId)}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Initiate exam" }</Button>
                   <Button secondary onClick={() => setShowConfirmationPopup(false)}>Cancel</Button>

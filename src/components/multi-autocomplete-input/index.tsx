@@ -9,7 +9,7 @@ interface Subject {
 }
 
 interface MultiAutocompleteInputProps {
-  onSelect: (selectedOptions: { id: string; name: string }[]) => void;
+  onSelect: (selectedOptions: { subjectid: string; subjectname: string }[]) => void;
   defaultValue?: Subject[];
   alternative?: boolean;
 }
@@ -45,13 +45,13 @@ export default function MultiAutocompleteInput({ onSelect, defaultValue = [], al
       limitTags={1}
       id="multiple-limit-tags"
       filterSelectedOptions
-      options={subjects}
+      options={subjects.filter((subject) => !defaultValue.map(subject => subject.subjectid).includes(subject.subjectid))}
       getOptionLabel={(option: Subject) => option.subjectname}
       defaultValue={defaultValue}
       onChange={(_event, value) => {
         const selectedSubjects = value.map((option) => ({
-          id: option.subjectid,
-          name: option.subjectname,
+          subjectid: option.subjectid,
+          subjectname: option.subjectname,
         }));
         onSelect(selectedSubjects);
       }}

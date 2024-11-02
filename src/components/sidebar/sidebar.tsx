@@ -93,6 +93,9 @@ const SideBar: React.FC = () => {
                                 <li>
                                     <strong>Pass an Exam:</strong> Earn 200 XP for each exam passed.
                                 </li>
+                                <li>
+                                    <strong>Complete the daily quiz:</strong> Earn 10 XP for each question answered correctly.
+                                </li>
                             </ul>
                         </div>
                     </XpTutorial>

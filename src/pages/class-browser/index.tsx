@@ -18,6 +18,7 @@ import TextInput from '../../components/search-input';
 import Notification from '../../components/notification';
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import Logo from '../../components/top-down-logo';
+import { motion } from 'framer-motion';
 
 interface Teacher {
     teacherid: string;
@@ -447,6 +448,12 @@ const ClassBrowser = () => {
                                         placeholder='Search for a teacher...'
                                     />
                                 </div>
+                                <motion.div
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3}}
+                                style={{ width:'100%', display: "flex", alignItems: "center", justifyContent: "center" }}
+                                >
                                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
                                     {cardsToDisplay.map((teacher, index) => (
                                         teacher ? (
@@ -473,6 +480,7 @@ const ClassBrowser = () => {
                                         )
                                     ))}
                                 </div>
+                                </motion.div>
                                 </>
                                 )
                             )}

@@ -17,7 +17,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
-    const [selectedOptions, setSelectedOptions] = useState<{ id: string; name: string; }[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<{ subjectid: string; subjectname: string; }[]>([]);
     const [isTeacher, setIsTeacher] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -31,7 +31,7 @@ const Register = () => {
         checkSession();
     }, [checkSession])
 
-    const handleSelectOptions = (selected: { id: string; name: string; }[]) => {
+    const handleSelectOptions = (selected: { subjectid: string; subjectname: string; }[]) => {
         setSelectedOptions(selected);
     };
 
@@ -42,6 +42,11 @@ const Register = () => {
             if(!firstName || !lastName || !email || !password || !repassword || (isTeacher && selectedOptions.length === 0)) {
                 setErrorMessage('Please fill all fields.');
                 throw new Error('Please fill all fields.');
+            }
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if(!passwordRegex.test(password)) {
+                setErrorMessage('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character.');
+                throw new Error('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character.');
             }
             if(!(password === repassword)) {
                 setErrorMessage('Passwords do not match.');
@@ -60,7 +65,7 @@ const Register = () => {
                     lastname: lastName,
                     email: email,
                     password: password,
-                    subjects: selectedOptions.map(option => option.id),
+                    subjects: selectedOptions.map(option => option.subjectid),
                     role: role
                 }),
             });

@@ -34,7 +34,7 @@ import EasterEggRiddle from '../../components/riddle';
     const [showDeleteAccountConfirmation, setShowDeleteAccountConfirmation] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [newSubjects, setNewSubjects] = useState<{ id: string; name: string; }[]>([]);
+    const [newSubjects, setNewSubjects] = useState<{ subjectid: string; subjectname: string; }[]>([]);
     const [password, setPassword] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const [showTakeVacationPopup, setShowTakeVacationPopup] = useState(false);
@@ -53,6 +53,9 @@ import EasterEggRiddle from '../../components/riddle';
     useEffect(() => {
         setFirstName(user?.firstName || '');
         setLastName(user?.lastName || '');
+        if(newSubjects.length === 0 && user?.subjects){
+            setNewSubjects(user?.subjects);
+        }
         
         const getUserBadges = () => {
             if(user && user?.role === 'TEACHER'){
@@ -110,7 +113,7 @@ import EasterEggRiddle from '../../components/riddle';
 
         getUserBadges();
         
-    }, [user, user?.firstName, user?.lastName, user?.stats?.total_exams])
+    }, [newSubjects, user, user?.firstName, user?.lastName, user?.stats?.total_exams])
 
     const handlePasswordChange = () => {
         navigate('/change-password');
@@ -127,7 +130,7 @@ import EasterEggRiddle from '../../components/riddle';
         setPassword('');
     };
 
-    const handleSubjectsChange = (selected: { id: string; name: string; }[]) => {
+    const handleSubjectsChange = (selected: { subjectid: string; subjectname: string; }[]) => {
         setNewSubjects(selected);
     }
 
@@ -190,6 +193,8 @@ import EasterEggRiddle from '../../components/riddle';
         event.preventDefault();
         setIsSaving(true);
 
+        console.log(newSubjects);
+
         if (!firstName || !lastName) {
             setMessage('Please fill all fields.');
             setShowErrorMessage(true);
@@ -202,7 +207,7 @@ import EasterEggRiddle from '../../components/riddle';
             newFirstName: firstName,
             newLastName: lastName,
             email: user?.email,
-            subjects: newSubjects.map(subject => subject.id)
+            subjects: newSubjects.map(subject => subject.subjectid),
         }
         try{
             const response = await fetch(`${URL}authentication/edit-profile`, {
@@ -223,8 +228,8 @@ import EasterEggRiddle from '../../components/riddle';
                 firstName: firstName,
                 lastName: lastName,
                 subjects: newSubjects.map(subject => ({
-                    subjectid: subject.id,
-                    subjectname: subject.name
+                    subjectid: subject.subjectid,
+                    subjectname: subject.subjectname
                 }))
             });
             setIsEditing(false);

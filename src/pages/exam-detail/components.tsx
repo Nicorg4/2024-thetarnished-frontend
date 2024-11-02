@@ -195,3 +195,12 @@ export const ButtonsContainer = styled.div`
     align-items: center;
     justify-content: flex-end;
 `
+
+export const ExamContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 90%;
+`
