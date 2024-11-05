@@ -29,19 +29,22 @@ const ResetPassword = () => {
                     method: 'GET',
                     headers: {
                         'ngrok-skip-browser-warning': 'true',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     }
             });
             if(!response.ok){
                 alert('Failed to confirm credentials');
-                navigate('/')
+
             }
             }catch(error){
                 console.error(error);
             }
         }
-        confirmCredentials();
-    }, [URL, navigate, token, userId]);
+        if(userId && token){
+            confirmCredentials();
+        }
+        
+    }, [URL, navigate]);
 
     const handleChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -73,6 +76,7 @@ const ResetPassword = () => {
             }, 3000);   
         }catch(error){
             console.error(error);
+            setIsLoading(false);
             setShowErrorMessage(true);
             setTimeout(() => {
                 setShowErrorMessage(false);
