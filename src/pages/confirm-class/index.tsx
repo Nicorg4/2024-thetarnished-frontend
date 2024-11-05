@@ -6,6 +6,7 @@ import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/comp
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { IoCheckmarkCircleOutline, IoCloseCircleOutline  } from "react-icons/io5";
 import Logo from '../../components/top-down-logo';
+import { useAuth } from '../../auth/useAuth';
 
 
 const ClassConfirm = ({ mode }: { mode: string }) => {    
@@ -14,6 +15,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
     const { reservationId, teacherId } = useParams();
     const [message, setMessage] = React.useState('');
     const [isConfirmed, setIsConfirmed] = React.useState(false);
+    const { user } = useAuth();
 
     useEffect(() => {
         setIsLoading(true);
@@ -24,6 +26,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${user?.token}`,
                     },
                     body: JSON.stringify({
                         teacher_id: teacherId,
@@ -45,10 +48,11 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         const rejectClass = async () => {
             try{
                 const reponse = await fetch(`${URL}reservation/cancel/${reservationId}`, {
-                    method: 'PUT',
+                    method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${user?.token}`,
                     },
                     body: JSON.stringify({
                         teacher_id: teacherId,
@@ -72,7 +76,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         } else {
             rejectClass();
         }
-    }, [URL, mode, reservationId, teacherId]);
+    }, [URL, mode, reservationId, teacherId, user?.token]);
     
     return (
         <MainContainer>

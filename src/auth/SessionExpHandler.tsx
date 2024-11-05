@@ -23,6 +23,7 @@ const SessionExpHandler = () => {
           }
         }
     };
+    checkSessionExpiration();
     const interval = setInterval(checkSessionExpiration, 60000);
     return () => clearInterval(interval);
   }, [user, logout, navigate]);

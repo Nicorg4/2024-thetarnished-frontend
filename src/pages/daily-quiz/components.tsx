@@ -11,7 +11,6 @@ export const MainContainer = styled.div`
 
     @media (max-width: 1000px){
         flex-direction: column;
-        padding-bottom: 100px;
     }
 `
 
@@ -44,6 +43,7 @@ export const Content = styled.div`
         margin-left: 0;
         margin-right: 0;
         margin-top: 100px;
+        height: 70%;
     }
 `
 
@@ -55,6 +55,7 @@ export const QuizTitle = styled.h1`
 
     @media (max-width: 550px){
         font-size: 2.3rem;
+        padding-bottom: 50px;
   }
 `
 

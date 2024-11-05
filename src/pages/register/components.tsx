@@ -22,6 +22,7 @@ export const MainContainer = styled.div`
       flex-direction: column;
       justify-content: flex-start;
       min-height: 100%;
+      padding-bottom: 200px;
     }
 `
 
@@ -66,6 +67,10 @@ export const RightContainer = styled.div`
     justify-content: center;
     width: 50%;
     height: 900px;
+
+    @media (max-width: 1200px){
+      margin-top: 30px;
+    }
 `
 
 export const Image = styled.img`

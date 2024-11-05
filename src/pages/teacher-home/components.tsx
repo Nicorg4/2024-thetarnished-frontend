@@ -13,8 +13,9 @@ export const MainContainer = styled.div`
 
     @media (max-width: 1000px){
         justify-content: center;
-        padding-bottom: 50px;
+        min-height: 100%;
     }
+    
 `;
 
 const slideIn = keyframes`
@@ -48,11 +49,11 @@ export const Content = styled.div`
         margin-right: 0px;
         margin-left: 0px;
         margin-top: 100px;
+        width: 80% ;
+        height: 70%;
     }
 
-    @media (max-width: 800px){
-        width: 80% ;
-    }
+
 `
 
 export const CardsContainer =  styled.div`
@@ -73,6 +74,7 @@ export const Card = styled.div`
 
     @media (max-width: 600px){
         width: 300px ;
+        max-height: 130px;
     }
 `;
 
@@ -141,6 +143,7 @@ export const StaticSkeletonCard = styled.div`
 
   @media (max-width: 600px){
         width: 90% ;
+        max-height: 130px;
     }
 `;
 
@@ -199,14 +202,18 @@ export const GreetingText = styled.h1`
     width: 100%;
     margin: 0px;
 
-    @media (max-width: 550px){
+    @media (max-width: 650px){
         font-size: 2.3rem;
-  }
+    }
 `
 
 export const Subtitle = styled.h2`
     color: ${colors.primary};
     font-weight: 400;
+
+    @media (max-width: 650px){
+        font-size: 1rem;
+    }
 `
 
 export const PageNumber = styled.span`

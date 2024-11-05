@@ -125,7 +125,7 @@ const MyClasses = () => {
                             width: '100%',
                         }}
                     >
-                    <PageTitle>My upcoming classes</PageTitle>
+                    <PageTitle>My classes</PageTitle>
                     </motion.div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }}>

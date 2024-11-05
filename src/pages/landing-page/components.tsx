@@ -33,7 +33,7 @@ const Title = styled.h1`
   font-size: 3rem;
   font-weight: 700;
   transition: transform 0.3s ease;
-  color: ${colors.primary};
+  color: ${colors.secondary};
   text-align: center;
 
   &:hover {
@@ -44,7 +44,7 @@ const Title = styled.h1`
 const Subtitle = styled.p`
   font-size: 1.2rem;
   margin: 20px auto;
-  color: ${colors.primary};
+  color: ${colors.secondary};
 `;
 
 const GetStartedButton = styled.button`

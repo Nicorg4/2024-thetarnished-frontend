@@ -44,6 +44,10 @@ const buttonStyles = css<ButtonProps>`
     @media (min-width: 1000px) {
       display: ${props => props.widthRestricted ? "none" : "flex"};
     }
+
+    @media (max-width: 750px){
+        font-size: 13px;
+    }
 `;
 export const Button = styled.button<ButtonProps>`
     ${buttonStyles}

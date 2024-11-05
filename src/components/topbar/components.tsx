@@ -114,7 +114,7 @@ export const SingOutLink = styled(NavLink)`
     text-align: center;
     font-size: 20px;
     color:  ${colors.secondary};
-    top: 70%;
+    bottom: 100px;
     display: flex;
     align-items: center;
     gap: 10px;

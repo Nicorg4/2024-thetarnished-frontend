@@ -105,7 +105,7 @@ export const Card = styled.div`
     @media (max-width: 600px){
         margin: auto ;
         margin-bottom: 20px;
-        width: 330px ;
+        width: 330px;
     }
 `;
 
@@ -267,6 +267,10 @@ export const ButtonContainer = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
+
+    @media (max-width: 750px){
+        padding-bottom: 20px;
+    }
 `
 export const NotificationContainer = styled.div`
     height: 100%;
@@ -282,7 +286,7 @@ export const PageTitle = styled.h1`
     padding-left: 50px;
     font-weight: 300;
 
-    @media (max-width: 550px){
-        font-size: 2.3rem;
+    @media (max-width: 750px){
+        font-size: 2rem;
   }
 `

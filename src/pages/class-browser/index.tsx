@@ -171,10 +171,12 @@ const ClassBrowser = () => {
             setTeachersDictatingSubject(teachersArray);
             setIsLoading(false);
         };
+        if (user) {
+            getSubjectPrice();
+            fetchTeachers();
+        }
         
-        getSubjectPrice();
-        fetchTeachers();
-    }, [URL, subjectId, user?.id, user?.token]);
+    }, [URL, subjectId, user]);
     
 
     const handleCardClick = (teacher: Teacher) => {

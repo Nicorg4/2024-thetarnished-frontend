@@ -33,7 +33,6 @@ export const MainContainer = styled.div<MainContainerProps>`
     @media (max-width: 1000px){
         min-height: 100%;
         justify-content: center;
-        padding-bottom: 30px;
     }
 `;
 
@@ -68,10 +67,8 @@ export const Content = styled.div`
         margin-right: 0px;
         margin-left: 0px;
         margin-top: 100px;
-    }
-
-    @media (max-width: 800px){
         width: 80% ;
+        height: 70%;
     }
 `
 
