@@ -36,6 +36,7 @@ interface Exam {
   };
   subject: string;
   questions: Question[];
+  state: string;
 }
 
 const ExamViewer = () => {
@@ -134,6 +135,11 @@ const ExamViewer = () => {
     setSelectedExamId(examId);
     setShowConfirmationPopup(true);
   };
+
+  const handleContinueExam = (examId: string) => {
+    setSelectedExamId(examId);
+    navigate(`/exam/${examId}`);
+  };
   
   return (
     <>
@@ -189,7 +195,7 @@ const ExamViewer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: (index + 1) * 0.2 }}
               >
-                <ExamCard onClick={() => handleExamCardClick(exam.exam_id)}>
+                <ExamCard onClick={() => exam.state === 'INITIATED' ? handleContinueExam(exam.exam_id) : handleExamCardClick(exam.exam_id)}>
                   <ExamTitle>{exam.exam_name}</ExamTitle>
                   <ExamInfo>
                     <FaChalkboardTeacher />

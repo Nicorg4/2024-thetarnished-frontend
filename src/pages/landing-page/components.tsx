@@ -68,7 +68,7 @@ const FeaturesSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 67%;
+  min-height: 70%;
   padding: 20px 50px;
   justify-content: center;
 `;

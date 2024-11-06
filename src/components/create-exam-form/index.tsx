@@ -174,6 +174,7 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`,
             'ngrok-skip-browser-warning': 'true',
           },
           body: JSON.stringify(newExam)
@@ -181,7 +182,6 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
         if (!response.ok) {
           throw new Error('Failed to create exam');
         } 
-        closePopup();
         setMessage("Exam created successfully");
         if(user){
           const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 50;
@@ -191,6 +191,7 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
         setIsCreatingExam(false);
         setTimeout(() => {
           setShowSuccess(false);
+          closePopup();
         }, 3000);
       } catch {
         setIsCreatingExam(false);

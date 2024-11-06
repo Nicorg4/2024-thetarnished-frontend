@@ -58,57 +58,60 @@ import EasterEggRiddle from '../../components/riddle';
         }
         
         const getUserBadges = () => {
-            if(user && user?.role === 'TEACHER'){
-                if(user?.stats?.total_reservations >= 5 && user?.stats?.total_reservations < 50){
-                    setUserBadges(badges.filter(badge => badge.id === '1'));
+            let newBadges: { id: string; name: string; description: string; imageUrl: string; }[] = [];
+
+            if (user && user?.role === 'TEACHER') {
+                if (user?.stats?.total_reservations >= 5 && user?.stats?.total_reservations < 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '1')];
                 }
-                else if(user?.stats?.total_reservations >= 50 && user?.stats?.total_reservations < 100){
-                    setUserBadges(badges.filter(badge => badge.id === '2'));
+                else if (user?.stats?.total_reservations >= 50 && user?.stats?.total_reservations < 100) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '2')];
                 }
-                else if(user?.stats?.total_reservations >= 100){
-                    setUserBadges(badges.filter(badge => badge.id === '3'));
+                else if (user?.stats?.total_reservations >= 100) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '3')];
                 }
-                if(user?.stats?.total_exams >= 5 && user?.stats?.total_exams < 10){
-                    setUserBadges(badges.filter(badge => badge.id === '10'));
+                if (user?.stats?.total_exams >= 5 && user?.stats?.total_exams < 10) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '10')];
                 }
-                else if(user?.stats?.total_exams >= 10 && user?.stats?.total_exams < 50){
-                    setUserBadges(badges.filter(badge => badge.id === '11'));
+                else if (user?.stats?.total_exams >= 10 && user?.stats?.total_exams < 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '11')];
                 }
-                else if(user?.stats?.total_exams >= 50){
-                    setUserBadges(badges.filter(badge => badge.id === '12'));
-                }
-            }
-            if(user && user?.role === 'STUDENT'){
-                if(user?.stats?.total_reservations >= 10 && user?.stats?.total_reservations < 50){
-                    setUserBadges(badges.filter(badge => badge.id === '4'));
-                }
-                else if(user?.stats?.total_reservations >= 50 && user?.stats?.total_reservations < 100){
-                    setUserBadges(badges.filter(badge => badge.id === '5'));
-                }
-                else if(user?.stats?.total_reservations >= 100){
-                    setUserBadges(badges.filter(badge => badge.id === '6'));
-                }
-                if(user?.stats?.total_exams > 5 && user?.stats?.total_exams < 10){
-                    setUserBadges(badges.filter(badge => badge.id === '7'));
-                }
-                else if(user?.stats?.total_exams >= 10 && user?.stats?.total_exams < 50){
-                    setUserBadges(badges.filter(badge => badge.id === '8'));
-                }
-                else if(user?.stats?.total_exams >= 50){
-                    setUserBadges(badges.filter(badge => badge.id === '9'));
+                else if (user?.stats?.total_exams >= 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '12')];
                 }
             }
-            if(user){
-                if(user?.stats?.total_time > 10 && user?.stats?.total_time < 50){
-                    setUserBadges(badges.filter(badge => badge.id === '13'));
+            if (user && user?.role === 'STUDENT') {
+                if (user?.stats?.total_reservations >= 10 && user?.stats?.total_reservations < 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '4')];
                 }
-                else if(user?.stats?.total_time > 50 && user?.stats?.total_time < 100){
-                    setUserBadges(badges.filter(badge => badge.id === '14'));
+                else if (user?.stats?.total_reservations >= 50 && user?.stats?.total_reservations < 100) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '5')];
                 }
-                else if(user?.stats?.total_time > 100){
-                    setUserBadges(badges.filter(badge => badge.id === '15'));
+                else if (user?.stats?.total_reservations >= 100) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '6')];
+                }
+                if (user?.stats?.total_exams >= 5 && user?.stats?.total_exams < 10) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '7')];
+                }
+                else if (user?.stats?.total_exams >= 10 && user?.stats?.total_exams < 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '8')];
+                }
+                else if (user?.stats?.total_exams >= 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '9')];
                 }
             }
+            if (user) {
+                if (user?.stats?.total_time > 10 && user?.stats?.total_time < 50) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '13')];
+                }
+                else if (user?.stats?.total_time > 50 && user?.stats?.total_time < 100) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '14')];
+                }
+                else if (user?.stats?.total_time > 100) {
+                    newBadges = [...newBadges, ...badges.filter(badge => badge.id === '15')];
+                }
+            }
+            setUserBadges(newBadges);
         }
 
         getUserBadges();
