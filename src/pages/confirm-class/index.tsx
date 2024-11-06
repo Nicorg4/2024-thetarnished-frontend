@@ -26,7 +26,6 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
-                        'Authorization': `Bearer ${user?.token}`,
                     },
                     body: JSON.stringify({
                         teacher_id: teacherId,
@@ -47,16 +46,12 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         }
         const rejectClass = async () => {
             try{
-                const reponse = await fetch(`${URL}reservation/cancel/${reservationId}`, {
+                const reponse = await fetch(`${URL}reservation/reject/${reservationId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
-                        'Authorization': `Bearer ${user?.token}`,
                     },
-                    body: JSON.stringify({
-                        teacher_id: teacherId,
-                    })
                 });
 
                 if (!reponse.ok) {

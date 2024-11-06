@@ -68,10 +68,10 @@ const TeacherHome = () => {
         const now = new Date().getTime();
         const timeIntervals: Record<string, number> = {
             '24h': 24 * 60 * 60 * 1000,
-            '3d': 7 * 24 * 60 * 60 * 1000,
+            '3d': 3 * 24 * 60 * 60 * 1000,
             '1w': Infinity ,
         };
-
+        
         return reservations.filter((reservation) => {
             const reservationTime = new Date(reservation.datetime).getTime();
             return reservationTime >= now && reservationTime <= now + timeIntervals[timeFilter];

@@ -138,7 +138,7 @@ const skeletonLoading = keyframes`
 
 export const StaticSkeletonCard = styled.div`
   width: 500px ;
-  height: 150px;
+  height: 130px;
   border: 1px solid ${colors.primary};
   border-radius: 8px;
   background-color: transparent;
