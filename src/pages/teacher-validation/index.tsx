@@ -12,6 +12,9 @@ import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import TextInput from "../../components/search-input";
 import { StarIconContainer } from "../class-browser/components";
 import { IoMdStar } from "react-icons/io";
+import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/components";
+import SimplifiedLogo from '../../assets/Logo transparent.png'
+import { Message } from "../../components/message/components";
 
 interface Teacher {
     teacherid: number;
@@ -28,6 +31,11 @@ const TeacherValidation = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [isRejectPopupOpen, setIsRejectPopupOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [isAccepting, setIsAccepting] = useState(false);
+    const [isRejecting, setIsRejecting] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [message, setMessage] = useState("");
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const { isLoggedIn, user } = useAuth();
 
@@ -36,9 +44,6 @@ const TeacherValidation = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isLoggedIn || user?.role !== "ADMIN") {
-            navigate("/");
-        }
        const getInactiveTeachers = async () => {
             try{
                 const response = await fetch(`${URL}admins/inactive-teachers`, {
@@ -59,13 +64,14 @@ const TeacherValidation = () => {
                 console.error("Error fetching teachers: ", error);
             }
         }
+       if(user){getInactiveTeachers()}
        
-       getInactiveTeachers();
-    }, [URL, isLoggedIn, navigate, user?.role, user?.token]);
+    }, [URL, isLoggedIn, navigate, user]);
 
-    const handleTeacherAccept = () => {
+    const handleTeacherAccept = async () => {
+        setIsAccepting(true);
         try{
-            fetch(`${URL}admins/activate-teacher/${currentTeacherId}`, {
+            const response = await fetch(`${URL}admins/activate-teacher/${currentTeacherId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -74,11 +80,26 @@ const TeacherValidation = () => {
                     
                 },
             });
+            if(!response.ok){
+                setMessage("Failed to accept teacher. Please try again.");
+                throw new Error("Failed to accept teacher. Please try again.");
+            }
+            setIsAccepting(false)
+            setTeachers(teachers.filter(teacher => teacher.teacherid !== currentTeacherId));
+            setIsPopupOpen(false);
+            setMessage("Teacher accepted successfully.");
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 3000);
         } catch (error) {
+            setIsAccepting(false);
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, 3000);
             console.error("Error accepting teacher: ", error);
         }
-        setTeachers(teachers.filter(teacher => teacher.teacherid !== currentTeacherId));
-        setIsPopupOpen(false);
     }
 
     const handleTeacherReject = (teacherId: number) => {
@@ -91,9 +112,10 @@ const TeacherValidation = () => {
         setIsPopupOpen(true);
     } 
 
-    const handleTeacherRejection = () => {
+    const handleTeacherRejection = async () => {
+        setIsRejecting(true);
         try{
-            fetch(`${URL}teachers/delete/${currentTeacherId}`, {
+            const response = await fetch(`${URL}teachers/delete/${currentTeacherId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -101,11 +123,27 @@ const TeacherValidation = () => {
                     'ngrok-skip-browser-warning': 'true',
                 },
             });
+            if(!response.ok){
+                setMessage("Failed to delete teacher");
+                throw new Error("Failed to delete teacher");
+            }
+            setIsRejecting(false);
+            setTeachers(teachers.filter(teacher => teacher.teacherid !== currentTeacherId));
+            setIsRejectPopupOpen(false);
+            setMessage("Teacher rejected successfully.");
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 3000);
         } catch (error) {
+            setIsRejecting(false);
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, 3000);
             console.error("Error rejecting teacher: ", error);
         }
-        setTeachers(teachers.filter(teacher => teacher.teacherid !== currentTeacherId));
-        setIsRejectPopupOpen(false);
+        
     }
 
     const filteredTeachers = Array.isArray(teachers) ? 
@@ -119,13 +157,15 @@ const TeacherValidation = () => {
 
     return (
         <>
+        {showSuccessMessage && <Message>{message}</Message>}
+        {showErrorMessage && <Message error>{message}</Message>}
             {isPopupOpen && (
                 <PopUpContainer>
                     <PopUp>
                         <h2>You are about to enroll this teacher to the app. Are you sure?</h2>
                         <p>This teacher will be able to create, and give classes to students.</p>
                         <div style={{ display: "flex", justifyContent: "center" }}>
-                            <Button onClick={handleTeacherAccept}>Accept</Button>
+                            <Button onClick={handleTeacherAccept}>{isAccepting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : 'Accept'}</Button>
                             <Button secondary onClick={() => setIsPopupOpen(false)}>Close</Button>
                         </div>
                     </PopUp>
@@ -137,7 +177,7 @@ const TeacherValidation = () => {
                         <h2>You are about to reject this teacher application. Are you sure?</h2>
                         <p>This teacher account will be deleted.</p>
                         <div style={{ display: "flex", justifyContent: "center" }}>
-                            <Button crucial onClick={handleTeacherRejection}>Reject</Button>
+                            <Button important onClick={handleTeacherRejection}>{isRejecting ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : 'Reject'}</Button>
                             <Button secondary onClick={() => setIsRejectPopupOpen(false)}>Close</Button>
                         </div>
                     </PopUp>

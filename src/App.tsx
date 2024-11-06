@@ -51,8 +51,8 @@ const App: React.FC = () => {
           <Route path="/admin-home" element={<ProtectedRoute element={<AdminHome />} roles={['ADMIN']} />} />
           <Route path="teacher-validation" element={<ProtectedRoute element={<TeacherValidation />} roles={['ADMIN']} />} />
           <Route path="/exam/:examId" element={<ProtectedRoute element={<ExamDetail />} roles={['STUDENT']} />} />
-          <Route path="/confirm-class/:reservationId/:teacherId" element={<ProtectedRoute element={<ClassConfirm mode={"confirm"}/>} roles={['TEACHER']} />} />
-          <Route path="/reject-class/:reservationId/:teacherId" element={<ProtectedRoute element={<ClassConfirm mode={"reject"} />} roles={['TEACHER']} />} />
+          <Route path="/confirm-class/:reservationId/:teacherId" element={<ClassConfirm mode={"confirm"}/>} />
+          <Route path="/reject-class/:reservationId/:teacherId" element={<ClassConfirm mode={"reject"}/>}/>
           <Route path='/update-subjects' element={<UpdateSubjects />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="/access-denied" element={<AccessDenied />} />
