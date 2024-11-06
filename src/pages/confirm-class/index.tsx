@@ -47,7 +47,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         const rejectClass = async () => {
             try{
                 const reponse = await fetch(`${URL}reservation/reject/${reservationId}`, {
-                    method: 'DELETE',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
@@ -66,7 +66,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 console.error(error);
             }
         }
-        if (mode === 'confirm') {
+        if (mode === 'confirm' && reservationId && teacherId) {
             confirmClass();
         } else {
             rejectClass();
