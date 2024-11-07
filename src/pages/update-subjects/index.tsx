@@ -10,6 +10,7 @@ import { RxUpdate } from "react-icons/rx";
 import { useAuth } from '../../auth/useAuth';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
+import { Message } from '../../components/message/components';
 
 interface Subject {
     subjectid: string;
@@ -25,6 +26,8 @@ const UpdateSubjects = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
 
     const { user } = useAuth();
 
@@ -86,13 +89,23 @@ const UpdateSubjects = () => {
                 subject.subjectid === subject.subjectid ? { ...subject, class_price: subject.class_price } : subject
             ));
             setIsUpdating(false);
+            setShowSuccessMessage(true);
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 3000);
         } catch (error) {
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, 3000);
             console.error('Error updating class price:', error);
         }
     };
     
   return (
     <MainContainer >
+        {showSuccessMessage && <Message>Subject cost updated successfully!</Message>}
+        {showErrorMessage && <Message error>Failed to update subject cost.</Message>}
         <Logo />
         <Topbar/>
         <SideBar/>

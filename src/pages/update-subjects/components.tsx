@@ -148,7 +148,7 @@ export const CardsContainer = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    max-height: 600px;
+    max-height: 650px;
     overflow-y: auto;
     flex-wrap: wrap;
     padding: 10px;
