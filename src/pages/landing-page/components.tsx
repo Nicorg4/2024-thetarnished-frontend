@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { FaRegCircleCheck } from "react-icons/fa6";
 
 export const Content = styled.div`
-  height: 100vh;
+  height: 105vh;
 
   @media (max-width: 700px) {
     height: 100%;
@@ -69,7 +69,6 @@ const FeaturesSection = styled.section`
   flex-direction: column;
   align-items: center;
   min-height: 70%;
-  padding: 20px 50px;
   justify-content: center;
 `;
 
