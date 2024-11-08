@@ -17,6 +17,31 @@ export const MainContainer = styled.div`
     background: linear-gradient(143deg, rgba(89,185,99,1) 0%, rgba(38,78,42,1) 35%, rgba(15,41,46,1) 84%);
     padding: 0;
     z-index: -2;
+
+    @media (max-width: 1200px){
+      flex-direction: column;
+      justify-content: flex-start;
+      min-height: 100%;
+      padding-bottom: 200px;
+    }
+`
+
+export const TopContainer = styled.div`
+  background-color: ${colors.secondary};
+  padding-top: 40px;
+  padding-bottom: 50px;
+  width: 100%;
+  justify-content:center ;
+  display: flex;
+  max-height: 150px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (min-width: 1200px){
+      display: none;
+  }
 `
 
 export const LeftContainer = styled.div`
@@ -41,12 +66,24 @@ export const RightContainer = styled.div`
     align-items: center;
     justify-content: center;
     width: 50%;
-    height: 100%;
+    height: 900px;
+
+    @media (max-width: 1200px){
+      margin-top: 30px;
+    }
 `
 
 export const Image = styled.img`
     max-width: 100%;
     max-height: 100%;
+
+    @media (max-width: 1200px){
+      height: 100px;
+    }
+
+    @media (max-width: 500px){
+      height: 80px;
+    }
 `
 
 const flip = keyframes`
@@ -65,10 +102,11 @@ export const FormContainer = styled.div`
     justify-content: center;
     padding: 30px 70px 60px 70px;
     background-color: ${colors.secondary} ;
-    border-radius: 50px ;
+    border-radius: 10px ;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     animation: ${flip} .5s ease-in-out;
     backface-visibility: hidden;
+    max-width: 322px;
 
     @media (max-width: 500px){
       padding: 30px 35px 60px 35px;
@@ -255,4 +293,9 @@ export const ForgotPass = styled(Link)`
   text-align: center ;
   cursor: pointer ;
   font-weight: bold ;
+
+  &:hover{
+    color: ${colors.primary};
+    opacity: 0.8;
+  }
 `

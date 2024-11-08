@@ -10,6 +10,12 @@ export interface ScheduleEntry {
   dayofweek: string;
 }
 
+interface Stats {
+  total_reservations: number;
+  total_exams: number;
+  total_time: number;
+}
+
 export interface User {
   id: BigInteger;
   firstName: string;
@@ -24,6 +30,13 @@ export interface User {
   role: 'STUDENT' | 'TEACHER' | 'ADMIN';
   isOnVacation: boolean;
   token: string;
+  avatar_id: number;
+  xp: number;
+  lvl: number;
+  stats: Stats;
+  hasFoundEasterEgg?: boolean;
+  exp?: number;
+  dailyQuizCompleted?: boolean;
 }
 
 export interface AuthContextType {
@@ -32,6 +45,7 @@ export interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   updateUser: (newUserData: Partial<User>) => void;
+  checkSession: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

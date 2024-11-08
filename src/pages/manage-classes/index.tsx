@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Button } from "../../components/main-button/components";
 import ClassManager from "./ClassManager";
 import ClassHistory from "./ClassHistory";
-import { ButtonContainer } from "./components";
+import Logo from "../../components/top-down-logo";
 
 
 const ManageClasses = () => {
@@ -15,10 +14,8 @@ const ManageClasses = () => {
 
     return (
         <>
-        <ButtonContainer>
-            <Button secondary onClick={toggleContainer}>{showContainer ? "Go to class history " : "Go to class manager"}</Button>
-        </ButtonContainer>
-        {showContainer ? <ClassManager/> :  <ClassHistory/>}
+        <Logo/>
+        {showContainer ? <ClassManager toggleContainer={toggleContainer}/> :  <ClassHistory toggleContainer={toggleContainer}/>}
         </>
     );
 };

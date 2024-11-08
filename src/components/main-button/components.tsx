@@ -5,6 +5,7 @@ interface ButtonProps {
   secondary?: boolean;
   important?: boolean;
   crucial?: boolean
+  widthRestricted?: boolean;
 }
 
 const buttonStyles = css<ButtonProps>`
@@ -38,6 +39,14 @@ const buttonStyles = css<ButtonProps>`
           props.crucial ? `1px solid ${colors.important}` :
           "none"};
         background-color: #cccccc;
+    }
+
+    @media (min-width: 1000px) {
+      display: ${props => props.widthRestricted ? "none" : "flex"};
+    }
+
+    @media (max-width: 750px){
+        font-size: 13px;
     }
 `;
 export const Button = styled.button<ButtonProps>`

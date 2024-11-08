@@ -44,14 +44,16 @@ export const LeftContainer = styled.div`
 
 export const TopContainer = styled.div`
   background-color: ${colors.secondary};
-  border-bottom-left-radius: 40%;
-  border-bottom-right-radius: 40%;
   padding-top: 40px;
   padding-bottom: 50px;
   width: 100%;
   justify-content:center ;
   display: flex;
-  height: 15%;
+  max-height: 150px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media (min-width: 1200px){
       display: none;
@@ -100,7 +102,7 @@ export const FormContainer = styled.div`
     justify-content: center;
     padding: 30px 70px 60px 70px ;
     background-color: ${colors.secondary} ;
-    border-radius: 10% ;
+    border-radius: 10px ;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     animation: ${flip} .5s ease-in-out;
     backface-visibility: hidden;
@@ -151,7 +153,7 @@ const buttonStyles = css<ButtonProps>`
     margin: 5px;
     background-color: ${props => props.secondary ? colors.secondary : colors.primary};
     border: ${props => props.secondary ? `1px solid ${colors.primary}` : "none"};
-    color: ${props => props.secondary ? colors.text : '#fff'};
+    color: ${props => props.secondary ? colors.primary : '#fff'};
 
     &:hover {
         border-color: ${colors.primary};
@@ -249,4 +251,9 @@ export const ForgotPass = styled(Link)`
   text-align: center ;
   cursor: pointer ;
   font-weight: bold ;
+
+  &:hover{
+    color: ${colors.primary};
+    opacity: 0.8;
+  }
 `

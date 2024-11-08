@@ -50,6 +50,7 @@ interface Exam {
 
 const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [currentQuestion, setCurrentQuestion] = useState<string>('');
   const [options, setOptions] = useState<string[]>(['']);
   const [correctOption, setCorrectOption] = useState<number | null>(null);
@@ -57,10 +58,10 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
   const [message, setMessage] = useState<string>('');
   const [showError, setShowError] = useState<boolean>(false);
   const [showSuccess, setShowSuccess] = useState<boolean>(false);
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const URL = import.meta.env.VITE_API_URL;
 
-   const handleAddOption = () => {
+  const handleAddOption = () => {
     if (options.length < 5) {
       setOptions([...options, '']);
     }
@@ -69,6 +70,11 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
   const handleRemoveOption = (index: number) => {
     const updatedOptions = options.filter((_, i) => i !== index);
     setOptions(updatedOptions);
+    if (correctOption === index) {
+      setCorrectOption(null);
+    } else if (correctOption !== null && correctOption > index) {
+      setCorrectOption(correctOption - 1);
+    }
   };
 
   const handleOptionChange = (index: number, value: string) => {
@@ -76,43 +82,100 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
     setOptions(updatedOptions);
   };
 
-  const addCurrentQuestion = () => {
-    if (currentQuestion && correctOption !== null) {
-      const newQuestion: Question = {
-        id: `${questions.length + 1}`,
+  const isQuestionValid = () => {
+    const filledOptions = options.filter(option => option.trim() !== '');
+    return (
+      currentQuestion.trim() !== '' &&
+      filledOptions.length >= 2 &&
+      correctOption !== null
+    );
+  };
+
+  const saveCurrentQuestion = () => {
+    if (isQuestionValid()) {
+      const updatedQuestion: Question = {
+        id: `${currentQuestionIndex + 1}`,
         question: currentQuestion,
-        options: options.filter(option => option),
-        correctOption
+        options: options.filter(option => option.trim() !== ''),
+        correctOption: correctOption as number
       };
-      setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
-      setCurrentQuestion('');
-      setOptions(['']);
-      setCorrectOption(null);
-      return newQuestion;
+
+      const updatedQuestions = [...questions];
+      updatedQuestions[currentQuestionIndex] = updatedQuestion;
+      setQuestions(updatedQuestions);
     }
-    return null;
+  };
+
+  const handleNextQuestion = () => {
+    saveCurrentQuestion();
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+      const nextQuestion = questions[currentQuestionIndex + 1];
+      setCurrentQuestion(nextQuestion.question);
+      setOptions(nextQuestion.options);
+      setCorrectOption(nextQuestion.correctOption);
+    }
+  };
+
+  const handleBackQuestion = () => {
+    saveCurrentQuestion();
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
+      const previousQuestion = questions[currentQuestionIndex - 1];
+      setCurrentQuestion(previousQuestion.question);
+      setOptions(previousQuestion.options);
+      setCorrectOption(previousQuestion.correctOption);
+    }
   };
 
   const handleAddQuestion = () => {
-    addCurrentQuestion();
+    if (isQuestionValid()) {
+      const newQuestion: Question = {
+        id: `${currentQuestionIndex + 1}`,
+        question: currentQuestion,
+        options: options.filter(option => option.trim() !== ''),
+        correctOption: correctOption as number
+      };
+
+      const updatedQuestions = [...questions];
+      updatedQuestions[currentQuestionIndex] = newQuestion;
+      setQuestions([...updatedQuestions]);
+
+      setCurrentQuestion('');
+      setOptions(['']);
+      setCorrectOption(null);
+      setCurrentQuestionIndex(updatedQuestions.length);
+    }
   };
 
   const handleCreateExam = async () => {
-    const lastQuestionAdded = addCurrentQuestion(); 
-    if ((questions.length > 0 || lastQuestionAdded) && correctOption !== null && user?.id) {
+    const finalQuestions = [...questions];
+    if (isQuestionValid()) {
+      const lastQuestion = {
+        id: `${currentQuestionIndex + 1}`,
+        question: currentQuestion,
+        options: options.filter(option => option.trim() !== ''),
+        correctOption: correctOption as number
+      };
+      finalQuestions[currentQuestionIndex] = lastQuestion;
+    }
+
+    if (finalQuestions.length > 0 && user?.id) {
       const newExam: Exam = {
         reservationid: reservation.id,
         teacherid: user.id.toString(),
         exam_name: reservation.subject_name + " exam",
         subject_name: reservation.subject_name,
-        questions: lastQuestionAdded ? [...questions, lastQuestionAdded] : questions,
+        questions: finalQuestions,
       };
       setIsCreatingExam(true);
       try {
-        const response = await fetch(`${URL}exam/create-exam`,{
+        const response = await fetch(`${URL}exam/create-exam`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`,
+            'ngrok-skip-browser-warning': 'true',
           },
           body: JSON.stringify(newExam)
         });
@@ -120,6 +183,10 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
           throw new Error('Failed to create exam');
         } 
         setMessage("Exam created successfully");
+        if(user){
+          const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 50;
+          updateUser({ xp: (Number(user.xp) + 50),  lvl: (Number(user.xp)) > xpToLvlUp ? (user.lvl) + 1 : (user.lvl)})
+        }
         setShowSuccess(true);
         setIsCreatingExam(false);
         setTimeout(() => {
@@ -136,11 +203,11 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
         }, 3000);
       }
     }
-  };  
+  };
   return (
     <Container>
-        {showSuccess && <Message>{message}</Message>}
-        {showError && <Message error>{message}</Message>}
+      {showSuccess && <Message>{message}</Message>}
+      {showError && <Message error>{message}</Message>}
       <PopUp>
         <h2>Create {reservation.subject_name} exam for {reservation.student_name}</h2>
         <StyledForm>
@@ -173,11 +240,19 @@ const CreateExamForm = ({ reservation, closePopup }: CreateExamFormProps) => {
               /> Correct option
             </div>
           ))}
-        </StyledForm>        
+        </StyledForm>
         <ActionButtons>
-            <Button secondary type="button" onClick={handleAddQuestion}>Add question</Button>
-            <Button type="button" onClick={handleCreateExam}>{isCreatingExam ? <AnimatedLoadingLogo src={SimplifiedLogo}/> :  "Create exam"}</Button>
-          </ActionButtons>    
+          <Button secondary type="button" onClick={handleBackQuestion} disabled={currentQuestionIndex === 0}>Back</Button>   
+          <Button secondary type="button" onClick={handleNextQuestion} disabled={currentQuestionIndex >= questions.length - 1}>Next</Button>
+          <Button 
+            type="button" 
+            onClick={handleAddQuestion} 
+            disabled={!isQuestionValid()}
+          >
+            Add Question
+          </Button>
+          <Button type="button" onClick={handleCreateExam}>{isCreatingExam ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Create exam"}</Button>
+        </ActionButtons>
         <CloseButton onClick={closePopup}>
           <RiCloseLargeFill />
         </CloseButton>

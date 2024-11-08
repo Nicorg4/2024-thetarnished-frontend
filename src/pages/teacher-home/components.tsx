@@ -1,56 +1,59 @@
 import styled, { keyframes } from 'styled-components';
 import colors from '../../assets/colors';
 
+
 export const MainContainer = styled.div`
-    height: 100vh ;
-    width: 100vw ;
+    position: relative;
+    height: 100vh;
+    width: 100vw;
     display: flex;
-    align-items: center ;
-    background: rgb(43,84,52);
+    align-items: center;
+    background: rgb(43,130,51);
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
-    
+
     @media (max-width: 1000px){
-        padding-bottom: 80px;
+        justify-content: center;
+        min-height: 100%;
     }
-`
+    
+`;
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 export const Content = styled.div`
     width: 90% ;
-    height: 100% ;
+    height: 80% ;
     margin-left: 100px;
     display: flex ;
+    flex-direction: column;
     align-items: center ;
-    justify-content: center;
-
-    max-height: 800px;
-    overflow-y: auto;
-    flex-wrap: wrap;
-
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: white;
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #e0e0e0;
-    }
-
-    scrollbar-width: thin;
-    scrollbar-color: white transparent;
+    background-color: ${colors.secondary};
+    padding: 30px 20px 70px 20px;
+    margin-left: 150px;
+    margin-right: 50px;
+    border-radius: 10px;
+    animation: ${slideIn} 0.2s ease-out forwards;
+    position: relative;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
-        padding-top: 80px;
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-top: 100px;
+        width: 80% ;
+        height: 70%;
     }
+
+
 `
 
 export const CardsContainer =  styled.div`
@@ -63,7 +66,6 @@ export const Card = styled.div`
     padding-bottom: 5px;
     transition: transform 0.2s ease;
     width: 500px ;
-    margin: auto;
     margin-bottom: 20px;
 
     &:hover {
@@ -71,7 +73,8 @@ export const Card = styled.div`
     }
 
     @media (max-width: 600px){
-        width: 90% ;
+        width: 300px ;
+        max-height: 130px;
     }
 `;
 
@@ -131,7 +134,7 @@ const skeletonLoading = keyframes`
 export const StaticSkeletonCard = styled.div`
   width: 500px ;
   height: 150px;
-  border: 1px solid ${colors.secondary};
+  border: 1px solid ${colors.primary};
   border-radius: 8px;
   background-color: transparent;
   padding-bottom: 5px;
@@ -140,6 +143,7 @@ export const StaticSkeletonCard = styled.div`
 
   @media (max-width: 600px){
         width: 90% ;
+        max-height: 130px;
     }
 `;
 
@@ -164,18 +168,24 @@ export const NoScheduleAlertContainer = styled.div`
     align-items: center;
     justify-content: center;
     text-align: center;
+    height: 100%;
 `
 
 export const TimeFilterButton = styled.button<{ active?: boolean }>`
   padding: 10px 20px;
   background-color: ${({ active }) => (active ? `${colors.primary}` : `${colors.secondary}`)};
   color: ${({ active }) => (active ? '#fff' : '#000')};
-  border: none;
+  border: ${({ active }) => (active ? '' : `1px solid ${colors.primary}`)};
   cursor: pointer;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${({ active }) => (active ? '' : '#bbb')};
+    background-color: #cccccc;
+  }
+
+  @media (max-width: 600px){
+        font-size: 0.8rem;
   }
 `;
 
@@ -185,4 +195,28 @@ export const FilterButtonsContainer = styled.div`
         width: 90% ;
         margin: auto;
   }   
+`
+
+export const GreetingText = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+
+    @media (max-width: 650px){
+        font-size: 2.3rem;
+    }
+`
+
+export const Subtitle = styled.h2`
+    color: ${colors.primary};
+    font-weight: 400;
+
+    @media (max-width: 650px){
+        font-size: 1rem;
+    }
+`
+
+export const PageNumber = styled.span`
+    color: ${colors.primary};
+    font-weight: 400;
 `

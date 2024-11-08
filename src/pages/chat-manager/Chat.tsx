@@ -9,6 +9,7 @@ import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/comp
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import colors from "../../assets/colors";
 import { RiCloseLargeFill } from "react-icons/ri";
+import avatars from "../../assets/avatars/avatars";
 
 
 interface Message {
@@ -33,6 +34,8 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
   const [studentName, setStudentName] = useState<string>("");
   const [teacherName, setTeacherName] = useState<string>("");
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [studentAvatar, setStudentAvatar] = useState(1);
+  const [teacherAvatar, setTeacherAvatar] = useState(1);
   const {user} = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const URL = import.meta.env.VITE_API_URL;
@@ -59,10 +62,12 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${user?.token}`,
+            'ngrok-skip-browser-warning': 'true',
           },
         });
         const student = await response.json();
         setStudentName(student.firstname +" "+ student.lastname);
+        setStudentAvatar(student.avatar_id)
       } catch (error) {
         console.error("Error fetching student name:", error);
       }
@@ -77,10 +82,12 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
             headers: {
               "Content-Type": "application/json",
               'Authorization': `Bearer ${user?.token}`,
+              'ngrok-skip-browser-warning': 'true',
             },
           });
         const teacher = await response.json();
         setTeacherName(teacher.firstname +" "+ teacher.lastname);
+        setTeacherAvatar(teacher.avatar_id);
   
       } catch (error) {
         console.error("Error fetching teacher name:", error);
@@ -147,7 +154,7 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
         <Content>        
         <div className="chat-container">
           <div className="sender-name">
-            <UserImage src="https://imgs.search.brave.com/CidPMbEerqHyYiRV-k0nX7jmRCWkpObwF5BxWwlJKog/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNjE5/NDAwODEwL3Bob3Rv/L21yLXdoby5qcGc_/cz02MTJ4NjEyJnc9/MCZrPTIwJmM9aGFy/VHhXX0lSbDA2Q25o/LTRrbkNudHh3WWlx/V282eWlBeEpUcld5/U0ppRT0" alt="User Image" />
+            <UserImage src={(role === "TEACHER") ? avatars[studentAvatar - 1].src : avatars[teacherAvatar - 1].src} alt="User Image" />
             {role === "STUDENT" ? teacherName : studentName}<CloseButton onClick={handleCloseChat}><RiCloseLargeFill/></CloseButton></div>
           <div className="message-history" ref={chatContainerRef}>
           {messages.map((msg, index) => {

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, LoadingSkeletonCard, CardsContainer, NoScheduleAlertContainer, TimeFilterButton, FilterButtonsContainer } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, CardsContainer, NoScheduleAlertContainer, TimeFilterButton, FilterButtonsContainer, GreetingText, Subtitle, PageNumber, StaticSkeletonCard } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
 import { Button } from '../../components/main-button/components';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../../components/top-down-logo';
-// import { PopUp, PopUpContainer } from '../../components/popup/components';
+import Notification from '../../components/notification';
+import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
+import SimplifiedLogo from "../../assets/Logo transparent alt.png";
+import { motion } from 'framer-motion';
 
 interface Reservations {
     id: string;
@@ -17,7 +20,7 @@ interface Reservations {
 }
 
 const TeacherHome = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     const URL = import.meta.env.VITE_API_URL;
@@ -25,8 +28,8 @@ const TeacherHome = () => {
     const [reservations, setReservations] = useState<Reservations[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [timeFilter, setTimeFilter] = useState<'24h' | '3d' | '1w'>('1w');
-
-    
+    const [currentPage, setCurrentPage] = useState(0);
+    const cardsPerPage = 2;    
     
     useEffect(() => {
         const getReservationsForTeacher = async () => {
@@ -36,6 +39,7 @@ const TeacherHome = () => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 });
 
@@ -44,9 +48,7 @@ const TeacherHome = () => {
                 }
                 const data = await response.json();
                 setReservations(data);
-                setTimeout(() => {
-                  setIsLoading(false);
-                }, 3000);
+                setIsLoading(false);
                 
             } catch (error) {
                 console.error(error);
@@ -56,7 +58,7 @@ const TeacherHome = () => {
         if (user?.id) {
             getReservationsForTeacher();
         }
-    }, [URL, user?.id, user?.token]);
+    }, [URL, logout, user, user?.id, user?.token]);
 
     const handleGoToSchedule = () => {
         navigate("/manage-schedule")
@@ -66,19 +68,39 @@ const TeacherHome = () => {
         const now = new Date().getTime();
         const timeIntervals: Record<string, number> = {
             '24h': 24 * 60 * 60 * 1000,
-            '3d': 7 * 24 * 60 * 60 * 1000,
+            '3d': 3 * 24 * 60 * 60 * 1000,
             '1w': Infinity ,
         };
-
+        
         return reservations.filter((reservation) => {
             const reservationTime = new Date(reservation.datetime).getTime();
             return reservationTime >= now && reservationTime <= now + timeIntervals[timeFilter];
         });
     };
 
-    const totalCards = 3;
+    const totalCards = 2;
     const filteredReservations = filterReservationsByTime();
-    const skeletonCards = totalCards - filteredReservations.length;
+    const totalPages = Math.ceil(filteredReservations.length / cardsPerPage);
+    
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const paginatedReservations = filteredReservations.slice(
+        currentPage * cardsPerPage,
+        (currentPage + 1) * cardsPerPage
+    );
+
+    const skeletonCards = totalCards - paginatedReservations.length;
 
     return (
         <MainContainer >
@@ -87,26 +109,44 @@ const TeacherHome = () => {
             <Topbar/>
             {user?.isActive === true ? (
                 <Content>
+                {!isLoading && (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2, delay: 0.3 }}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '95%',
+                        }}
+                    >
+                    <GreetingText style={{fontWeight:'300'}}>Welcome back, {user?.firstName}!</GreetingText>
+                    </motion.div>
+                )}
                 {(user?.schedule)?.length === 0 ? (
                   <NoScheduleAlertContainer>
-                    <h2>In order for students to be able to book your classes, you need to set up your availability schedule.</h2>
+                    <Notification alternative={true} message='In order for students to be able to book your classes, you need to set up your availability schedule.'/>
                     <Button onClick={handleGoToSchedule}>Go to schedule</Button>
                   </NoScheduleAlertContainer>
   
                 ) : (
                   <>
                   {isLoading ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          {Array.from({ length: totalCards }).map((_, index) => (
-                              <LoadingSkeletonCard key={index} />
-                          ))}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                          <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                       </div>
                   ) : (
-                      <div style={{justifyContent: "center", alignItems:"center", textAlign: "center"}}>
-                          <h1 style={{paddingTop:"30px", marginBottom:"5px"}}>Hello, {user?.firstName}!</h1>
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2, delay: 0.4 }}
+                            style={{ display: 'flex', flexDirection:'column', alignItems:"center", textAlign: "center", height: '100%', justifyContent: 'center'}}
+                        >
                           {reservations.length > 0 ? (
                             <>
-                            <h2>Here are your upcoming classes:</h2>
+                            <Subtitle>Here are your upcoming classes:</Subtitle>
                             
                             <FilterButtonsContainer style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px', gap:"10px" }}>
                               <TimeFilterButton onClick={() => setTimeFilter('24h')} active={timeFilter === '24h'}>Next 24 hours</TimeFilterButton>
@@ -115,7 +155,7 @@ const TeacherHome = () => {
                             </FilterButtonsContainer>
   
                             <CardsContainer>
-                                  {filteredReservations.map((reservation) => (
+                                  {paginatedReservations.map((reservation) => (
                                       <Card key={reservation.id}>
                                           <CardHeader>
                                               <p>{reservation.subject_name}</p>
@@ -135,34 +175,38 @@ const TeacherHome = () => {
                                                   hour12: false
                                                   })}
                                               </p>
-                                              
-                                              
                                           </CardFooter>
                                       </Card>
                                   ))}
-  {/*                                 {skeletonCards === 3 ? (<h2>You don’t have any pending classes for this time scale.</h2>) : (
-                                      <> */}
-                                      {skeletonCards > 0 && 
-                                          Array.from({ length: skeletonCards }).map((_, index) => (
-                                              <StaticSkeletonCard key={`skeleton-${index}`} />
-                                      ))}
-  {/*                                     </>
-                                  )} */}
+                                  {skeletonCards > 0 && 
+                                        Array.from({ length: skeletonCards }).map((_, index) => (
+                                            <StaticSkeletonCard key={`skeleton-${index}`} />
+                                    ))}
+                                   {skeletonCards === 3 && 
+                                    <Notification alternative={true} message='You don’t have any pending classes for this time scale.' />
+                                   }
                               </CardsContainer>
+                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center' }}>
+                                    <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                                    <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
+                                    <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                                </div>
                             </>
                           ) : (
-                              <h2>You don’t have any pending classes.</h2>
+                            <NoScheduleAlertContainer>
+                               <Notification alternative={true} message='You don’t have any pending classes.' />
+                            </NoScheduleAlertContainer>
                           )}
-                      </div>
+                    </motion.div>
                   )}
                   </>
                   )}
               </Content>
             ) : (
                 <Content>
-                    <NoScheduleAlertContainer>
-                        <h2>Your account is under evaluation, please be patient and await for approval.</h2>
-                    </NoScheduleAlertContainer>
+                    <div style={{height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                        <Notification alternative={true} message='Your account is under evaluation, please be patient and await for approval.' />
+                    </div>
                 </Content>
             )}
             
