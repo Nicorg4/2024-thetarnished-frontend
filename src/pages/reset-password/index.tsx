@@ -14,6 +14,7 @@ const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const [message, setMessage] = useState("")
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const URL = import.meta.env.VITE_API_URL;
@@ -28,32 +29,43 @@ const ResetPassword = () => {
                 const response = await fetch(`${URL}reset/reset-password/${userId}/${token}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'ngrok-skip-browser-warning': 'true',
+                        'Content-Type': 'application/json',
                     }
             });
             if(!response.ok){
-                alert('Failed to confirm credentials');
-                navigate('/')
+                setMessage('Failed to confirm credentials')
+                throw new Error('Failed to confirm credentials');
+
             }
             }catch(error){
+                setShowErrorMessage(true);
+                setTimeout(() => {
+                    setShowErrorMessage(false);
+                    navigate('/')
+                }, 3000);
                 console.error(error);
             }
         }
-        confirmCredentials();
-    }, [URL, navigate, token, userId]);
+        if(userId && token){
+            confirmCredentials();
+        }
+        
+    }, [URL, navigate]);
 
     const handleChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsLoading(true);
         if (newPassword !== currentPassword){
-            alert('New password and current password do not match');
-            return;
+            setMessage('New password and current password do not match');
+            throw new Error('New password and current password do not match');
         }
         try{
             const response = await fetch(`${URL}reset/reset-password/${userId}/${token}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     newPassword: newPassword,
@@ -61,6 +73,7 @@ const ResetPassword = () => {
             });
             setIsLoading(false);
             if(!response.ok){
+                setMessage('Failed to change password');
                 throw new Error('Failed to change password');
             }
 
@@ -71,6 +84,7 @@ const ResetPassword = () => {
             }, 3000);   
         }catch(error){
             console.error(error);
+            setIsLoading(false);
             setShowErrorMessage(true);
             setTimeout(() => {
                 setShowErrorMessage(false);
@@ -83,7 +97,7 @@ const ResetPassword = () => {
     return(
         <MainContainer>
            {showSuccessMessage && <Message>Your new password has been saved</Message>}
-           {showErrorMessage && <Message error>Could not update your password. Invalid credentials</Message>}
+           {showErrorMessage && <Message error>{message}</Message>}
             <RightContainer>
                 <FormContainer>
                     <FormTitle>Reset your password</FormTitle>

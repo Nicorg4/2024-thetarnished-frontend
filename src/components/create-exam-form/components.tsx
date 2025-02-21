@@ -40,6 +40,8 @@ export const CloseButton = styled.button`
 
     &:hover {
         opacity: 0.7;
+        background-color: transparent;
+        scale:  1.1 ;
     }
 `
 

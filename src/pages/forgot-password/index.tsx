@@ -22,6 +22,7 @@ const ForgotPassword = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
             },
             body: JSON.stringify({ email }),
         });
@@ -34,7 +35,7 @@ const ForgotPassword = () => {
         setEmailSent(true);
         setTimeout(() => {
             setEmailSent(false);
-            navigate('/');
+            navigate('/login');
         }, 3000);
 
     }catch(error){
@@ -43,7 +44,7 @@ const ForgotPassword = () => {
     }   
     }
     const handleBackToLogin = () => {
-        navigate('/');
+        navigate('/login');
     }
 
     return(

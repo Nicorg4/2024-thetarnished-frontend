@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { MainContainer, LeftContainer, RightContainer, Image, FormContainer, Form, InputText, Input, FormTitle, Button, ToggleVisibilityButton, ButtonsContainer, AnimatedStars, Star, ForgotPass, AnimatedContainer, Checkbox } from "./components"
+import { useEffect, useState } from "react"
+import { MainContainer, LeftContainer, RightContainer, Image, FormContainer, Form, InputText, Input, FormTitle, Button, ToggleVisibilityButton, ButtonsContainer, AnimatedStars, Star, ForgotPass, AnimatedContainer, Checkbox, TopContainer } from "./components"
 import { AiTwotoneEyeInvisible, AiOutlineEye } from "react-icons/ai";
 import { useNavigate } from 'react-router-dom';
 import Logo from "../../assets/Logo.png"
@@ -7,6 +7,7 @@ import MultiAutocompleteInput from "../../components/multi-autocomplete-input";
 import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/components";
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { Message } from "../../components/message/components";
+import { useAuth } from "../../auth/useAuth";
 
 const Register = () => {
 
@@ -16,7 +17,7 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [repassword, setRepassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
-    const [selectedOptions, setSelectedOptions] = useState<{ id: string; name: string; }[]>([]);
+    const [selectedOptions, setSelectedOptions] = useState<{ subjectid: string; subjectname: string; }[]>([]);
     const [isTeacher, setIsTeacher] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -24,8 +25,13 @@ const Register = () => {
     const URL = import.meta.env.VITE_API_URL;
 
     const navigate = useNavigate();
+    const {checkSession } = useAuth();
+    
+    useEffect(() => {
+        checkSession();
+    }, [checkSession])
 
-    const handleSelectOptions = (selected: { id: string; name: string; }[]) => {
+    const handleSelectOptions = (selected: { subjectid: string; subjectname: string; }[]) => {
         setSelectedOptions(selected);
     };
 
@@ -37,6 +43,11 @@ const Register = () => {
                 setErrorMessage('Please fill all fields.');
                 throw new Error('Please fill all fields.');
             }
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if(!passwordRegex.test(password)) {
+                setErrorMessage('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character.');
+                throw new Error('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character.');
+            }
             if(!(password === repassword)) {
                 setErrorMessage('Passwords do not match.');
                 throw new Error('Passwords do not match.');
@@ -46,6 +57,7 @@ const Register = () => {
             const response = await fetch(`${URL}authentication/register`, {
                 method: 'POST',
                 headers: {
+                    'ngrok-skip-browser-warning': 'true',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
@@ -53,7 +65,7 @@ const Register = () => {
                     lastname: lastName,
                     email: email,
                     password: password,
-                    subjects: selectedOptions.map(option => option.id),
+                    subjects: selectedOptions.map(option => option.subjectid),
                     role: role
                 }),
             });
@@ -85,6 +97,9 @@ const Register = () => {
             <LeftContainer>
                 <Image src={Logo}></Image>
             </LeftContainer>
+            <TopContainer>
+                <Image src={Logo}></Image>
+            </TopContainer>
             <RightContainer>
             <AnimatedStars xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
                 <Star cx="100" cy="100" r="2" delay="2s"/>

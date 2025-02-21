@@ -9,11 +9,12 @@ interface Subject {
 }
 
 interface MultiAutocompleteInputProps {
-  onSelect: (selectedOptions: { id: string; name: string }[]) => void;
+  onSelect: (selectedOptions: { subjectid: string; subjectname: string }[]) => void;
   defaultValue?: Subject[];
+  alternative?: boolean;
 }
 
-export default function MultiAutocompleteInput({ onSelect, defaultValue = [] }: MultiAutocompleteInputProps) {
+export default function MultiAutocompleteInput({ onSelect, defaultValue = [], alternative }: MultiAutocompleteInputProps) {
   const [subjects, setSubjects] = useState<Subject[]>([]);
 
   const URL = import.meta.env.VITE_API_URL;
@@ -25,6 +26,7 @@ export default function MultiAutocompleteInput({ onSelect, defaultValue = [] }: 
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
           },
         });
         const data = await response.json();
@@ -43,13 +45,13 @@ export default function MultiAutocompleteInput({ onSelect, defaultValue = [] }: 
       limitTags={1}
       id="multiple-limit-tags"
       filterSelectedOptions
-      options={subjects}
+      options={subjects.filter((subject) => !defaultValue.map(subject => subject.subjectid).includes(subject.subjectid))}
       getOptionLabel={(option: Subject) => option.subjectname}
       defaultValue={defaultValue}
       onChange={(_event, value) => {
         const selectedSubjects = value.map((option) => ({
-          id: option.subjectid,
-          name: option.subjectname,
+          subjectid: option.subjectid,
+          subjectname: option.subjectname,
         }));
         onSelect(selectedSubjects);
       }}
@@ -75,7 +77,6 @@ export default function MultiAutocompleteInput({ onSelect, defaultValue = [] }: 
         <TextField {...params} label="Subjects" placeholder="Add subject..." />
       )}
       sx={{
-        maxWidth: 300,
         '& .MuiAutocomplete-listbox': {
           '&::-webkit-scrollbar': {
             width: '6px',
@@ -92,7 +93,7 @@ export default function MultiAutocompleteInput({ onSelect, defaultValue = [] }: 
           },
         },
       }}
-      style={{ padding: 10, marginTop: 10 }}
+      style={{ padding: 10, marginTop: 10, width: alternative ? '63%' : '300px' }}
     />
   );
 }

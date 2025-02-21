@@ -3,7 +3,6 @@ import SideBar from '../../components/sidebar/sidebar';
 import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, CardsContainer, ChatButton, PageNumber, ButtonContainer, NotificationContainer, HeaderText, PageTitle, GoogleMeetButton } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
-import Logo from '../../components/top-down-logo';
 import { Button } from '../../components/main-button/components';
 import { PopUp, PopUpContainer } from '../../components/popup/components';
 import { Message } from '../../components/message/components';
@@ -45,8 +44,8 @@ interface Student {
     profile_picture: string;
 }
 
-const ClassManager = () => {
-    const { user } = useAuth();
+const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
+    const { user, updateUser } = useAuth();
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
     const navigateToChat = (teacherid:string) =>{
@@ -111,6 +110,7 @@ const ClassManager = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
             });
             const subject_price = await price.json();
@@ -119,6 +119,7 @@ const ClassManager = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
                 body: JSON.stringify({
                     valor: subject_price,
@@ -128,6 +129,10 @@ const ClassManager = () => {
                 throw new Error('Failed to update reservation');
             }
             setReservations((prevReservations) => prevReservations.filter((reservation) => reservation.id !== reservationId));
+            if(user){
+                const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 100;
+                updateUser({ xp: (Number(user.xp) + 100 ),  lvl: (Number(user.xp)) > xpToLvlUp ? (user.lvl) + 1 : (user.lvl)})
+            }
             setIsFinishing(false);
             setMessage('Class finished successfully');
             setShowMessage(true);
@@ -145,6 +150,25 @@ const ClassManager = () => {
         }
     };
 
+    const totalPages = Math.ceil(reservations.length / cardsPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const paginatedReservations = reservations.slice(
+        currentPage * cardsPerPage,
+        (currentPage + 1) * cardsPerPage
+    );
+
     const cancelClass = async () => {
         try {
             setIsCanceling(true);
@@ -153,6 +177,7 @@ const ClassManager = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
                 },
             });
             if (!response.ok) {
@@ -280,8 +305,7 @@ const ClassManager = () => {
     <MainContainer isCreateExamPopupOpen={isCreateExamPopupOpen} isPopupOpen={isPopupOpen || isCreatingGoogleMeetPopupOpen}>
         {showMessage && <Message>{message}</Message>}
         {showErrorMessage && <Message error>{message}</Message>}
-        <SideBar />
-        <Logo/>
+        <SideBar />     
         <Topbar/>
         {isPopupOpen && (
         <PopUpContainer>
@@ -298,16 +322,32 @@ const ClassManager = () => {
         <CreateExamForm reservation={currentReservation} closePopup={() => setIsCreateExamPopupOpen(false)} />
         )}
         <Content>
+            <ButtonContainer>
+                <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.2, delay: 0.3 }}
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                    <PageTitle>Class manager</PageTitle>
+                </motion.div>
+                <Button secondary onClick={toggleContainer}>Show class history <IoIosArrowForward /></Button>
+            </ButtonContainer>
+            
             {isLoading ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                     <AnimatedLoadingLogo src={TransparentLogoAlt} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                 <CardsContainer>
-                    {reservations.map((reservation) => (
+                    {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>
-                            <CardHeader style={{ backgroundColor: reservation.group ? '#f2b36f' : '#3e7d44' }}>
-                                <p>{reservation.subject_name}</p>
+                            <CardHeader style={{ backgroundColor: '#3e7d44' }}>
+                                <HeaderText>{reservation.subject_name} {reservation.group ? '(Group class)' : ''}</HeaderText>
                             </CardHeader>
                             <CardBody>
                                 <CardInfo>
@@ -324,7 +364,7 @@ const ClassManager = () => {
                             </CardBody>
                             <CardFooter>
                                 {new Date(reservation.datetime) < new Date() && (
-                                <Button onClick={() => handleFinishedClass(reservation.id, reservation.subject_id)}>
+                                <Button disabled={isFinishing} onClick={() => handleFinishedClass(reservation.id, reservation.subject_id)}>
                                     {isFinishing && selectedClassId === reservation.id ? (
                                         <AnimatedLoadingLogo src={SimplifiedLogo} />
                                     ) : (
@@ -333,6 +373,7 @@ const ClassManager = () => {
                                 </Button>
                                 )}
                                 <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}><CiChat1/></ChatButton> 
+                                
                                 {new Date(reservation.datetime) > new Date() && (
                                     <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
                                 )}
@@ -350,9 +391,17 @@ const ClassManager = () => {
                         Array.from({ length: skeletonCards }).map((_, index) => (
                             <StaticSkeletonCard key={`skeleton-${index}`} />
                     ))}
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
+                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
+                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                        </div>
                 </CardsContainer>
+                </motion.div>
             ) : (
-                <Notification alternative={false} message={"You don't have any class to manage."} />
+                <NotificationContainer>
+                    <Notification alternative={true} message={"You don't have any class to manage."} />
+                </NotificationContainer>
             )}
         </Content>
     </MainContainer>

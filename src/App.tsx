@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthProvider';
-import Login from '../src/pages/login'
-import TeacherHome from './pages/teacher-home'
-import StudentHome from './pages/student-home'
+import Login from '../src/pages/login';
+import TeacherHome from './pages/teacher-home';
+import StudentHome from './pages/student-home';
 import ManageSchedule from './pages/manage-schedule';
 import ManageClasses from './pages/manage-classes';
 import Profile from './pages/profile';
@@ -15,7 +15,7 @@ import ChangePassword from './pages/change-password';
 import ResetPassword from './pages/reset-password';
 import AdminHome from './pages/admin-home';
 import LandingPage from './pages/landing-page';
-import ExamViewer from './pages/exam-viewer';
+import ExamViewer from './pages/my-exams';
 import ExamDetail from './pages/exam-detail';
 import ClassConfirm from './pages/confirm-class';
 import Chat from './pages/chat-manager/Chat'
@@ -30,23 +30,14 @@ import Quiz from './pages/daily-quiz';
 import UploadNotes from './pages/upload-notes';
 import SharedNotes from './pages/shared-notes';
 
-const App = () => {
-  return (
+const App: React.FC = () => {
+    return (
     <Router>
       <AuthProvider>
+        <SessionExpHandler />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/teacher-home" element={<TeacherHome />} />
-          <Route path="/student-home" element={<StudentHome />} />
-          <Route path="/manage-schedule" element={<ManageSchedule />} />
-          <Route path="/manage-classes" element={<ManageClasses />} />
-          <Route path="/my-classes" element={<MyClasses />} />
-          <Route path="/exam-viewer" element={<ExamViewer />} />
-          <Route path="/class-browser/:subjectId/:subjectName" element={<ClassBrowser />} />
-          <Route path="/chat/:studentId/:teacherId/" element={<Chat />} />  {/* No nos olvidemos de agregar esto     :studentId/:teacherId*/ }
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/change-password" element={<ChangePassword />} />
@@ -81,5 +72,4 @@ const App = () => {
     </Router>
   );
 };
-
 export default App;

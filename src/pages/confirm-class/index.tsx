@@ -5,6 +5,8 @@ import { InteractionBlocker } from '../../components/interaction-blocker/compone
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { IoCheckmarkCircleOutline, IoCloseCircleOutline  } from "react-icons/io5";
+import Logo from '../../components/top-down-logo';
+import { useAuth } from '../../auth/useAuth';
 
 
 const ClassConfirm = ({ mode }: { mode: string }) => {    
@@ -13,6 +15,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
     const { reservationId, teacherId } = useParams();
     const [message, setMessage] = React.useState('');
     const [isConfirmed, setIsConfirmed] = React.useState(false);
+    const { user } = useAuth();
 
     useEffect(() => {
         setIsLoading(true);
@@ -44,16 +47,13 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         }
         const rejectClass = async () => {
             try{
-                const reponse = await fetch(`${URL}reservation/cancel/${reservationId}`, {
+                const reponse = await fetch(`${URL}reservation/reject/${reservationId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
                         'Authorization': `Bearer ${user?.token}`,
                     },
-                    body: JSON.stringify({
-                        teacher_id: teacherId,
-                    })
                 });
 
                 if (!reponse.ok) {
@@ -68,15 +68,16 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 console.error(error);
             }
         }
-        if (mode === 'confirm') {
+        if (mode === 'confirm' && reservationId && teacherId) {
             confirmClass();
         } else {
             rejectClass();
         }
-    }, [URL, mode, reservationId, teacherId]);
+    }, [URL, mode, reservationId, teacherId, user?.token]);
     
     return (
         <MainContainer>
+            <Logo/>
             <Content>
                 {isLoading ? (
                     <InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>

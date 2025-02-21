@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, LoadingSkeletonCard, ChatButton } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, ChatButton, PageNumber, NotificationContainer, PageTitle } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
-import Logo from '../../components/top-down-logo';
 import { CiChat1 } from "react-icons/ci";
 import Chat from '../chat-manager/Chat';
 import Notification from '../../components/notification';
@@ -41,6 +40,8 @@ const MyClasses = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
     const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const cardsPerPage = 3; 
     const URL = import.meta.env.VITE_API_URL;
     const navigateToChat = (teacherid:string) =>{
         setSelectedTeacherId(teacherid);
@@ -55,6 +56,7 @@ const MyClasses = () => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 });
 
@@ -103,17 +105,18 @@ const MyClasses = () => {
 
 
     return (
+        <>
+        {isChatOpen ? (
+            <Chat
+                teacherId={selectedTeacherId || ''}
+                studentId={`${user?.id}` || ''}
+                closeChat={() => setIsChatOpen(false)}
+            />
+        ) : (
         <MainContainer>
             <SideBar />
-            <Logo/>
             <Topbar/>
-            {isChatOpen ? (
-                <Chat
-                    teacherId={selectedTeacherId || ''}
-                    studentId={`${user?.id}` || ''}
-                    closeChat={() => setIsChatOpen(false)}
-                />
-            ) : (
+            <Logo/>
                 <Content>
                 <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -159,14 +162,24 @@ const MyClasses = () => {
                             Array.from({ length: skeletonCards }).map((_, index) => (
                                 <StaticSkeletonCard key={`skeleton-${index}`} />
                         ))}
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
+                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
+                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                        </div>
+                    </motion.div>
                     </div>
+                    </>
                 ) : (
-                    <h2 style={{textAlign:"center"}}>You haven’t booked any class yet.</h2>
+                    <NotificationContainer>
+                        <Notification alternative={true} message="You haven’t booked any class yet."/>
+                    </NotificationContainer>
                 )}
             </Content>
-            )}
             
         </MainContainer>
+        )}
+    </>
     );
 };
 

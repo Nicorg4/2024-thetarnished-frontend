@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, StaticSkeletonCard, LoadingSkeletonCard, CardFooter, PaidInfo, CardsContainer } from './components';
+import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, StaticSkeletonCard, CardFooter, PaidInfo, CardsContainer, ButtonContainer, NotificationContainer, PageNumber } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
+import Notification from '../../components/notification';
+import { Button } from '../../components/main-button/components';
+import { IoIosArrowBack  } from "react-icons/io";
+import { motion } from 'framer-motion';
+import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
+import SimplifiedLogo from "../../assets/Logo transparent alt.png";
 
 interface Student {
     firstname: string;
@@ -22,10 +28,12 @@ interface Reservations {
     paid:  boolean;
 }
 
-const ClassHistory = () => {
+const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
     const { user } = useAuth();
     const [reservations, setReservations] = useState<Reservations[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [currentPage, setCurrentPage] = useState(0);
+    const cardsPerPage = 3; 
     const URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
@@ -36,6 +44,7 @@ const ClassHistory = () => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${user?.token}`,
+                        'ngrok-skip-browser-warning': 'true',
                     },
                 });
 
@@ -54,23 +63,46 @@ const ClassHistory = () => {
         getReservationsForTeacher();
     }, [URL, user?.id, user?.token]);
 
-    const totalCards = 4;
-    const skeletonCards = totalCards - reservations.length;
+    
+
+    const totalPages = Math.ceil(reservations.length / cardsPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const paginatedReservations = reservations.slice(
+        currentPage * cardsPerPage,
+        (currentPage + 1) * cardsPerPage
+    );
+
+    const totalCards = 3;
+    const skeletonCards = totalCards - paginatedReservations.length;
 
   return (
     <MainContainer isCreateExamPopupOpen={false} isPopupOpen={false}>
         <SideBar />
         <Topbar/>
         <Content>
+            <ButtonContainer>
+                <Button secondary onClick={toggleContainer}><IoIosArrowBack /> Show class manager</Button>
+            </ButtonContainer>
             {isLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {Array.from({ length: totalCards }).map((_, index) => (
-                        <LoadingSkeletonCard key={index} />
-                    ))}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                    <AnimatedLoadingLogo src={SimplifiedLogo} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
+                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                 <CardsContainer>
-                    {reservations.map((reservation) => (
+                    {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>
                             <CardHeader style={{ backgroundColor: reservation.group ? '#f2b36f' : '#3e7d44' }}>
                                 <p>{reservation.Subject.subjectname}</p>
@@ -90,9 +122,17 @@ const ClassHistory = () => {
                         Array.from({ length: skeletonCards }).map((_, index) => (
                             <StaticSkeletonCard key={`skeleton-${index}`} />
                     ))}
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
+                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
+                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                        </div>
                 </CardsContainer>
+                </motion.div>
             ) : (
-                <h2 style={{textAlign:"center"}}>You don't have any unpaid class.</h2>
+                <NotificationContainer>
+                    <Notification alternative={true} message={"You have not dictated a class yet."} />
+                </NotificationContainer>
             )}
         </Content>
     </MainContainer>
