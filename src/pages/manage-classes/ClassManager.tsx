@@ -372,7 +372,10 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                                     )}
                                 </Button>
                                 )}
-                                <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}><CiChat1/></ChatButton> 
+                                
+                                {!reservation.group && 
+                                    <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.students[0].id)}><CiChat1/></ChatButton> 
+                                }
                                 {new Date(reservation.datetime) > new Date() && (
                                     <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
                                 )}
@@ -381,7 +384,10 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                                 ): (
                                     <GoogleMeetButton onClick={() => handleJoinGoogleMeet(reservation)}>Join <FaVideo/></GoogleMeetButton>
                                 )}
-                                <Button widthRestricted={true} secondary title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}>Chat</Button> 
+                                {!reservation.group && 
+                                    <Button widthRestricted={true} secondary title='Initiate chat' onClick={()=> navigateToChat(reservation.students[0].id)}>Chat</Button> 
+                                }
+                                
                                 <Button secondary onClick={() => handleClassCancelation(reservation.id)}>Cancel</Button>
                             </CardFooter>
                         </Card>
