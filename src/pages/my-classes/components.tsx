@@ -167,4 +167,32 @@ export const ChatButton = styled.button`
         cursor: pointer;
         
     }
+
+    @media (max-width: 1000px){
+        display: none;
+    }
+`
+
+export const PageNumber = styled.span`
+    color: ${colors.primary};
+    font-weight: 400;
+`
+
+export const NotificationContainer = styled.div`
+    height: 100%;
+    display: flex;
+    justify-content: center ;
+    align-items: center;
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 90%;
+    margin: 0px;
+    padding-left: 50px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
 `

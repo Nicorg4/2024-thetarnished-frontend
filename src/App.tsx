@@ -19,6 +19,16 @@ import ExamViewer from './pages/exam-viewer';
 import ExamDetail from './pages/exam-detail';
 import ClassConfirm from './pages/confirm-class';
 import Chat from './pages/chat-manager/Chat'
+import SessionExpHandler from './auth/SessionExpHandler';
+import AccessDenied from './pages/access-denied';
+import ProtectedRoute from './auth/ProtectedRoute';
+import NotFound from './pages/not-found';
+import UpdateSubjects from './pages/update-subjects';
+import TeacherValidation from './pages/teacher-validation'
+import Leaderboard from './pages/leaderboard';
+import Quiz from './pages/daily-quiz';
+import UploadNotes from './pages/upload-notes';
+import SharedNotes from './pages/shared-notes';
 
 const App = () => {
   return (
@@ -45,6 +55,27 @@ const App = () => {
           <Route path="/my-exams" element={<ExamViewer />} />
           <Route path="/exam/:examId" element={<ExamDetail />} />
           <Route path="/confirm-class/:reservationId/:teacherId" element={<ClassConfirm />} />
+          <Route path="/teacher-home" element={<ProtectedRoute element={<TeacherHome />} roles={['TEACHER']} />} />
+          <Route path="/student-home" element={<ProtectedRoute element={<StudentHome />} roles={['STUDENT']} />} />
+          <Route path="/manage-schedule" element={<ProtectedRoute element={<ManageSchedule />} roles={['TEACHER']} />} />
+          <Route path="/manage-classes" element={<ProtectedRoute element={<ManageClasses />} roles={['TEACHER']} />} />
+          <Route path="/my-classes" element={<ProtectedRoute element={<MyClasses />} roles={['STUDENT']} />} />
+          <Route path="/my-exams" element={<ProtectedRoute element={<ExamViewer />} roles={['STUDENT']} />} />
+          <Route path="/class-browser/:subjectId/:subjectName" element={<ProtectedRoute element={<ClassBrowser />} roles={['STUDENT']} />} />
+          <Route path="/profile" element={<ProtectedRoute element={<Profile />} roles={['STUDENT', 'TEACHER']} />} />
+          <Route path="/settings" element={<ProtectedRoute element={<Settings />} roles={['STUDENT', 'TEACHER']} />} />
+          <Route path="/admin-home" element={<ProtectedRoute element={<AdminHome />} roles={['ADMIN']} />} />
+          <Route path="teacher-validation" element={<ProtectedRoute element={<TeacherValidation />} roles={['ADMIN']} />} />
+          <Route path="/exam/:examId" element={<ProtectedRoute element={<ExamDetail />} roles={['STUDENT']} />} />
+          <Route path="/confirm-class/:reservationId/:teacherId" element={<ClassConfirm mode={"confirm"}/>} />
+          <Route path="/reject-class/:reservationId/:teacherId" element={<ClassConfirm mode={"reject"}/>}/>
+          <Route path='/update-subjects' element={<ProtectedRoute element={<UpdateSubjects />} roles={['ADMIN']} />} />
+          <Route path="leaderboard" element={<ProtectedRoute element={<Leaderboard />} roles={['STUDENT', 'TEACHER']} />} />
+          <Route path="/access-denied" element={<AccessDenied />} />
+          <Route path="/daily-quiz" element={<ProtectedRoute element={<Quiz />} roles={['STUDENT', 'TEACHER']} />} />
+          <Route path="/upload-notes" element={<ProtectedRoute element={<UploadNotes />} roles={['TEACHER']} />} />
+          <Route path="/shared-notes" element={<ProtectedRoute element={<SharedNotes />} roles={['STUDENT']} />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </Router>

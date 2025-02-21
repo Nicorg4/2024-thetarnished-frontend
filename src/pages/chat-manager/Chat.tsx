@@ -20,8 +20,8 @@ interface Message {
   roomId: string;
   sender: string;
 }
-
-const socket: Socket = io("https://chat.fpenonori.com", {
+const SOCKET = import.meta.env.VITE_API_SOCKET;
+const socket: Socket = io(`${SOCKET}`, {
   transports: ["websocket"],
   secure: true,
 });
@@ -128,6 +128,7 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
         roomId: `${studentId}-${teacherId}`,
         sender: role === "STUDENT" ? studentId! : teacherId!,
       };
+      console.log(newMessage);
       socket.emit("sendMessage", newMessage);
       setMessage("");
     }

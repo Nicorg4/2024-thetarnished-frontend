@@ -251,4 +251,75 @@ export const ChatButton = styled.button`
         cursor: pointer;
         
     }
+
+    @media (max-width: 1000px){
+        display: none;
+    }
 `
+
+export const PageNumber = styled.span`
+    color: ${colors.primary};
+    font-weight: 400;
+`
+
+export const NotificationContainer = styled.div`
+    height: 100%;
+    display: flex;
+    justify-content: center ;
+    align-items: center;
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    padding-left: 50px;
+    font-weight: 300;
+
+    @media (max-width: 750px){
+        font-size: 2rem;
+  }
+`
+
+
+export const GoogleMeetButton = styled.button`
+  background-color: white;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 4px solid transparent; 
+  border-radius: 8px;
+  position: relative;
+  color: ${colors.primary};
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 4px;
+    border-radius: inherit;
+    background: linear-gradient(to right, 
+      green 25%, 
+      yellow 25%, yellow 50%, 
+      red 50%, red 75%, 
+      teal 75%
+    );
+    -webkit-mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
+    mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    background-color:transparent ;
+  }
+`;
+

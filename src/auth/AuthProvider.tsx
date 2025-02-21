@@ -41,6 +41,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isActive: boolean;
       on_vacation: boolean;
     }>(data.token);
+
+
+    let userLevel
+
+    if(info.xp > 0){
+      const adjustedXp = Math.max(info.xp, 1000);
+      userLevel = Math.floor(1 + Math.log(adjustedXp / 1000) / Math.log(1.2));
+    }
+    else{
+      userLevel = 1
+    }
+
+    let sufix = ''
+
+    if(info.role === 'TEACHER'){
+      sufix = 'teacher'
+    }
+    else{
+        sufix = 'student'
+    }
+    let userStats = []
+    if(info.role !== 'ADMIN'){
+      const getUserStats = await fetch(`${URL}information/get-${sufix}-stats/${info.id}`,
+      {
+        method: 'GET',
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${data.token}`,
+        },
+      }
+    );
+      if(!getUserStats.ok){
+        throw new Error('Login failed');
+      }
+    
+    userStats = await getUserStats.json();
+    }
     
     const loggedInUser: User = {
       id: info.id,

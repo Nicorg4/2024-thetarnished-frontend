@@ -14,6 +14,7 @@ interface Reservations {
     subject_name: string;
     datetime: string;
     student_id: string;
+    class_price: number;
 }
 
 const TeacherHome = () => {
@@ -110,7 +111,7 @@ const TeacherHome = () => {
                             
                             <FilterButtonsContainer style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px', gap:"10px" }}>
                               <TimeFilterButton onClick={() => setTimeFilter('24h')} active={timeFilter === '24h'}>Next 24 hours</TimeFilterButton>
-                              <TimeFilterButton onClick={() => setTimeFilter('3d')} active={timeFilter === '3d'}>Next 7 days</TimeFilterButton>
+                              <TimeFilterButton onClick={() => setTimeFilter('3d')} active={timeFilter === '3d'}>Next 3 days</TimeFilterButton>
                               <TimeFilterButton onClick={() => setTimeFilter('1w')} active={timeFilter === '1w'}>Next month</TimeFilterButton>
                             </FilterButtonsContainer>
   
@@ -118,7 +119,7 @@ const TeacherHome = () => {
                                   {filteredReservations.map((reservation) => (
                                       <Card key={reservation.id}>
                                           <CardHeader>
-                                              <p>{reservation.subject_name}</p>
+                                              <p>{reservation.subject_name} {'($' + reservation.class_price + ')'}</p>
                                           </CardHeader>
                                           <CardBody>
                                               <CardInfo>
@@ -149,6 +150,11 @@ const TeacherHome = () => {
   {/*                                     </>
                                   )} */}
                               </CardsContainer>
+                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center' }}>
+                                    <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                                    <PageNumber style={{ margin: '0 10px' }}>Page {filteredReservations.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                                    <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                                </div>
                             </>
                           ) : (
                               <h2>You don’t have any pending classes.</h2>

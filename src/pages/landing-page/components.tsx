@@ -175,6 +175,7 @@ const TestimonialAuthor = styled.p`
 
 interface AlternativeProps {
     alternative?: boolean
+    disabled?: boolean
 }
 
 const PricingSection = styled.section`
@@ -272,7 +273,7 @@ const ActionButton = styled.div<AlternativeProps>`
   font-size: 1rem;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   background-color: ${(props) => (props.alternative ? colors.primary : colors.secondary)};
   color: ${(props) => (props.alternative ? colors.secondary : colors.primary)};
   transition: background-color 0.3s ease;
@@ -515,7 +516,7 @@ export const Testimonials = () => (
           <Feature>Access to premium tools</Feature>
           <Feature>Priority email support</Feature>
         </AlternativeFeatures>
-        <ActionButton alternative>Select Plan</ActionButton>
+        <ActionButton alternative disabled>Coming soon</ActionButton>
       </AlternativePricingCard>
   
       <PricingCard>
@@ -529,7 +530,7 @@ export const Testimonials = () => (
           <Feature>24/7 support</Feature>
           <Feature>Dedicated account manager</Feature>
         </PricingFeatures>
-        <ActionButton>Get Started</ActionButton>
+        <ActionButton disabled>Coming soon</ActionButton>
       </PricingCard>
     </PricingSection>
   );

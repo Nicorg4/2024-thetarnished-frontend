@@ -22,6 +22,8 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${user?.token}`,
                     },
                     body: JSON.stringify({
                         teacher_id: teacherId,
@@ -46,6 +48,8 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Authorization': `Bearer ${user?.token}`,
                     },
                     body: JSON.stringify({
                         teacher_id: teacherId,
