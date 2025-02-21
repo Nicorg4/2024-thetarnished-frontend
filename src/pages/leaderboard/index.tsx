@@ -8,6 +8,8 @@ import { IoIosArrowDown, IoIosArrowUp  } from "react-icons/io";
 import { motion } from 'framer-motion';
 import { useAuth } from '../../auth/useAuth';
 import Logo from '../../components/top-down-logo';
+import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 
 interface UserRanking {
     name: string;
@@ -19,27 +21,33 @@ const Leaderboard = () => {
     const [studentRanking, setStudentRanking] = useState<UserRanking[]>([]);
     const [teacherRanking, setTeacherRanking] = useState<UserRanking[]>([]);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const URL = import.meta.env.VITE_API_URL;
     const {user} = useAuth();
 
     useEffect(() => {
         const fetchUserRanking = async () => {
-            const response = await fetch(`${URL}information/get-users-ranking`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user?.token}`,
-                        'ngrok-skip-browser-warning': 'true',
-                    },
+            try{
+                const response = await fetch(`${URL}information/get-users-ranking`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${user?.token}`,
+                            'ngrok-skip-browser-warning': 'true',
+                        },
+                    }
+                )
+                if(!response.ok){
+                    throw new Error('Error fetching student ranking');
                 }
-            )
-            if(!response.ok){
-                throw new Error('Error fetching student ranking');
+                const data = await response.json();
+                setStudentRanking(data.students);
+                setTeacherRanking(data.teachers);
+                setIsLoading(false);
+            }catch(error){
+                console.error('Error fetching student ranking:', error);
             }
-            const data = await response.json();
-            setStudentRanking(data.students);
-            setTeacherRanking(data.teachers);
         }
         fetchUserRanking();
     }, [URL, user?.token]);
@@ -96,8 +104,14 @@ const Leaderboard = () => {
                         width: '95%'
                     }}
                 >
-                    <PageTitle>Leaderboard</PageTitle>
+                <PageTitle>Leaderboard</PageTitle>
                 </motion.div>
+                {isLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                    <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
+                </div>
+                ) : (
+                <>
                 <Container>
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -129,6 +143,8 @@ const Leaderboard = () => {
                     <Button secondary onClick={handleScrollToBottom}><IoIosArrowDown /></Button>
                     <Button secondary onClick={handleScrollToTop}><IoIosArrowUp /></Button>
                 </ButtonsContainer>
+                </>
+                )}
             </Content>
         </MainContainer>
     );

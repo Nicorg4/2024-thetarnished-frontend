@@ -263,6 +263,15 @@ export const PageNumber = styled.span`
     font-weight: 400;
 `
 
+export const ButtonContainer = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    @media (max-width: 750px){
+        padding-bottom: 20px;
+    }
+`
 export const NotificationContainer = styled.div`
     height: 100%;
     display: flex;
@@ -281,7 +290,6 @@ export const PageTitle = styled.h1`
         font-size: 2rem;
   }
 `
-
 
 export const GoogleMeetButton = styled.button`
   background-color: white;

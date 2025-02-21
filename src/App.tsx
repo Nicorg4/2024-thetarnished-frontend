@@ -18,7 +18,7 @@ import LandingPage from './pages/landing-page';
 import ExamViewer from './pages/my-exams';
 import ExamDetail from './pages/exam-detail';
 import ClassConfirm from './pages/confirm-class';
-import Chat from './pages/chat-manager/Chat'
+import Chat from './pages/chat-manager/Chat';
 import SessionExpHandler from './auth/SessionExpHandler';
 import AccessDenied from './pages/access-denied';
 import ProtectedRoute from './auth/ProtectedRoute';
@@ -45,7 +45,6 @@ const App: React.FC = () => {
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/my-exams" element={<ExamViewer />} />
           <Route path="/exam/:examId" element={<ExamDetail />} />
-          <Route path="/confirm-class/:reservationId/:teacherId" element={<ClassConfirm />} />
           <Route path="/teacher-home" element={<ProtectedRoute element={<TeacherHome />} roles={['TEACHER']} />} />
           <Route path="/student-home" element={<ProtectedRoute element={<StudentHome />} roles={['STUDENT']} />} />
           <Route path="/manage-schedule" element={<ProtectedRoute element={<ManageSchedule />} roles={['TEACHER']} />} />

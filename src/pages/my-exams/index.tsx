@@ -169,13 +169,7 @@ const ExamViewer = () => {
         </Content>
       ) : 
       <Content>
-        {exams.length === 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
-              <Notification alternative={true} message='No exams available at the moment.'/>
-          </div>
-        ) : (
-          <>
-          <motion.div
+        <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.2, delay: 0.1 }}
@@ -187,6 +181,12 @@ const ExamViewer = () => {
           >
           <PageTitle>My exams</PageTitle>
           </motion.div>
+        {exams.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+              <Notification alternative={true} message='No exams available at the moment.'/>
+          </div>
+        ) : (
+          <>
           <CardsContainer>
             {paginatedExams.map((exam, index) => (
               <motion.div

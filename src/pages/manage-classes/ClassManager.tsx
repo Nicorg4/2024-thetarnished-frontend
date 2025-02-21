@@ -373,7 +373,6 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                                 </Button>
                                 )}
                                 <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.student_id)}><CiChat1/></ChatButton> 
-                                
                                 {new Date(reservation.datetime) > new Date() && (
                                     <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
                                 )}

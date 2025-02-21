@@ -80,10 +80,8 @@ const UpdateSubjects = () => {
                 },
                 body: JSON.stringify({ class_price: subject.class_price }),
             });
-            if (response.ok) {
-                console.log('Class price updated successfully');
-            } else {
-                console.error('Failed to update class price');
+            if (!response.ok) {
+                throw new Error('Failed to update class price');
             }
             setSubjects(prevSubjects => prevSubjects.map(subject =>
                 subject.subjectid === subject.subjectid ? { ...subject, class_price: subject.class_price } : subject
@@ -95,6 +93,7 @@ const UpdateSubjects = () => {
             }, 3000);
         } catch (error) {
             setShowErrorMessage(true);
+            setIsUpdating(false);
             setTimeout(() => {
                 setShowErrorMessage(false);
             }, 3000);
