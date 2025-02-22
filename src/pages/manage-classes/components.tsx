@@ -101,8 +101,8 @@ export const Card = styled.div`
 
     @media (max-width: 600px){
         margin: auto ;
-        margin-bottom: 20px;
-        width: 330px;
+        margin-bottom: 10px;
+        width: 90%;
     }
 `;
 
@@ -178,8 +178,8 @@ export const StaticSkeletonCard = styled.div`
 
   @media (max-width: 600px){
         margin: auto ;
-        margin-bottom: 20px;
-        width: 330px ;
+        margin-bottom: 10px;
+        width: 90%;
     }
 `;
 
@@ -291,11 +291,13 @@ export const PageTitle = styled.h1`
 export const GoogleMeetButton = styled.button`
   background-color: white;
   text-align: center;
-  padding: 10px 20px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  min-width: 80px;
   font-size: 16px;
   font-weight: bold;
   border: 4px solid transparent; 
-  border-radius: 8px;
   position: relative;
   color: ${colors.primary};
   cursor: pointer;

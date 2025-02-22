@@ -10,7 +10,7 @@ import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/comp
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import TransparentLogoAlt from "../../assets/Logo transparent alt.png";
 import CreateExamForm from '../../components/create-exam-form';
-import { CiChat1 } from "react-icons/ci";
+import { IoChatbubbleEllipses } from "react-icons/io5";
 import Chat from '../chat-manager/Chat';
 import Notification from '../../components/notification';
 import { IoIosArrowForward } from "react-icons/io";
@@ -285,8 +285,8 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
     {isCreatingGoogleMeetPopupOpen && (
         <PopUpContainer>
             <PopUp>
-                <h2>Do you want to create a google meet for this class?</h2>
-                <p>You and your student/s will be receiving the invitation to your personal email.</p>
+                <h2>Would you like to create a Google Meet for this class?</h2>
+                <p>You and your student(s) will receive the invitation in your personal email.</p>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <Button onClick={createMeeting}>{isCreatingGoogleMeet ?  <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Create"}</Button>
                     <Button secondary onClick={() => setIsCreatingGoogleMeetPopupOpen(false)}>Cancel</Button>
@@ -324,14 +324,14 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
         <Content>
             <ButtonContainer>
                 <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.2, delay: 0.3 }}
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                        >
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2, delay: 0.3 }}
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                    >
                     <PageTitle>Class manager</PageTitle>
                 </motion.div>
                 <Button secondary onClick={toggleContainer}>Show class history <IoIosArrowForward /></Button>
@@ -374,7 +374,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                                 )}
                                 
                                 {!reservation.group && 
-                                    <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.students[0].id)}><CiChat1/></ChatButton> 
+                                    <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.students[0].id)}><IoChatbubbleEllipses/></ChatButton> 
                                 }
                                 {new Date(reservation.datetime) > new Date() && (
                                     <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
