@@ -35,7 +35,7 @@ const SharedNotes = () => {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/files/all-files-by/${user?.id}`,{
+        const res = await fetch(`${URL}files/all-files-by/${user?.id}`,{
             method: "GET",
             headers: {
               'Content-Type': 'application/json',

@@ -377,7 +377,7 @@ const ClassBrowser = () => {
                                     <Select required onChange={(e) => handleTimeChange(index, e)} value={slot.time}>
                                         <option value="">Select a time</option>
                                         {teacherSchedule
-                                            .filter(schedule => `${schedule.dayofweek} ${schedule.dayofmonth}` === slot.day)
+                                            .filter(schedule => `${schedule.dayofweek} ${schedule.dayofmonth} ${schedule.month}` === slot.day)
                                             .filter(schedule => !selectedSlots.some((selectedSlot, selectedIndex) => selectedIndex !== index && selectedSlot.time === formatTimeWithPadding(schedule.start_time) && selectedSlot.day === slot.day))
                                             .map(schedule => (
                                                 <option key={schedule.scheduleid} value={formatTimeWithPadding(schedule.start_time)}>
