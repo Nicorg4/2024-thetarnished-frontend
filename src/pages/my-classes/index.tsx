@@ -3,7 +3,7 @@ import SideBar from '../../components/sidebar/sidebar';
 import { MainContainer, Content, Card, CardHeader, CardBody, CardInfo, CardFooter, StaticSkeletonCard, ChatButton, PageNumber, NotificationContainer, PageTitle } from './components';
 import { useAuth } from '../../auth/useAuth';
 import Topbar from '../../components/topbar';
-import { CiChat1 } from "react-icons/ci";
+import { IoChatbubbleEllipses } from "react-icons/io5";
 import Chat from '../chat-manager/Chat';
 import Notification from '../../components/notification';
 import { Button } from '../../components/main-button/components';
@@ -154,7 +154,7 @@ const MyClasses = () => {
                                         <GoogleMeetButton onClick={() => handleJoinGoogleMeet(reservation)}>Join <FaVideo/></GoogleMeetButton>
                                     )}    
                                     <Button widthRestricted secondary title='Initiate chat' onClick={()=> navigateToChat(reservation.Teacher.teacherid)}>Chat</Button> 
-                                <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.Teacher.teacherid)}><CiChat1/></ChatButton> 
+                                <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.Teacher.teacherid)}><IoChatbubbleEllipses/></ChatButton> 
                                 </CardFooter>
                             </Card>
                         ))}

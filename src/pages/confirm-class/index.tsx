@@ -34,7 +34,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 });
 
                 if (!reponse.ok) {
-                    throw new Error('Failed to fetch teacher reservations');
+                    throw new Error('Failed to confirm class');
                 }
                 setMessage('Class confirmed!');
                 setIsConfirmed(true);
@@ -57,7 +57,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 });
 
                 if (!reponse.ok) {
-                    throw new Error('Failed to fetch teacher reservations');
+                    throw new Error('Failed to reject class');
                 }
                 setMessage('Class rejected succesfully!');
                 setIsConfirmed(true);
@@ -68,7 +68,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 console.error(error);
             }
         }
-        if (mode === 'confirm' && reservationId && teacherId) {
+        if (mode === 'confirm' && reservationId && teacherId && user?.token) {
             confirmClass();
         } else {
             rejectClass();
