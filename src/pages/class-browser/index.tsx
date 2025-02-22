@@ -37,6 +37,7 @@ interface Schedule {
     dayofmonth: string;
     Teacher: Teacher;
     maxstudents: number;
+    month: string;
 }
 
 const ClassBrowser = () => {
@@ -272,12 +273,13 @@ const ClassBrowser = () => {
                     },
                     body: JSON.stringify(requestBody),
                 });
+                const data = await response.json();
                 if (response.status === 401) {
                     setMessage('User is not registered in CashFlow');
                     throw new Error('User is not registered in CashFlow');
                 }
                 if (!response.ok) {
-                    setMessage('Failed to book class');
+                    setMessage(data.message);
                     throw new Error('Failed to book class');
                 }
             }
@@ -362,12 +364,15 @@ const ClassBrowser = () => {
                                 <InputsContainer key={index}>
                                     <Select required onChange={(e) => handleDayChange(index, e)} value={slot.day}>
                                         <option value="">Select a day</option>
-                                        {Array.from(new Set(teacherSchedule.map(schedule => `${schedule.dayofweek} ${schedule.dayofmonth}`)))
-                                            .map(day => (
+                                        {Array.from(new Set(teacherSchedule.map(schedule => `${schedule.dayofweek} ${schedule.dayofmonth} ${schedule.month}`)))
+                                            .map(day => {
+                                                const parts = day.split(' ');
+                                                return (
                                                 <option key={day} value={day}>
-                                                    {`${dayNames[day.split(' ')[0]]} ${day.split(' ')[1]}`}
+                                                    {`${dayNames[parts[0]]} ${parts[1]}/${parts[2]}`}
                                                 </option>
-                                            ))}
+                                                );
+                                            })}
                                     </Select>
                                     <Select required onChange={(e) => handleTimeChange(index, e)} value={slot.time}>
                                         <option value="">Select a time</option>
@@ -377,7 +382,7 @@ const ClassBrowser = () => {
                                             .map(schedule => (
                                                 <option key={schedule.scheduleid} value={formatTimeWithPadding(schedule.start_time)}>
                                                 {schedule.maxstudents > 1 
-                                                    ? formatTimeWithPadding(schedule.start_time) + "  (Group)"
+                                                    ? formatTimeWithPadding(schedule.start_time) + " (Group)"
                                                     : formatTimeWithPadding(schedule.start_time)}
                                                 </option>
 
