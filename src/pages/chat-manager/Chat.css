@@ -25,12 +25,12 @@
 .message-history {
   flex-grow: 1; 
   overflow-y: auto; 
-  padding: 10px;
   box-sizing: border-box; 
   width: 100%; 
   max-width: 100%;
   overflow-x: hidden; 
   height: 100%; 
+  margin-bottom: 20px;
   ::-webkit-scrollbar {
     width: 8px;
 }
@@ -57,11 +57,16 @@ scrollbar-color: white transparent;
 .message-history p {
   margin: 5px 0;
   padding: 10px;
-  border-radius: 5px; 
   box-sizing: border-box;
   word-wrap: break-word;
-  margin-left: 80px;
-  margin-right: 80px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.server-message-text{
+  background-color: #6b6b6b;
+  border-radius: 5px;
+  font-size: 0.7rem;
 }
 
 
@@ -136,14 +141,16 @@ button:disabled {
 .server-message {
   color: #c5c5c5e9;
   word-spacing: -0.5px;
-  float: center;
-  clear: both;
-  word-wrap: break-word;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   width: 100%;
+  word-wrap: break-word;
   overflow-x: hidden;
   box-sizing: border-box;
-  padding: 2px;
+  padding: 5px 10px;
   border-radius: 5px;
 }
+
 

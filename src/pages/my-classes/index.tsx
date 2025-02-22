@@ -125,7 +125,7 @@ const MyClasses = () => {
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            width: '100%',
+                            width: '95%',
                         }}
                     >
                     <PageTitle>My classes</PageTitle>

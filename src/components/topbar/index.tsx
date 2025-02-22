@@ -42,6 +42,8 @@ const Topbar = () => {
     "/teacher-validation": "Teacher Validation",
     "/update-subjects": "Update Subjects",
     "/exam/:examId": "Exam Details",
+    "/upload-notes": "Upload Notes",
+    "/shared-notes": "Shared Notes",
   };
 
   const activePageName = pageNames[location.pathname] || "Active Page";

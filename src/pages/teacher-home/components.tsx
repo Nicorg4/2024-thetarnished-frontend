@@ -14,6 +14,7 @@ export const MainContainer = styled.div`
     @media (max-width: 1000px){
         justify-content: center;
         min-height: 100%;
+        padding-bottom: 35px;
     }
     
 `;
@@ -46,13 +47,9 @@ export const Content = styled.div`
 
     @media (max-width: 1000px){
         margin-left: 0;
-        margin-right: 0px;
-        margin-left: 0px;
+        margin-right: 0;
         margin-top: 100px;
-        width: 80% ;
-        height: 70%;
     }
-
 
 `
 
@@ -201,10 +198,11 @@ export const GreetingText = styled.h1`
     color: ${colors.primary};
     width: 100%;
     margin: 0px;
+    font-weight: 300;
 
-    @media (max-width: 650px){
+    @media (max-width: 550px){
         font-size: 2.3rem;
-    }
+  }
 `
 
 export const Subtitle = styled.h2`

@@ -10,7 +10,7 @@ export const MainContainer = styled.div`
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
 
     @media (max-width: 1000px){
-        padding-bottom: 80px;
+        padding-bottom: 35px;
         align-items: center;
         justify-content: center;
     }
@@ -47,9 +47,6 @@ export const Content = styled.div`
         margin-right: 0px;
         margin-left: 0px;
         margin-top: 100px;
-        height: 700px;
-        margin-top: 150px;
-        width: 80% ;
     }
 `
 
@@ -202,7 +199,6 @@ export const PageTitle = styled.h1`
     color: ${colors.primary};
     width: 90%;
     margin: 0px;
-    padding-left: 50px;
     font-weight: 300;
 
     @media (max-width: 550px){

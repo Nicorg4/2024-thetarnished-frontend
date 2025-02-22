@@ -63,7 +63,6 @@ export const Content = styled.div`
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 90% ;
         margin-right: 0px;
         margin-left: 0px;
         margin-top: 100px;
@@ -206,6 +205,9 @@ export const NoSubjectsFound = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 5%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
 `
 export const CardsContainer = styled.div`
     width: 90%;

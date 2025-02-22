@@ -18,7 +18,6 @@ import LandingPage from './pages/landing-page';
 import ExamViewer from './pages/my-exams';
 import ExamDetail from './pages/exam-detail';
 import ClassConfirm from './pages/confirm-class';
-import Chat from './pages/chat-manager/Chat';
 import SessionExpHandler from './auth/SessionExpHandler';
 import AccessDenied from './pages/access-denied';
 import ProtectedRoute from './auth/ProtectedRoute';

@@ -148,6 +148,7 @@ import EasterEggRiddle from '../../components/riddle';
                 headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': 'true',
+                    'Authorization': `Bearer ${user?.token}`,
                 },
                 body: JSON.stringify({
                     password: password,
@@ -164,6 +165,7 @@ import EasterEggRiddle from '../../components/riddle';
                 headers: {
                     'Content-Type': 'application/json',
                     'ngrok-skip-browser-warning': 'true',
+                    'Authorization': `Bearer ${user?.token}`,
                 },
                 body: JSON.stringify({
                     email: user?.email

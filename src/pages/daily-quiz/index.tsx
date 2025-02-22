@@ -160,12 +160,10 @@ const Quiz = () => {
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     width: '95%',
                 }}
             >
-            <QuizTitle style={{fontWeight:'300'}}>Daily quiz</QuizTitle>
+            <QuizTitle>Daily quiz</QuizTitle>
             </motion.div>
             {user?.dailyQuizCompleted && !completed ? (
                 <motion.div

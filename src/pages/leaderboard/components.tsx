@@ -10,9 +10,9 @@ export const MainContainer = styled.div`
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
 
     @media (max-width: 1000px) {
-        padding-bottom: 80px;
         align-items: center;
         justify-content: center;
+        padding-bottom: 35px;
     }
 `;
 
@@ -46,9 +46,6 @@ export const Content = styled.div`
         margin-left: 0;
         margin-right: 0;
         margin-top: 100px;
-        height: 700px;
-        margin-top: 150px;
-        width: 80%;
     }
 `;
 

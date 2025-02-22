@@ -33,6 +33,7 @@ export const MainContainer = styled.div<MainContainerProps>`
         min-height: 100%;
         justify-content: center;
         padding-bottom: 35px;
+
     }
 `;
 
@@ -60,6 +61,7 @@ export const Content = styled.div`
     margin-right: 50px;
     border-radius: 10px;
     animation: ${slideIn} 0.2s ease-out forwards;
+    position: relative;
 
     @media (max-width: 1000px){
         margin-left: 0;
@@ -118,9 +120,9 @@ export const BrowserWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     padding: 10px;
     height: 100%;
+    margin-top: 20px;
 `;
 
 export const Card = styled.div`
@@ -203,6 +205,9 @@ export const NoTeachersFound = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 5%;
+    height: 100% ;
+    align-items: center;
+    justify-content: center;
 `
 
 export const ButtonsContainer = styled.div`
@@ -213,9 +218,7 @@ export const CardsContainer = styled.div`
     width: 90%;
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    max-height: 600px;
+    max-height: 550px;
     overflow-y: auto;
     flex-wrap: wrap;
     padding: 10px;
@@ -243,4 +246,15 @@ export const CardsContainer = styled.div`
     @media (max-width: 1000px){
         width: 80%;
     }
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
 `

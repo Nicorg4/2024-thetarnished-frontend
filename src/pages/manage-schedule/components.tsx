@@ -31,8 +31,9 @@ export const MainContainer = styled.div<MainContainerProps>`
     }
 
     @media (max-width: 1000px){
-        min-height: 100%;
         justify-content: center;
+        min-height: 100%;
+        padding-bottom: 35px;
     }
 `;
 
@@ -55,20 +56,17 @@ export const Content = styled.div`
     flex-direction: column;
     align-items: center ;
     background-color: ${colors.secondary};
-    padding: 50px 20px 50px 20px;
+    padding: 30px 20px 70px 20px;
     margin-left: 150px;
     margin-right: 50px;
     border-radius: 10px;
     animation: ${slideIn} 0.2s ease-out forwards;
+    position: relative;
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 90% ;
-        margin-right: 0px;
-        margin-left: 0px;
+        margin-right: 0;
         margin-top: 100px;
-        width: 80% ;
-        height: 70%;
     }
 `
 

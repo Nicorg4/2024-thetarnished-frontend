@@ -1,7 +1,7 @@
 import Logo from '../../components/top-down-logo'
 import Topbar from '../../components/topbar'
 import SideBar from '../../components/sidebar/sidebar'
-import { BrowserWrapper, Card, CardInfo, CardsContainer, Content, Currency, LoadingSkeletonCard, MainContainer, NoSubjectsFound, PriceInput, PriceInputContainer, StaticSkeletonCard, Title, UpdateButton } from './components'
+import { BrowserWrapper, Card, CardInfo, CardsContainer, Content, Currency, LoadingSkeletonCard, MainContainer, NoSubjectsFound, PageTitle, PriceInput, PriceInputContainer, StaticSkeletonCard, Title, UpdateButton } from './components'
 import { useEffect, useState } from 'react';
 import Notification from '../../components/notification';
 import TextInput from '../../components/search-input';
@@ -11,6 +11,7 @@ import { useAuth } from '../../auth/useAuth';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { Message } from '../../components/message/components';
+import { motion } from 'framer-motion';
 
 interface Subject {
     subjectid: string;
@@ -109,6 +110,18 @@ const UpdateSubjects = () => {
         <Topbar/>
         <SideBar/>
         <Content>
+            <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2, delay: 0.3 }}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '95%'
+                }}
+            >
+            <PageTitle>Update subjects</PageTitle>
+            </motion.div>
             <BrowserWrapper>
                 {isLoading ? (
                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>

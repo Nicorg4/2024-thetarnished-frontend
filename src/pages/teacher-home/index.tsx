@@ -123,7 +123,7 @@ const TeacherHome = () => {
                             width: '95%',
                         }}
                     >
-                    <GreetingText style={{fontWeight:'300'}}>Welcome back, {user?.firstName}!</GreetingText>
+                    <GreetingText>Welcome back, {user?.firstName}!</GreetingText>
                     </motion.div>
                 )}
                 {(user?.schedule)?.length === 0 ? (

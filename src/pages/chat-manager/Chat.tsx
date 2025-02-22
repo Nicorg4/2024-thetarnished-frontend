@@ -10,6 +10,9 @@ import SimplifiedLogo from "../../assets/Logo transparent.png";
 import colors from "../../assets/colors";
 import { RiCloseLargeFill } from "react-icons/ri";
 import avatars from "../../assets/avatars/avatars";
+import { FaPaperclip } from "react-icons/fa";
+import { PopUp, PopUpContainer } from "../../components/popup/components";
+import { Message } from "../../components/message/components";
 
 
 interface Message {
@@ -20,6 +23,7 @@ interface Message {
   teacherId: string;
   roomId: string;
   sender: string;
+  fileid: string;
 }
 const SOCKET = import.meta.env.VITE_API_SOCKET;
 const socket: Socket = io(`${SOCKET}`, {
@@ -38,6 +42,10 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
   const [teacherAvatar, setTeacherAvatar] = useState(1);
   const {user} = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [uploadFilePopUpOpen ,setUploadFilePopUpOpen] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const URL = import.meta.env.VITE_API_URL;
 
   const scrollToBottom = () => {
@@ -135,7 +143,6 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
         roomId: `${studentId}-${teacherId}`,
         sender: role === "STUDENT" ? studentId! : teacherId!,
       };
-      console.log(newMessage);
       socket.emit("sendMessage", newMessage);
       setMessage("");
     }
@@ -149,8 +156,125 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
     closeChat();
   };
 
+  const handleUploadFilePopUpOpen = () =>{
+    setUploadFilePopUpOpen(true);
+  }
+
+  const handleFilePopupClose = () => {
+    setSelectedFile(null);
+    setUploadFilePopUpOpen(false);
+  };
+
+  const handleFileUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (!selectedFile) {
+      setMessage("No file selected");
+      setShowErrorMessage(true);
+      setTimeout(() => setShowErrorMessage(false), 3000);
+      return;
+    }
+  
+    setIsUploading(true);
+  
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+  
+      const response = await fetch(`${URL}files/upload-from-chat`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${user?.token}`,
+          'ngrok-skip-browser-warning': 'true'
+        },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        setMessage("Failed to upload file");
+        throw new Error("Failed to upload file");
+      }
+  
+      const fileData = await response.json();
+      const fileid = fileData.id;
+  
+      const newMessage = {
+        message: `${selectedFile.name}`,
+        studentId: studentId!,
+        teacherId: teacherId!,
+        roomId: `${studentId}-${teacherId}`,
+        sender: role === "STUDENT" ? studentId! : teacherId!,
+        fileid,
+      };
+  
+      socket.emit("sendMessage", newMessage);
+      setUploadFilePopUpOpen(false);
+    } catch (error) {
+      setShowErrorMessage(true);
+      setTimeout(() => setShowErrorMessage(false), 3000);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  const handleFileDownload = (fileId: string, fileName: string) => async () => {
+    try {
+      const response = await fetch(`${URL}files/download/${fileId}`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user?.token}`,
+          'ngrok-skip-browser-warning': 'true',
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to download file");
+      }
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+  
+
+  const handleFileChange = (e: any) => {
+    const file = e.target.files[0];
+    if (file && file.type !== "application/pdf") {
+      return;
+    }
+    setSelectedFile(file);
+  };
+
   return (
-    <MainContainer>
+    <>
+    {showErrorMessage && <Message error>{message}</Message>}
+      {uploadFilePopUpOpen &&
+        <PopUpContainer>
+            <PopUp>
+            <CloseButton onClick={handleFilePopupClose}><RiCloseLargeFill/></CloseButton>
+            <Title>Upload your file.</Title>
+              <UploadForm onSubmit={handleFileUpload}>
+                <FileInput
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFileChange}
+                />
+                <Button type="submit">
+                  {isUploading ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : "Upload"}
+                </Button>
+              </UploadForm>
+            </PopUp>
+        </PopUpContainer>
+      }
+    <MainContainer isPopupOpen={uploadFilePopUpOpen}>
         {isLoading ? (<InteractionBlocker><AnimatedLoadingLogo src={SimplifiedLogo}/></InteractionBlocker>) : (
         <Content>        
         <div className="chat-container">
@@ -199,7 +323,16 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
               <React.Fragment key={index}>
                 {dateSeparator}
                 <p className={isSender ? "sender-message" : "other-message"}>
-                  {msg.message}
+                  {msg.fileid ? (
+                    <span
+                      onClick={handleFileDownload(msg.fileid, msg.message)}
+                      style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                    >
+                      {msg.message}
+                    </span>
+                  ) : (
+                    msg.message
+                  )}
                   <br />
                   <em
                     style={{
@@ -214,6 +347,7 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
                 </p>
               </React.Fragment>
             );
+            
           })}
         </div>
         <BottomBarContainer>
@@ -230,6 +364,7 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
               placeholder="Type a message"
             />
           </div>
+          <FileButton onClick={handleUploadFilePopUpOpen}><FaPaperclip /></FileButton>
           <SendButton onClick={sendMessage}>Send</SendButton>
         </BottomBarContainer>
         </div>
@@ -237,16 +372,37 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
 
       )}
     </MainContainer>
+    </>
   );
 };
 
-const MainContainer =  styled.div`
+interface MainContainerProps {
+  isPopupOpen: boolean;
+}
+
+
+const MainContainer =  styled.div<MainContainerProps>`
     height: 100vh ;
     width: 100vw ;
     display: flex;
     align-items: center ;
     background: rgb(43,84,52);
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: ${({ isPopupOpen }) => (isPopupOpen ? 1 : 0)};
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        backdrop-filter: blur(5px);      
+    }
 `
 
 const Content = styled.div`
@@ -296,9 +452,17 @@ const SendButton = styled(Button)`
   text-align: center;
 `
 
+const FileButton = styled(Button)`
+  background-color: ${colors.primary};
+  height: 100%;
+  border-radius: 0;
+  display: flex;
+  text-align: center;
+`
+
 const Input = styled.input`
   flex-grow: 1;
-  padding: 10px;
+  padding-left: 15px;
   border-radius: 5px;
   color: #3e7d44;
   font-size: 1rem;
@@ -311,4 +475,46 @@ const Input = styled.input`
     outline: none;
   }
 `
+
+const Title = styled.h2`
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin: 0;
+    color: ${colors.primary};
+
+    @media (max-width: 1100px){
+        font-size: 1rem;
+    }
+    @media (max-width: 900px){
+        font-size: 0.8rem;
+    }
+`;
+
+const UploadForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+  background-color: ${colors.secondary};
+  border-radius: 10px;
+`;
+
+const FileInput = styled.input`
+  padding: 10px 15px;
+  margin-top: 20px;
+  border: 1px solid ${colors.primary};
+  border-radius: 5px;
+  font-size: 16px;
+  color: ${colors.text};
+  background-color: ${colors.secondary};
+  transition: border 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: ${colors.primary};
+  }
+`;
+
 export default Chat;

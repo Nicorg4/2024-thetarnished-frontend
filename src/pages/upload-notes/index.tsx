@@ -18,6 +18,7 @@ import { FaUnlockAlt, FaLock } from 'react-icons/fa';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { Message } from "../../components/message/components";
 import { LuUpload } from "react-icons/lu";
+import { FaUserLock } from "react-icons/fa6";
 
 interface File {
     id: string;
@@ -55,7 +56,18 @@ const UploadNotes = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [loadingStudents, setLoadingStudents] = useState(false);
+  const [activeGranting, setActiveGranting] = useState('');
+  const [activeRevoking, setActiveRevoking] = useState('');
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
   const URL = import.meta.env.VITE_API_URL;
+
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 900);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchFiles = async () => {
     try {
@@ -69,7 +81,7 @@ const UploadNotes = () => {
           
       });
       const data = await res.json();
-      setFiles(data.files || []);
+      setFiles(data.files);
       setLoading(false);
     } catch (error) {
       setFiles([]);
@@ -158,11 +170,12 @@ const UploadNotes = () => {
         subject.filename.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const numStaticSkeletonCards = Math.max(0, 9 - filteredSubjects.length);
+    const numStaticSkeletonCards = 0 /* Math.max(0, 9 - filteredSubjects.length) */;
     const cardsToDisplay = [...filteredSubjects.map(item => item), ...Array(numStaticSkeletonCards).fill(null)];
 
   const handleGrantAccess = (fileID: string, studentID: string) => async () => {
     setIsGranting(true);
+    setActiveGranting(studentID);
     try {
       const response = await fetch(`${URL}files/assign-file/${fileID}/to/${studentID}`, {
         method: "POST",
@@ -197,6 +210,7 @@ const UploadNotes = () => {
 
   const handleRevokeAccess = (fileID: string, studentID: string) => async () => {
     setIsRevoking(true);
+    setActiveRevoking(studentID);
     try {
       const response = await fetch(`${URL}files/unassign-file/${fileID}/to/${studentID}`, {
         method: "DELETE",
@@ -311,10 +325,10 @@ const UploadNotes = () => {
                       </CardInfo>
                       <DownloadButtonContainer>
                         <Button onClick={handleGrantAccess(fileId, student.studentid)}>
-                          {isGranting ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : <FaUnlockAlt />}
+                          {isGranting && activeGranting === student.studentid ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : <FaUnlockAlt />}
                         </Button>
                         <Button important onClick={handleRevokeAccess(fileId, student.studentid)}>
-                          {isRevoking ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : <FaLock />}
+                          {isRevoking && activeRevoking === student.studentid ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : <FaLock />}
                         </Button>
                       </DownloadButtonContainer>
                     </Card>
@@ -397,7 +411,10 @@ const UploadNotes = () => {
                             <CardInfo>
                                 <Title>{truncateText(file.filename)}</Title>
                                 <DownloadButtonContainer>
+                                  {isMobile ? <EditButton onClick={handleFileDownload(file.id, file.filename)}><FaUserLock /></EditButton> : (
                                     <EditButton onClick={() => handleOpenGivePermissionsPopUp(file.id)}>Edit permissions</EditButton>
+                                  )}
+                                    
                                     <DownloadButton onClick={handleFileDownload(file.id, file.filename)}><IoMdDownload /></DownloadButton>
                                 </DownloadButtonContainer>
                             </CardInfo>

@@ -34,9 +34,9 @@ export const MainContainer = styled.div<MainContainerProps>`
     }
 
     @media (max-width: 1000px){
-        padding-bottom: 80px;
         align-items: center;
         justify-content: center;
+        padding-bottom: 35px;
     }
 `
 
@@ -68,12 +68,9 @@ export const Content = styled.div`
 
     @media (max-width: 1000px){
         margin-left: 0;
-        margin-right: 0px;
-        margin-left: 0px;
+        margin-right: 0;
         margin-top: 100px;
-        height: 700px;
-        margin-top: 150px;
-        width: 80% ;
+        width: 80%;
     }
 `
 
@@ -104,8 +101,8 @@ export const Card = styled.div`
 
     @media (max-width: 600px){
         margin: auto ;
-        margin-bottom: 20px;
-        width: 330px;
+        margin-bottom: 10px;
+        width: 90%;
     }
 `;
 
@@ -181,8 +178,8 @@ export const StaticSkeletonCard = styled.div`
 
   @media (max-width: 600px){
         margin: auto ;
-        margin-bottom: 20px;
-        width: 330px ;
+        margin-bottom: 10px;
+        width: 90%;
     }
 `;
 
@@ -294,11 +291,13 @@ export const PageTitle = styled.h1`
 export const GoogleMeetButton = styled.button`
   background-color: white;
   text-align: center;
-  padding: 10px 20px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  min-width: 80px;
   font-size: 16px;
   font-weight: bold;
   border: 4px solid transparent; 
-  border-radius: 8px;
   position: relative;
   color: ${colors.primary};
   cursor: pointer;
