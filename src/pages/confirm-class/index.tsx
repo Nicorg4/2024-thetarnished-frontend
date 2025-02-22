@@ -22,7 +22,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         const confirmClass = async () => {
             try{
                 const reponse = await fetch(`${URL}reservation/confirm-reservation/${reservationId}`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
@@ -48,7 +48,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         const rejectClass = async () => {
             try{
                 const reponse = await fetch(`${URL}reservation/reject/${reservationId}`, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
