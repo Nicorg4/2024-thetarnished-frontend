@@ -68,7 +68,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 console.error(error);
             }
         }
-        if (mode === 'confirm' && reservationId && teacherId && user?.token) {
+        if (mode && mode === 'confirm' && reservationId && teacherId && user?.token) {
             confirmClass();
         } else {
             rejectClass();
