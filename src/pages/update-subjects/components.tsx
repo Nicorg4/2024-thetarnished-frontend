@@ -41,6 +41,7 @@ export const Content = styled.div`
     margin-right: 50px;
     border-radius: 10px;
     animation: ${slideIn} 0.2s ease-out forwards;
+    position: relative;
 
     @media (max-width: 1000px){
         margin-left: 0;
@@ -62,6 +63,7 @@ export const BrowserWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 10px;
+    margin-top: 20px;
 `;
 
 export const Card = styled.div`
@@ -148,7 +150,7 @@ export const CardsContainer = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    max-height: 650px;
+    max-height: 550px;
     overflow-y: auto;
     flex-wrap: wrap;
     padding: 10px;
@@ -222,4 +224,15 @@ export const Currency = styled.span`
   font-weight: 600;
   font-size: 1.1rem;
   margin-right: 5px;
+`
+
+export const PageTitle = styled.h1`
+    color: ${colors.primary};
+    width: 100%;
+    margin: 0px;
+    font-weight: 300;
+
+    @media (max-width: 550px){
+        font-size: 2.3rem;
+  }
 `

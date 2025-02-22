@@ -31,7 +31,7 @@ export const MenuButton = styled.button`
     font-size: 28px;
     color: ${colors.primary};
     background-color: transparent;
-    width: 80px;
+
     padding: 10px;
     height: 100%;
     border: none;
@@ -72,7 +72,7 @@ export const FullMenuContainer = styled.div<FullMenuContainerProps>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   z-index: 100;
   transition: max-height 0.3s ease-in-out, opacity 0.1s ease-in-out;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
@@ -157,8 +157,7 @@ export const UserInfo = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
 `
 
 export const UserName = styled.p`

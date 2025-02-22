@@ -29,7 +29,7 @@ export const MainContainer = styled.div<MainContainerProps>`
     }
 
     @media (max-width: 1000px){
-        padding-bottom: 80px;
+        padding-bottom: 35px;
         align-items: center;
         justify-content: center;
     }
@@ -66,8 +66,6 @@ export const Content = styled.div`
         margin-right: 0px;
         margin-left: 0px;
         margin-top: 100px;
-        margin-top: 150px;
-        width: 80% ;
     }
 `
 
@@ -142,11 +140,9 @@ export const PageTitle = styled.h1`
     color: ${colors.primary};
     width: 100%;
     margin: 0px;
-    padding-left: 50px;
     font-weight: 300;
 
     @media (max-width: 550px){
         font-size: 2.3rem;
   }
-
 `

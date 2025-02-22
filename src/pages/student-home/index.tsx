@@ -1,4 +1,4 @@
-import { Content, MainContainer, CardsWrapper, Card, CardSubject, SkeletonCard, ButtonsContainer, TutorialButtonContainer, TutorialButton } from "./components";
+import { Content, MainContainer, CardsWrapper, Card, CardSubject, SkeletonCard, ButtonsContainer, TutorialButtonContainer, TutorialButton, PageNumber } from "./components";
 import SideBar from "../../components/sidebar/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const {user} = useAuth();
   const [showTutorialPopUp, setShowTutorialPopUp] = useState(false)
@@ -51,7 +51,7 @@ const Home = () => {
   };
 
   const handlePrevPage = () => {
-    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
+    setCurrentPage(prevPage => Math.max(prevPage - 1, 0));
   };
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const Home = () => {
         }
 
         const data = await response.json();
-        setSubjects([...data.results]);
+        setSubjects(data.results);
         setTimeout(() => {
           setIsLoading(false);
         }, 1500);
@@ -99,7 +99,7 @@ const Home = () => {
   );
 
   const totalPages = Math.ceil(filteredSubjects.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const startIndex = currentPage * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentSubjects = filteredSubjects.slice(startIndex, endIndex);
   const skeletonCount = ITEMS_PER_PAGE - currentSubjects.length;
@@ -157,7 +157,7 @@ const Home = () => {
           <>
           {currentSubjects.length > 0 ? (
             <>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', marginTop: '50px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
               <TextInput
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
@@ -193,9 +193,10 @@ const Home = () => {
               
             </CardsWrapper>
 
-            <div style={{ display: 'flex', justifyContent: 'center', width: '100px' }}>
-              {currentPage > 1 && <Button onClick={handlePrevPage}>Previous</Button>}
-              {currentPage < totalPages && <Button onClick={handleNextPage}>Next</Button>}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
+                <Button onClick={handlePrevPage} disabled={currentPage === 0}>Previous</Button>
+                <PageNumber style={{ margin: '0 10px' }}>Page {currentSubjects.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
             </div>
           </>
           ) : (

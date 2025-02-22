@@ -17,7 +17,7 @@ export const MainContainer = styled.div`
 
     @media (max-width: 1000px){
         flex-direction: column;
-        padding-bottom: 100px;
+        padding-bottom: 300px;
     }
 `
 
@@ -34,6 +34,7 @@ const slideIn = keyframes`
 
 export const Content = styled.div`
     width: 85% ;
+    height: 100%;
     margin-left: 150px;
     margin-right: 50px;
     border-radius: 10px;
@@ -43,14 +44,14 @@ export const Content = styled.div`
     justify-content: center;
     background-color: ${colors.secondary};
     height: 80%;
-    padding: 30px 20px 70px 20px;
+    padding: 30px 20px 200px 20px;
     color: ${colors.primary};
     animation: ${slideIn} 0.2s ease-out forwards;
 
     @media (max-width: 1000px){
         margin-left: 0;
         margin-right: 0;
-        margin-top: 100px;
+        margin-top: 150px;
     }
 `
 

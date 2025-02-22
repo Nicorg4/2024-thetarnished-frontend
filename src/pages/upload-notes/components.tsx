@@ -63,14 +63,9 @@ export const Content = styled.div`
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 90% ;
         margin-right: 0px;
         margin-left: 0px;
         margin-top: 100px;
-    }
-
-    @media (max-width: 800px){
-        width: 80% ;
     }
 `
 
@@ -126,6 +121,8 @@ export const BrowserWrapper = styled.div`
     align-items: center;
     justify-content: center;
     padding: 10px;
+    margin-top: 20px;
+    max-height: 650px;
 `;
 
 export const Card = styled.div`
@@ -156,13 +153,16 @@ export const CardInfo = styled.div`
     align-items: center;
 `
 export const Title = styled.h2`
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 400;
     margin: 0;
     color: ${colors.primary};
 
-    @media (max-width: 600px){
-        font-size: 1.1rem;
+    @media (max-width: 1100px){
+        font-size: 1rem;
+    }
+    @media (max-width: 900px){
+        font-size: 0.8rem;
     }
 `;
 export const Instructor = styled.p`

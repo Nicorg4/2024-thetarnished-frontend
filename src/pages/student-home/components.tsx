@@ -77,7 +77,7 @@ export const ContentTitle = styled.h2`
 export const CardsWrapper = styled.div`
     display: grid;
     grid-template-columns: 230px 230px 230px 230px 230px;
-    gap: 30px;
+    gap: 15px;
     padding: 20px;
     border-radius: 8px;
     align-items: center;
@@ -225,4 +225,9 @@ export const TutorialButton = styled.button`
     &:hover{
       background-color: #cccccc;
     }
+`
+
+export const PageNumber = styled.span`
+    color: ${colors.primary};
+    font-weight: 400;
 `

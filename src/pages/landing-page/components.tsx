@@ -11,7 +11,7 @@ import { FaRegCircleCheck } from "react-icons/fa6";
 export const Content = styled.div`
   height: 105vh;
 
-  @media (max-width: 700px) {
+  @media (max-width: 950px) {
     height: 100%;
   }
 `;
@@ -70,6 +70,10 @@ const FeaturesSection = styled.section`
   align-items: center;
   min-height: 70%;
   justify-content: center;
+  
+  @media(max-width: 950px) {
+    padding: 30px;
+  }
 `;
 
 const FeaturesTitle = styled.h2`
@@ -255,6 +259,7 @@ const PricingTitle = styled.h3<AlternativeProps>`
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 15px;
+  text-align: center;
   color: ${(props) => (props.alternative ? colors.primary : colors.secondary)};
 `;
 

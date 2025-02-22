@@ -34,9 +34,9 @@ export const MainContainer = styled.div<MainContainerProps>`
     }
 
     @media (max-width: 1000px){
-        padding-bottom: 80px;
         align-items: center;
         justify-content: center;
+        padding-bottom: 35px;
     }
 `
 
@@ -68,12 +68,9 @@ export const Content = styled.div`
 
     @media (max-width: 1000px){
         margin-left: 0;
-        margin-right: 0px;
-        margin-left: 0px;
+        margin-right: 0;
         margin-top: 100px;
-        height: 700px;
-        margin-top: 150px;
-        width: 80% ;
+        width: 80%;
     }
 `
 

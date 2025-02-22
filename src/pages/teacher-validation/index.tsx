@@ -1,6 +1,6 @@
 import { useAuth } from "../../auth/useAuth";
 import { useEffect, useState } from "react";
-import { BrowserWrapper, ButtonsContainer, Card, CardInfo, CardsContainer, Content, Instructor, LoadingSkeletonCard, MainContainer, NoTeachersFound, StaticSkeletonCard, Title } from "./components";
+import { BrowserWrapper, ButtonsContainer, Card, CardInfo, CardsContainer, Content, Instructor, LoadingSkeletonCard, MainContainer, NoTeachersFound, PageTitle, StaticSkeletonCard, Title } from "./components";
 import Logo from "../../components/top-down-logo";
 import { PopUp, PopUpContainer } from "../../components/popup/components";
 import { Button } from "../../components/main-button/components";
@@ -15,6 +15,7 @@ import { IoMdStar } from "react-icons/io";
 import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/components";
 import SimplifiedLogo from '../../assets/Logo transparent.png'
 import { Message } from "../../components/message/components";
+import { motion } from 'framer-motion';
 
 interface Teacher {
     teacherid: number;
@@ -55,8 +56,11 @@ const TeacherValidation = () => {
                     },
                     
                 });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
                 const data = await response.json();
-                setTeachers(data);
+                setTeachers(data || []);	
                 setIsLoading(false);
             }catch (error) {
                 setTeachers([]);
@@ -152,7 +156,7 @@ const TeacherValidation = () => {
         ) 
     : [];
 
-    const numStaticSkeletonCards = Math.max(0, 9 - filteredTeachers.length);
+    const numStaticSkeletonCards = 0 /* Math.max(0, 9 - filteredTeachers.length); */
     const cardsToDisplay = [...filteredTeachers.map(item => item), ...Array(numStaticSkeletonCards).fill(null)];
 
     return (
@@ -188,6 +192,18 @@ const TeacherValidation = () => {
                 <Topbar/>
                 <SideBar/>
                 <Content>
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: 0.3 }}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '95%'
+                    }}
+                >
+                <PageTitle>Teacher validation</PageTitle>
+                </motion.div>
                     <BrowserWrapper>
                         {isLoading ? (
                             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
@@ -210,7 +226,7 @@ const TeacherValidation = () => {
                                     placeholder='Search for a teacher...'
                                 />
                             </div>
-                            <CardsContainer style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
+                            <CardsContainer>
                                 {cardsToDisplay.map((teacher, index) => (
                                     teacher ? (
                                         <Card 

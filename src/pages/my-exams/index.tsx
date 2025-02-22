@@ -176,7 +176,7 @@ const ExamViewer = () => {
               style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  width: '100%',
+                  width: '95%',
               }}
           >
           <PageTitle>My exams</PageTitle>
@@ -213,13 +213,15 @@ const ExamViewer = () => {
               </motion.div>
             ))}
           </CardsContainer>
-          </>
-        )}
+          
+        
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
             <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
-            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
+            <PageNumber style={{ margin: '0 10px' }}>Page {paginatedExams.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
             <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
         </div>
+        </>
+        )}
       </Content>
       }
     </MainContainer>

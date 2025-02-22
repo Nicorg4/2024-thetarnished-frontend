@@ -10,7 +10,9 @@ export const MainContainer = styled.div`
     background: radial-gradient(circle, rgba(43,84,52,1) 0%, rgba(15,41,46,1) 92%);
 
     @media (max-width: 1000px){
+        min-height: 100%;
         flex-direction: column;
+        padding-bottom: 35px;
     }
 `
 
@@ -26,7 +28,7 @@ const slideIn = keyframes`
 `;
 
 export const Content = styled.div`
-    width: 85% ;
+    width: 90% ;
     margin-left: 150px;
     margin-right: 50px;
     border-radius: 10px;
@@ -43,7 +45,6 @@ export const Content = styled.div`
         margin-left: 0;
         margin-right: 0;
         margin-top: 100px;
-        height: 70%;
     }
 `
 
@@ -51,11 +52,10 @@ export const QuizTitle = styled.h1`
     color: ${colors.primary};
     width: 100%;
     margin: 0px;
-    padding-left: 50px;
+    font-weight: 300;
 
     @media (max-width: 550px){
         font-size: 2.3rem;
-        padding-bottom: 50px;
   }
 `
 
