@@ -67,10 +67,6 @@ export const Content = styled.div`
         margin-left: 0px;
         margin-top: 100px;
     }
-
-    @media (max-width: 800px){
-        width: 80% ;
-    }
 `
 
 
@@ -204,7 +200,6 @@ export const StaticSkeletonCard = styled.div`
 export const NoSubjectsFound = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 5%;
     height: 100%;
     justify-content: center;
     align-items: center;

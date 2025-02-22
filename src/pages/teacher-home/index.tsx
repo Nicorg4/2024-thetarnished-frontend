@@ -128,7 +128,7 @@ const TeacherHome = () => {
                 )}
                 {(user?.schedule)?.length === 0 ? (
                   <NoScheduleAlertContainer>
-                    <Notification alternative={true} message='In order for students to be able to book your classes, you need to set up your availability schedule.'/>
+                    <Notification alternative={true} message='Please set up your availability to allow students to book your classes.'/>
                     <Button onClick={handleGoToSchedule}>Go to schedule</Button>
                   </NoScheduleAlertContainer>
   

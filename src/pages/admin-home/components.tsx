@@ -44,7 +44,7 @@ export const Content = styled.div`
     justify-content: center;
     background-color: ${colors.secondary};
     height: 80%;
-    padding: 30px 20px 200px 20px;
+    padding: 30px 20px 70px 20px;
     color: ${colors.primary};
     animation: ${slideIn} 0.2s ease-out forwards;
 
@@ -52,6 +52,7 @@ export const Content = styled.div`
         margin-left: 0;
         margin-right: 0;
         margin-top: 150px;
+        padding: 30px 20px 200px 20px;
     }
 `
 
