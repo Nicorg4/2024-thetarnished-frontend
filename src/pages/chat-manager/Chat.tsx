@@ -13,6 +13,8 @@ import avatars from "../../assets/avatars/avatars";
 import { FaPaperclip } from "react-icons/fa";
 import { PopUp, PopUpContainer } from "../../components/popup/components";
 import { Message } from "../../components/message/components";
+import { CiFileOn } from "react-icons/ci";
+import { DownloadButtonContainer } from "../upload-notes/components";
 
 
 interface Message {
@@ -259,17 +261,21 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
       {uploadFilePopUpOpen &&
         <PopUpContainer>
             <PopUp>
-            <CloseButton onClick={handleFilePopupClose}><RiCloseLargeFill/></CloseButton>
-            <Title>Upload your file.</Title>
+            <Title>Select a pdf file.</Title>
               <UploadForm onSubmit={handleFileUpload}>
                 <FileInput
                   type="file"
                   accept="application/pdf"
                   onChange={handleFileChange}
                 />
-                <Button type="submit">
-                  {isUploading ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : "Upload"}
-                </Button>
+                <DownloadButtonContainer>
+                  <Button type="submit">
+                    {isUploading ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : "Upload"}
+                  </Button>
+                  <Button secondary onClick={handleFilePopupClose}>
+                    Cancel
+                  </Button>
+                </DownloadButtonContainer>
               </UploadForm>
             </PopUp>
         </PopUpContainer>
@@ -322,13 +328,13 @@ const Chat: React.FC<{ teacherId: string; studentId: string; closeChat: () => vo
             return (
               <React.Fragment key={index}>
                 {dateSeparator}
-                <p className={isSender ? "sender-message" : "other-message"}>
+                <p style={{position:'relative'}} className={isSender ? "sender-message" : "other-message"}>
                   {msg.fileid ? (
                     <span
                       onClick={handleFileDownload(msg.fileid, msg.message)}
-                      style={{ color: "blue", textDecoration: "underline", cursor: "pointer" }}
+                      style={{ color: isSender ? "#4453aa" : '#61ced8', textDecoration: "underline", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", position:'absolute' }}
                     >
-                      {msg.message}
+                      <CiFileOn style={{fontSize:'2.5rem'}}/>{msg.message}
                     </span>
                   ) : (
                     msg.message
