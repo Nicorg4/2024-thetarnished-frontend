@@ -197,9 +197,6 @@ import EasterEggRiddle from '../../components/riddle';
     const handleProfileSave = async (event: React.FormEvent) => {
         event.preventDefault();
         setIsSaving(true);
-
-        console.log(newSubjects);
-
         if (!firstName || !lastName) {
             setMessage('Please fill all fields.');
             setShowErrorMessage(true);
@@ -269,7 +266,7 @@ import EasterEggRiddle from '../../components/riddle';
         }
         try{
             setIsConfirmingVacation(true);
-            const response = await fetch(`${URL}classes/assign-vacation`, {
+            const response = await fetch(`${URL}vacation/assign-vacation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -282,15 +279,18 @@ import EasterEggRiddle from '../../components/riddle';
                     enddate: dateRange[1]
                 }),
             });
-            if(response.status === 403) {
-                setMessage('Cannot take vacation during a reservation');
-                throw new Error('Failed to take vacation');
-            }
+            const data = await response.json();
             if (!response.ok) {
-                setMessage("Could not take vacation");
+                setMessage(data.message);
                 throw new Error('Failed to take vacation');
             }
-            updateUser({ isOnVacation: true });
+            setDateRange([null, null]);
+            const currentDate = new Date();
+            const startDate = new Date(dateRange[0]);
+            const endDate = new Date(dateRange[1]);
+            if(startDate <= currentDate && endDate >= currentDate) {
+                updateUser({ isOnVacation: true });
+            }
             setIsConfirmingVacation(false);
             setShowTakeVacationPopup(false);
             setShowSuccessMessage(true);
@@ -318,7 +318,7 @@ import EasterEggRiddle from '../../components/riddle';
     const handleConfirmTerminateVacation = async () => {
         try{
             setIsConfirmingTerminateVacation(true);
-            const response = await fetch(`${URL}classes/stop-vacation`, {
+            const response = await fetch(`${URL}vacation/stop-vacation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -452,8 +452,9 @@ import EasterEggRiddle from '../../components/riddle';
             <PopUpContainer>
                 <PopUp>
                     <h2>Are you sure you want to terminate your vacation?</h2>
+                    <p>{user?.vacation_range}</p>
                     <ButtonsContainer>
-                        <Button onClick={handleConfirmTerminateVacation}>{isConfirmingTerminateVacation ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Terminate vacation" }</Button>
+                        <Button important onClick={handleConfirmTerminateVacation}>{isConfirmingTerminateVacation ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Terminate vacation" }</Button>
                         <Button secondary onClick={handleCancelTerminateVacation}>Cancel</Button>
                     </ButtonsContainer>
                 </PopUp>
@@ -558,10 +559,10 @@ import EasterEggRiddle from '../../components/riddle';
                     </UserInfo>
                     {user?.role === 'TEACHER' && (
                         <VacationButtonContainer>
-                            {!user?.isOnVacation ? 
+                            {!user?.has_planned_vacation ? 
                             <VacationButton onClick={handleTakeVacation}><FaUmbrellaBeach /></VacationButton> 
                             : 
-                            <VacationButton important onClick={handleTerminateVacation}><FaUmbrellaBeach /></VacationButton>}
+                            <VacationButton onClick={handleTerminateVacation}>Planned vacation</VacationButton>}
                         </VacationButtonContainer>
                     )}
                     <BadgesContainer>

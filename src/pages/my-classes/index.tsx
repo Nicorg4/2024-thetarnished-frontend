@@ -64,7 +64,6 @@ const MyClasses = () => {
                     throw new Error('Failed to fetch student reservations');
                 }
                 const data = await response.json();
-                console.log(data);
                 setReservations(data);
                 setIsLoading(false);
             } catch (error) {

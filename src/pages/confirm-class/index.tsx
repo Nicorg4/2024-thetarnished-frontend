@@ -32,15 +32,15 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                         teacher_id: teacherId,
                     })
                 });
-
+                const data = await reponse.json();
                 if (!reponse.ok) {
+                    setMessage(data.message);
                     throw new Error('Failed to confirm class');
                 }
                 setMessage('Class confirmed!');
                 setIsConfirmed(true);
                 setIsLoading(false);
             }catch(error){
-                setMessage('Failed to confirm class, try again later.');
                 setIsLoading(false);
                 console.error(error);
             }
@@ -55,15 +55,15 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                         'Authorization': `Bearer ${user?.token}`,
                     },
                 });
-
+                const data = await reponse.json();
                 if (!reponse.ok) {
+                    setMessage(data.message);
                     throw new Error('Failed to reject class');
                 }
                 setMessage('Class rejected succesfully!');
                 setIsConfirmed(true);
                 setIsLoading(false);
             }catch(error){
-                setMessage('Failed to reject class, try again later.');
                 setIsLoading(false);
                 console.error(error);
             }
@@ -73,7 +73,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
         } else {
             rejectClass();
         }
-    }, [URL, mode, reservationId, teacherId, user?.token]);
+    }, [URL, reservationId, teacherId, user?.token]);
     
     return (
         <MainContainer>

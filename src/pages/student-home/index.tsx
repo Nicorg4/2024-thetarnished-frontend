@@ -193,7 +193,7 @@ const Home = () => {
               
             </CardsWrapper>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <Button onClick={handlePrevPage} disabled={currentPage === 0}>Previous</Button>
                 <PageNumber style={{ margin: '0 10px' }}>Page {currentSubjects.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
                 <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>

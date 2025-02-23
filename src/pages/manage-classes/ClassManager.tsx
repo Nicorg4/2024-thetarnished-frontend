@@ -84,7 +84,6 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                 throw new Error('Failed to fetch teacher reservations');
             }
             const data = await response.json();
-            console.log(data); 
             setReservations(data);
             setTimeout(() => {
                 setIsLoading(false);

@@ -29,6 +29,8 @@ export interface User {
   isActive: boolean;
   role: 'STUDENT' | 'TEACHER' | 'ADMIN';
   isOnVacation: boolean;
+  has_planned_vacation: boolean;
+  vacation_range: string;
   token: string;
   avatar_id: number;
   xp: number;

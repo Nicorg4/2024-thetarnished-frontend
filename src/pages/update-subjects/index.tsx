@@ -44,7 +44,6 @@ const UpdateSubjects = () => {
             });
             const data = await response.json();
             setSubjects(data);
-            console.log(data);
             setIsLoading(false);
             } catch (error) {
             console.error('Error fetching subjects:', error);

@@ -231,7 +231,6 @@ const UploadNotes = () => {
       setTimeout(() => {
         setShowMessage(false);
       }, 3000);
-      console.log("Access revoked successfully");
     } catch (error) {
       setIsRevoking(false);
       setShowErrorMessage(true);

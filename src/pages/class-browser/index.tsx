@@ -343,7 +343,7 @@ const ClassBrowser = () => {
        `${teacher.teacher.firstname} ${teacher.teacher.lastname}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const numStaticSkeletonCards = Math.max(0, 9 - filteredTeachers.length);
+    const numStaticSkeletonCards = 0 /* Math.max(0, 9 - filteredTeachers.length); */
     const cardsToDisplay = [...filteredTeachers.map(item => item.teacher), ...Array(numStaticSkeletonCards).fill(null)];
 
     const handleCancelBooking = async () => {
