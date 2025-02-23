@@ -31,7 +31,7 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 const requestOptions: RequestInit = {
                     method: 'POST',
                     headers,
-                    body: teacherId ? JSON.stringify({ teacher_id: teacherId }) : undefined
+                    body: teacherId ? JSON.stringify({ teacher_id: user?.id }) : undefined
                 };
 
                 const response = await fetch(`${URL}${endpoint}`, requestOptions);
