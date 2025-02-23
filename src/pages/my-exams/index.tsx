@@ -129,7 +129,7 @@ const ExamViewer = () => {
     }
   }
 
-  const paginatedExams = exams.slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage)
+  const paginatedExams = Array.isArray(exams) ? exams.slice(currentPage * cardsPerPage, (currentPage + 1) * cardsPerPage) : [];
 
   const handleExamCardClick = (examId: string) => {
     setSelectedExamId(examId);
@@ -155,19 +155,12 @@ const ExamViewer = () => {
               </ButtonsContainer>
           </PopUp>
       </PopUpContainer>
-  )}
+    )}
     <MainContainer isPopupOpen={showConfirmationPopUp}>
         {showErrorMessage && <Message error>Error initiating exam. Please try again later.</Message>}
       <SideBar/>
       <Topbar/>
       <Logo/>
-      {loading ? (
-        <Content>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
-              <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
-          </div>
-        </Content>
-      ) : 
       <Content>
         <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -180,13 +173,14 @@ const ExamViewer = () => {
               }}
           >
           <PageTitle>My exams</PageTitle>
-          </motion.div>
-        {exams.length === 0 ? (
+       </motion.div>
+      {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
-              <Notification alternative={true} message='No exams available at the moment.'/>
+              <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
           </div>
-        ) : (
+      ) : (
           <>
+          {paginatedExams.length > 0 ? (
           <CardsContainer>
             {paginatedExams.map((exam, index) => (
               <motion.div
@@ -213,8 +207,12 @@ const ExamViewer = () => {
               </motion.div>
             ))}
           </CardsContainer>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+              <Notification alternative={true} message='No exams available at the moment.'/>
+            </div>
+          )}
           
-        
         {totalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
                 <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
@@ -223,12 +221,10 @@ const ExamViewer = () => {
             </div>
         )}
         </>
-        )}
+      )}
       </Content>
-      }
     </MainContainer>
     </>
   );
 };
-
 export default ExamViewer;
