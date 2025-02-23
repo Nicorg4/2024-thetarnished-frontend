@@ -54,6 +54,7 @@ export const Content = styled.div`
 `
 
 export const CardsContainer =  styled.div`
+    min-height: 500px;
 `
 
 export const Card = styled.div`
@@ -70,6 +71,22 @@ export const Card = styled.div`
     }
 
     @media (max-width: 600px){
+        width: 300px ;
+        max-height: 130px;
+    }
+`;
+
+export const StaticSkeletonCard = styled.div`
+  width: 500px ;
+  height: 150px;
+  border: 1px solid ${colors.primary};
+  border-radius: 8px;
+  background-color: transparent;
+  padding-bottom: 5px;
+  margin: auto;
+  margin-bottom: 20px;
+
+  @media (max-width: 600px){
         width: 300px ;
         max-height: 130px;
     }
@@ -128,21 +145,7 @@ const skeletonLoading = keyframes`
     }
 `;
 
-export const StaticSkeletonCard = styled.div`
-  width: 500px ;
-  height: 150px;
-  border: 1px solid ${colors.primary};
-  border-radius: 8px;
-  background-color: transparent;
-  padding-bottom: 5px;
-  margin: auto;
-  margin-bottom: 20px;
 
-  @media (max-width: 600px){
-        width: 90% ;
-        max-height: 130px;
-    }
-`;
 
 export const LoadingSkeletonCard = styled.div`
   width: 500px ;
