@@ -77,8 +77,9 @@ const Quiz = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
 
+    
     const {user, updateUser} = useAuth();
- 
+
     const fetchQuestions = async () => {
         setIsFetchingQuestions(true);
         fetch('https://opentdb.com/api.php?amount=3&difficulty=easy&type=multiple')
@@ -126,7 +127,9 @@ const Quiz = () => {
                     setCompleted(true);
                     if(user){
                         const xpToLvlUp = Number(1000 * Math.pow(1.2, (user?.lvl ?? 1))) - 10 * Number(score);
+                        console.log("1: ",user?.xp);
                         updateUser({ xp: (Number(user.xp) + 10 * score),  lvl: (Number(user.xp)) > xpToLvlUp ? Number(user.lvl) + 1 : (user.lvl)})
+                        console.log("2: ",user?.xp);
                         updateUser({ dailyQuizCompleted : true })
                     }
                 }catch(error){

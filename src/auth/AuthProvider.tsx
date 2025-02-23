@@ -42,6 +42,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       role: 'STUDENT' | 'TEACHER' | 'ADMIN';
       isActive: boolean;
       on_vacation: boolean;
+      has_planned_vacation: boolean;
+      vacation_range: string;
       avatar_id: number;
       exp: number;
       xp: number;
@@ -97,6 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       role: info.role,
       isActive: info.isActive,
       isOnVacation: info.on_vacation,
+      has_planned_vacation: info.has_planned_vacation,
+      vacation_range: info.vacation_range,
       token: data.token,
       avatar_id: info.avatar_id,
       xp: info.xp,
@@ -120,6 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const route = roleRoutes[info.role];
     navigate(route);
   };
+
+  
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -128,11 +134,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateUser = (newUserData: Partial<User>) => {
-    if (user) {
-      const updatedUser = { ...user, ...newUserData };
-      setUser(updatedUser);
+    setUser((prevUser: User | null) => {
+      if (prevUser === null) {
+        return null;
+      }
+      const updatedUser = { ...prevUser, ...newUserData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
+      return updatedUser as User;
+    });
   };
 
 

@@ -12,6 +12,7 @@ export const NavbarContainer = styled.nav<NavContainerProps>`
     height: 80%;
     width: ${({ isOpen }) => (isOpen ? '200px' : '60px')};
     display: flex ;
+    gap: 20px;
     flex-direction:column;
     align-items: center;
     justify-content: space-between;
@@ -35,7 +36,6 @@ export const NavbarLink = styled(NavLink)<NavContainerProps>`
     border-radius: 5px;
     cursor: pointer;
     font-size: 30px;
-    gap: 10px;
     border: none ;
     transition: background-color 0.3s, justify-content 0.3s ease;;
     gap: ${({ isOpen }) => (isOpen ? '10px' : '0')};
@@ -84,6 +84,12 @@ export const UserImage = styled.img`
     border-radius: 50%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     margin-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
 `
 
 export const UserName = styled.p`

@@ -35,7 +35,7 @@ const SharedNotes = () => {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/files/all-files-by/${user?.id}`,{
+        const res = await fetch(`${URL}files/all-files-by/${user?.id}`,{
             method: "GET",
             headers: {
               'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const SharedNotes = () => {
         subject.filename.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const numStaticSkeletonCards = Math.max(0, 9 - filteredSubjects.length);
+    const numStaticSkeletonCards = 0 /* Math.max(0, 9 - filteredSubjects.length); */
     const cardsToDisplay = [...filteredSubjects.map(item => item), ...Array(numStaticSkeletonCards).fill(null)];
 
   return (

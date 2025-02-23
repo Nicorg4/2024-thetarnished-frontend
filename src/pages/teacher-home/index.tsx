@@ -79,7 +79,7 @@ const TeacherHome = () => {
         });
     };
 
-    const totalCards = 2;
+/*     const totalCards = 2; */
     const filteredReservations = filterReservationsByTime();
     const totalPages = Math.ceil(filteredReservations.length / cardsPerPage);
     
@@ -101,7 +101,7 @@ const TeacherHome = () => {
         (currentPage + 1) * cardsPerPage
     );
 
-    const skeletonCards = totalCards - paginatedReservations.length;
+    const skeletonCards = 0 /* totalCards - paginatedReservations.length; */
 
     return (
         <MainContainer >
@@ -179,19 +179,21 @@ const TeacherHome = () => {
                                           </CardFooter>
                                       </Card>
                                   ))}
-                                  {skeletonCards > 0 && 
+                                  {skeletonCards > 0 && skeletonCards < 2 &&
                                         Array.from({ length: skeletonCards }).map((_, index) => (
                                             <StaticSkeletonCard key={`skeleton-${index}`} />
                                     ))}
-                                   {skeletonCards === 3 && 
-                                    <Notification alternative={true} message='You don’t have any pending classes for this time scale.' />
+                                   {paginatedReservations.length === 0 && 
+                                    <Notification alternative={true} message='No pending classes for this time scale.' />
                                    }
-                              </CardsContainer>
-                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center' }}>
+                              {totalPages > 1 && (
+                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
                                     <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
                                     <PageNumber style={{ margin: '0 10px' }}>Page {filteredReservations.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
-                                    <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+                                    <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1 || currentPage === 0 && totalPages === 0}>Next</Button>
                                 </div>
+                              )}
+                              </CardsContainer>
                             </>
                           ) : (
                             <NoScheduleAlertContainer>

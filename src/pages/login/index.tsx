@@ -14,7 +14,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [isLogging, setIsLogging] = useState(false);
-    const [invalidCredentials, setInvalidCredentials] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showErrorMessage, setShowErrorMessage] = useState(false);
     
     const navigate = useNavigate();
     const URL  = import.meta.env.VITE_API_URL;
@@ -25,15 +26,20 @@ const Login = () => {
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        try{
+        try {
             setIsLogging(true);
             await login(email, password);
             setIsLogging(false);
         }
-        catch(error){
+        catch (error) {
             setIsLogging(false);
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage('An unknown error occurred');
+            }
+            setShowErrorMessage(true);
             console.error(error);
-            setInvalidCredentials(true);
         }
     }
 
@@ -64,7 +70,7 @@ const Login = () => {
                 </AnimatedStars>
             </StarsContainer>
                 <FormContainer>
-                    {invalidCredentials && <p style={{color: 'red'}}>Invalid credentials. Please try again.</p>}
+                    {showErrorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
                     <FormTitle>Welcome!</FormTitle>
                     <Form onSubmit={handleLogin}>
                         <InputText>Email:</InputText>

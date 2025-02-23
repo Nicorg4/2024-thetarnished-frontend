@@ -34,7 +34,7 @@ import EasterEggRiddle from '../../components/riddle';
     const [showDeleteAccountConfirmation, setShowDeleteAccountConfirmation] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [newSubjects, setNewSubjects] = useState<{ subjectid: string; subjectname: string; }[]>([]);
+    const [newSubjects, setNewSubjects] = useState<{ subjectid: string; subjectname: string; class_price: string }[]>([]);
     const [password, setPassword] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const [showTakeVacationPopup, setShowTakeVacationPopup] = useState(false);
@@ -133,7 +133,7 @@ import EasterEggRiddle from '../../components/riddle';
         setPassword('');
     };
 
-    const handleSubjectsChange = (selected: { subjectid: string; subjectname: string; }[]) => {
+    const handleSubjectsChange = (selected: { subjectid: string; subjectname: string; class_price: string }[]) => {
         setNewSubjects(selected);
     }
 
@@ -197,9 +197,6 @@ import EasterEggRiddle from '../../components/riddle';
     const handleProfileSave = async (event: React.FormEvent) => {
         event.preventDefault();
         setIsSaving(true);
-
-        console.log(newSubjects);
-
         if (!firstName || !lastName) {
             setMessage('Please fill all fields.');
             setShowErrorMessage(true);
@@ -234,10 +231,12 @@ import EasterEggRiddle from '../../components/riddle';
                 lastName: lastName,
                 subjects: newSubjects.map(subject => ({
                     subjectid: subject.subjectid,
-                    subjectname: subject.subjectname
+                    subjectname: subject.subjectname,
+                    class_price: subject.class_price
                 }))
             });
             setIsEditing(false);
+            setMessage("Profile updated successfully");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -269,7 +268,7 @@ import EasterEggRiddle from '../../components/riddle';
         }
         try{
             setIsConfirmingVacation(true);
-            const response = await fetch(`${URL}classes/assign-vacation`, {
+            const response = await fetch(`${URL}vacation/assign-vacation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -282,17 +281,23 @@ import EasterEggRiddle from '../../components/riddle';
                     enddate: dateRange[1]
                 }),
             });
-            if(response.status === 403) {
-                setMessage('Cannot take vacation during a reservation');
-                throw new Error('Failed to take vacation');
-            }
+            const data = await response.json();
             if (!response.ok) {
-                setMessage("Could not take vacation");
+                setMessage(data.message);
                 throw new Error('Failed to take vacation');
             }
-            updateUser({ isOnVacation: true });
+            setDateRange([null, null]);
+            const currentDate = new Date();
+            const startDate = new Date(dateRange[0]);
+            const endDate = new Date(dateRange[1]);
+            if(startDate <= currentDate && endDate >= currentDate) {
+                updateUser({ isOnVacation: true });
+            }
             setIsConfirmingVacation(false);
             setShowTakeVacationPopup(false);
+            setMessage('Vacation programmed successfully!');
+            updateUser({ has_planned_vacation: true });
+            updateUser({ vacation_range: `From ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}` });            
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -305,8 +310,7 @@ import EasterEggRiddle from '../../components/riddle';
             }, 3000);
             console.error(error);
         }   
-    }
-    
+    }    
     const handleTerminateVacation = async () => {
         setShowTerminateVacationPopup(true)
     }
@@ -318,7 +322,7 @@ import EasterEggRiddle from '../../components/riddle';
     const handleConfirmTerminateVacation = async () => {
         try{
             setIsConfirmingTerminateVacation(true);
-            const response = await fetch(`${URL}classes/stop-vacation`, {
+            const response = await fetch(`${URL}vacation/stop-vacation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -334,8 +338,11 @@ import EasterEggRiddle from '../../components/riddle';
                 throw new Error('Failed to terminate vacation');
             }
             updateUser({ isOnVacation: false });
+            updateUser({ has_planned_vacation: false });
+            updateUser({ vacation_range: '' });
             setIsConfirmingTerminateVacation(false);
             setShowTerminateVacationPopup(false);
+            setMessage("Vacation terminated successfully!");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -349,7 +356,6 @@ import EasterEggRiddle from '../../components/riddle';
             console.error(error);
         }
     }
-
     const [dateRange, setDateRange] = useState<[string | null, string | null]>([null, null]);
 
     const handleDateChange = (newDateRange: [dayjs.Dayjs | null, dayjs.Dayjs | null]) => {
@@ -399,6 +405,7 @@ import EasterEggRiddle from '../../components/riddle';
             updateUser({ avatar_id: selectedAvatarId });
             setIsSelectingAvatar(false);
             setShowAvatarSelectorPopup(false);
+            setMessage("Avatar updated successfully");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -452,8 +459,9 @@ import EasterEggRiddle from '../../components/riddle';
             <PopUpContainer>
                 <PopUp>
                     <h2>Are you sure you want to terminate your vacation?</h2>
+                    <p>{user?.vacation_range}</p>
                     <ButtonsContainer>
-                        <Button onClick={handleConfirmTerminateVacation}>{isConfirmingTerminateVacation ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Terminate vacation" }</Button>
+                        <Button important onClick={handleConfirmTerminateVacation}>{isConfirmingTerminateVacation ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Terminate vacation" }</Button>
                         <Button secondary onClick={handleCancelTerminateVacation}>Cancel</Button>
                     </ButtonsContainer>
                 </PopUp>
@@ -521,7 +529,7 @@ import EasterEggRiddle from '../../components/riddle';
                 </PopUpContainer>
             )}
         <MainContainer openRiddlePopUp={openRiddlePopUp} isPopupOpen={isPopupOpen} showTakeVacationPopup={showTakeVacationPopup} showDeleteAccountConfirmation={showDeleteAccountConfirmation} showTerminateVacationPopup={showTerminateVacationPopup} showAvatarSelectorPopup={showAvatarSelectorPopup}>
-            {showSuccessMessage && <Message>Your profile has been updated.</Message>}
+            {showSuccessMessage && <Message>{message}</Message>}
             {showErrorMessage && <Message error>{message}</Message>}
             <SideBar/>
             <Topbar/>
@@ -558,10 +566,10 @@ import EasterEggRiddle from '../../components/riddle';
                     </UserInfo>
                     {user?.role === 'TEACHER' && (
                         <VacationButtonContainer>
-                            {!user?.isOnVacation ? 
+                            {!user?.has_planned_vacation ? 
                             <VacationButton onClick={handleTakeVacation}><FaUmbrellaBeach /></VacationButton> 
                             : 
-                            <VacationButton important onClick={handleTerminateVacation}><FaUmbrellaBeach /></VacationButton>}
+                            <VacationButton onClick={handleTerminateVacation}>Planned vacation</VacationButton>}
                         </VacationButtonContainer>
                     )}
                     <BadgesContainer>
@@ -603,7 +611,7 @@ import EasterEggRiddle from '../../components/riddle';
                             <InputText>Last name:</InputText>
                             <Input type="text" id="username" placeholder="Username..." value={lastName} onChange={(e) => setLastName(e.target.value)} required ></Input>
                             {user?.role === 'TEACHER' && (
-                            <MultiAutocompleteInput alternative={true} defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname }))} onSelect={handleSubjectsChange}/>
+                            <MultiAutocompleteInput alternative={true} defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname, class_price: subject.class_price }))} onSelect={handleSubjectsChange}/>
                             )}
                             <ButtonsContainer>
                                 <Button type="submit">{isSaving ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Save"}</Button>

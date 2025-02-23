@@ -59,3 +59,10 @@ export const NotificationIcon = styled.div`
     }
    
 `
+
+export const PencilImage = styled.img`
+    z-index: 10;
+    @media (max-width: 800px) {
+        display: none;
+    }
+`

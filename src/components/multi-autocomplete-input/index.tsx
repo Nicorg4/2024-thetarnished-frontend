@@ -6,10 +6,11 @@ import { useEffect, useState } from 'react';
 interface Subject {
   subjectid: string;
   subjectname: string;
+  class_price: string;
 }
 
 interface MultiAutocompleteInputProps {
-  onSelect: (selectedOptions: { subjectid: string; subjectname: string }[]) => void;
+  onSelect: (selectedOptions: { subjectid: string; subjectname: string; class_price: string}[]) => void;
   defaultValue?: Subject[];
   alternative?: boolean;
 }
@@ -52,6 +53,7 @@ export default function MultiAutocompleteInput({ onSelect, defaultValue = [], al
         const selectedSubjects = value.map((option) => ({
           subjectid: option.subjectid,
           subjectname: option.subjectname,
+          class_price: option.class_price,
         }));
         onSelect(selectedSubjects);
       }}

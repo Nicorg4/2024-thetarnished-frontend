@@ -1,7 +1,7 @@
 import Logo from '../../components/top-down-logo'
 import Topbar from '../../components/topbar'
 import SideBar from '../../components/sidebar/sidebar'
-import { BrowserWrapper, Card, CardInfo, CardsContainer, Content, Currency, LoadingSkeletonCard, MainContainer, NoSubjectsFound, PageTitle, PriceInput, PriceInputContainer, StaticSkeletonCard, Title, UpdateButton } from './components'
+import { BrowserWrapper, Card, CardInfo, CardsContainer, Content, Currency, MainContainer, NoSubjectsFound, PageTitle, PriceInput, PriceInputContainer, StaticSkeletonCard, Title, UpdateButton } from './components'
 import { useEffect, useState } from 'react';
 import Notification from '../../components/notification';
 import TextInput from '../../components/search-input';
@@ -11,6 +11,7 @@ import { useAuth } from '../../auth/useAuth';
 import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { Message } from '../../components/message/components';
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 import { motion } from 'framer-motion';
 
 interface Subject {
@@ -44,7 +45,6 @@ const UpdateSubjects = () => {
             });
             const data = await response.json();
             setSubjects(data);
-            console.log(data);
             setIsLoading(false);
             } catch (error) {
             console.error('Error fetching subjects:', error);
@@ -122,19 +122,17 @@ const UpdateSubjects = () => {
             >
             <PageTitle>Update subjects</PageTitle>
             </motion.div>
-            <BrowserWrapper>
                 {isLoading ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
-                        {Array.from({ length: 9 }).map((_, index) => (
-                            <LoadingSkeletonCard key={index} />
-                        ))}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                        <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
                     </div>
                 ) : (
-                    (subjects.length === 0) ? 
+            <BrowserWrapper>
+                    {subjects.length === 0 ? (
                     <NoSubjectsFound>
                         <Notification alternative={true} message={"There are no subjects to display."} />
                     </NoSubjectsFound>
-                    : (
+                    ) : (
                     <>
                     <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
                         <TextInput
@@ -169,9 +167,9 @@ const UpdateSubjects = () => {
                         ))}
                     </CardsContainer>
                     </>
-                    )
-                )}
+                    )}
                 </BrowserWrapper>
+                )}
             </Content>
     </MainContainer>
   )

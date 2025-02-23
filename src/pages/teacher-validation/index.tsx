@@ -1,6 +1,6 @@
 import { useAuth } from "../../auth/useAuth";
 import { useEffect, useState } from "react";
-import { BrowserWrapper, ButtonsContainer, Card, CardInfo, CardsContainer, Content, Instructor, LoadingSkeletonCard, MainContainer, NoTeachersFound, PageTitle, StaticSkeletonCard, Title } from "./components";
+import { BrowserWrapper, ButtonsContainer, Card, CardInfo, CardsContainer, Content, Instructor, MainContainer, NoTeachersFound, PageTitle, StaticSkeletonCard, Title } from "./components";
 import Logo from "../../components/top-down-logo";
 import { PopUp, PopUpContainer } from "../../components/popup/components";
 import { Button } from "../../components/main-button/components";
@@ -16,6 +16,7 @@ import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/comp
 import SimplifiedLogo from '../../assets/Logo transparent.png'
 import { Message } from "../../components/message/components";
 import { motion } from 'framer-motion';
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 
 interface Teacher {
     teacherid: number;
@@ -60,7 +61,7 @@ const TeacherValidation = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setTeachers(data || []);	
+                setTeachers(data);	
                 setIsLoading(false);
             }catch (error) {
                 setTeachers([]);
@@ -206,10 +207,8 @@ const TeacherValidation = () => {
                 </motion.div>
                     <BrowserWrapper>
                         {isLoading ? (
-                            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
-                                {Array.from({ length: 9 }).map((_, index) => (
-                                    <LoadingSkeletonCard key={index} />
-                                ))}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                                <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
                             </div>
                         ) : (
                             (teachers.length === 0) ? 

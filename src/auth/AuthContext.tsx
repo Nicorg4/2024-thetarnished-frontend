@@ -24,11 +24,14 @@ export interface User {
   subjects: {
     subjectid: string;
     subjectname: string;
+    class_price: string;
   }[];
   schedule?: ScheduleEntry[];
   isActive: boolean;
   role: 'STUDENT' | 'TEACHER' | 'ADMIN';
   isOnVacation: boolean;
+  has_planned_vacation: boolean;
+  vacation_range: string;
   token: string;
   avatar_id: number;
   xp: number;
