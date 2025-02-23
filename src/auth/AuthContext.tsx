@@ -24,6 +24,7 @@ export interface User {
   subjects: {
     subjectid: string;
     subjectname: string;
+    class_price: string;
   }[];
   schedule?: ScheduleEntry[];
   isActive: boolean;

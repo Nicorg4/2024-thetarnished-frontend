@@ -66,8 +66,17 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
     const [isCreatingGoogleMeetPopupOpen, setIsCreatingGoogleMeetPopupOpen] = useState(false);
     const [isCreatingGoogleMeet, setIsCreatingGoogleMeet] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
-    const cardsPerPage = 3; 
+    const [cardsPerPage, setCardsPerPage] = useState(window.innerWidth < 600 ? 2 : 3);
     const URL = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        const handleResize = () => {
+          setCardsPerPage(window.innerWidth < 600 ? 2 : 3);
+        };
+    
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      }, []);
 
     const getReservationsForTeacher = async () => {
         try {
@@ -217,8 +226,8 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
         setIsCreatingGoogleMeetPopupOpen(true);
     };
 
-    const totalCards = 3;
-    const skeletonCards = totalCards - paginatedReservations.length;
+    /* const totalCards = 3; */
+    const skeletonCards = 0/* totalCards - paginatedReservations.length; */
 
     const createMeeting = async () => {
         if (!currentReservation) {
@@ -341,7 +350,8 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                     <AnimatedLoadingLogo src={TransparentLogoAlt} width='70px' height='70px' />
                 </div>
             ) : reservations.length > 0 ? (
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', height: '95%' }}>
                 <CardsContainer>
                     {paginatedReservations.map((reservation) => (
                         <Card key={reservation.id}>
@@ -376,7 +386,7 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                                     <ChatButton title='Initiate chat' onClick={()=> navigateToChat(reservation.students[0].id)}><IoChatbubbleEllipses/></ChatButton> 
                                 }
                                 {new Date(reservation.datetime) > new Date() && (
-                                    <Button onClick={() => handleCreateNewExam(reservation)}>Create exam</Button>
+                                    <Button onClick={() => handleCreateNewExam(reservation)}>New exam</Button>
                                 )}
                                 {!reservation.meeting_id ? (
                                     <GoogleMeetButton onClick={() => handleCreateGoogleMeet(reservation)}>Create <FaVideo/></GoogleMeetButton>
@@ -395,13 +405,16 @@ const ClassManager = ({toggleContainer}: {toggleContainer: () => void}) => {
                         Array.from({ length: skeletonCards }).map((_, index) => (
                             <StaticSkeletonCard key={`skeleton-${index}`} />
                     ))}
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
-                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
-                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
-                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
-                        </div>
+                        {totalPages > 1 && (
+                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
+                                <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                                <PageNumber style={{ margin: '0 10px' }}>Page {paginatedReservations.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                                <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1 || currentPage === 0 && totalPages === 0}>Next</Button>
+                            </div>
+                        )}
                 </CardsContainer>
                 </motion.div>
+                </div>
             ) : (
                 <NotificationContainer>
                     <Notification alternative={true} message={"You don't have any class to manage."} />

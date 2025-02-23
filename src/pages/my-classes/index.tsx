@@ -64,7 +64,7 @@ const MyClasses = () => {
                     throw new Error('Failed to fetch student reservations');
                 }
                 const data = await response.json();
-                setReservations(data);
+                setReservations(data || []);
                 setIsLoading(false);
             } catch (error) {
                 console.error(error);
@@ -95,8 +95,8 @@ const MyClasses = () => {
         (currentPage + 1) * cardsPerPage
     );
 
-    const totalCards = 3;
-    const skeletonCards = totalCards - paginatedReservations.length;
+    /* const totalCards = 3; */
+    const skeletonCards = 0 /* totalCards - paginatedReservations.length; */
 
     const handleJoinGoogleMeet = (reservation: Reservation) => {
         window.open(reservation.meet_link, "_blank");
@@ -136,7 +136,7 @@ const MyClasses = () => {
                 ) : reservations.length > 0 ? (
                     <>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }}>
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, delay: 0.4 }} style={{ display: 'flex', flexDirection: 'column', height: '80%' }}>
                         {paginatedReservations.map((reservation) => (
                             <Card key={reservation.id}>
                                 <CardHeader>
@@ -161,11 +161,13 @@ const MyClasses = () => {
                             Array.from({ length: skeletonCards }).map((_, index) => (
                                 <StaticSkeletonCard key={`skeleton-${index}`} />
                         ))}
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
-                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
-                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
-                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
-                        </div>
+                        {totalPages > 1 && (
+                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
+                                <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                                <PageNumber style={{ margin: '0 10px' }}>Page {paginatedReservations.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                                <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1 || currentPage === 0 && totalPages === 0}>Next</Button>
+                            </div>
+                        )}
                     </motion.div>
                     </div>
                     </>

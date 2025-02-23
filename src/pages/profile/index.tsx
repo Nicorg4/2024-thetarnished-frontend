@@ -34,7 +34,7 @@ import EasterEggRiddle from '../../components/riddle';
     const [showDeleteAccountConfirmation, setShowDeleteAccountConfirmation] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [message, setMessage] = useState('');
-    const [newSubjects, setNewSubjects] = useState<{ subjectid: string; subjectname: string; }[]>([]);
+    const [newSubjects, setNewSubjects] = useState<{ subjectid: string; subjectname: string; class_price: string }[]>([]);
     const [password, setPassword] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const [showTakeVacationPopup, setShowTakeVacationPopup] = useState(false);
@@ -133,7 +133,7 @@ import EasterEggRiddle from '../../components/riddle';
         setPassword('');
     };
 
-    const handleSubjectsChange = (selected: { subjectid: string; subjectname: string; }[]) => {
+    const handleSubjectsChange = (selected: { subjectid: string; subjectname: string; class_price: string }[]) => {
         setNewSubjects(selected);
     }
 
@@ -231,7 +231,8 @@ import EasterEggRiddle from '../../components/riddle';
                 lastName: lastName,
                 subjects: newSubjects.map(subject => ({
                     subjectid: subject.subjectid,
-                    subjectname: subject.subjectname
+                    subjectname: subject.subjectname,
+                    class_price: subject.class_price
                 }))
             });
             setIsEditing(false);
@@ -610,7 +611,7 @@ import EasterEggRiddle from '../../components/riddle';
                             <InputText>Last name:</InputText>
                             <Input type="text" id="username" placeholder="Username..." value={lastName} onChange={(e) => setLastName(e.target.value)} required ></Input>
                             {user?.role === 'TEACHER' && (
-                            <MultiAutocompleteInput alternative={true} defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname }))} onSelect={handleSubjectsChange}/>
+                            <MultiAutocompleteInput alternative={true} defaultValue={user?.subjects?.map(subject => ({ subjectid: subject.subjectid.toString(), subjectname: subject.subjectname, class_price: subject.class_price }))} onSelect={handleSubjectsChange}/>
                             )}
                             <ButtonsContainer>
                                 <Button type="submit">{isSaving ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Save"}</Button>

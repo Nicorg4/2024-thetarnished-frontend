@@ -80,6 +80,10 @@ export const CardsContainer = styled.div`
     justify-content: center;
     align-items: center;
     padding-top: 20px;
+
+    @media (max-width: 600px){
+        width: 99%;
+    }
 `
 
 export const Card = styled.div`
@@ -93,7 +97,7 @@ export const Card = styled.div`
     padding-bottom: 5px;
     transition: transform 0.2s ease;
     width: 500px ;
-    min-height: 170px;
+    min-height: 150px;
 
     &:hover {
         transform: translateY(-5px);
@@ -102,7 +106,7 @@ export const Card = styled.div`
     @media (max-width: 600px){
         margin: auto ;
         margin-bottom: 10px;
-        width: 90%;
+        width: 99%;
     }
 `;
 
@@ -125,7 +129,6 @@ export const HeaderText = styled.p`
 `
 
 export const CardBody = styled.div`
-    padding: 10px;
 `;
 
 export const CardInfo = styled.div`
@@ -149,7 +152,7 @@ export const CardFooter = styled.div`
     justify-content: flex-end;
     text-align: center;
     width: 97%;
-    margin-top: 20px;
+    margin-top: 5px;
 `
 
 const skeletonLoading = keyframes`
@@ -176,11 +179,7 @@ export const StaticSkeletonCard = styled.div`
   margin-bottom: 10px;
   padding-bottom: 5px;
 
-  @media (max-width: 600px){
-        margin: auto ;
-        margin-bottom: 10px;
-        width: 90%;
-    }
+  
 `;
 
 export const LoadingSkeletonCard = styled.div`

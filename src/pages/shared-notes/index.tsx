@@ -92,7 +92,7 @@ const SharedNotes = () => {
         subject.filename.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const numStaticSkeletonCards = Math.max(0, 9 - filteredSubjects.length);
+    const numStaticSkeletonCards = 0 /* Math.max(0, 9 - filteredSubjects.length); */
     const cardsToDisplay = [...filteredSubjects.map(item => item), ...Array(numStaticSkeletonCards).fill(null)];
 
   return (

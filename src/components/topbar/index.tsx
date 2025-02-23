@@ -88,6 +88,14 @@ const getXpNeededForNextLvl = () => {
     }
 };
 
+const handleNavigateProfile = () => {
+  if (user?.role === 'ADMIN') {
+      return
+  } else {
+      navigate('/profile');
+  }
+};
+
   return (
     <TopbarContainer>
         <MenuWrapper>
@@ -100,7 +108,7 @@ const getXpNeededForNextLvl = () => {
         {isMenuOpen && (
         <FullMenuContainer isOpen={isMenuOpen}>
           <UserInfo>
-            <UserImageAlt src={getAvatarSource()} alt="User Image" />
+            <UserImageAlt src={getAvatarSource()} alt="User Image" onClick={handleNavigateProfile}/>
                 {(user?.role !== 'ADMIN') && (
                 <>
                     <UserName>{user && `${user.firstName} ${user.lastName}`}</UserName>

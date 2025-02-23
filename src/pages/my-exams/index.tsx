@@ -103,7 +103,7 @@ const ExamViewer = () => {
           }
         );
         const data = await response.json();
-        setExams(Array.isArray(data) ? data : []);
+        setExams(data || []);
       } catch (error) {
         console.error('Error fetching exams:', error);
       } finally {
@@ -215,11 +215,13 @@ const ExamViewer = () => {
           </CardsContainer>
           
         
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
-            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
-            <PageNumber style={{ margin: '0 10px' }}>Page {paginatedExams.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
-            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
-        </div>
+        {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
+                <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                <PageNumber style={{ margin: '0 10px' }}>Page {paginatedExams.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1 || currentPage === 0 && totalPages === 0}>Next</Button>
+            </div>
+        )}
         </>
         )}
       </Content>

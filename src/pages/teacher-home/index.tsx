@@ -79,7 +79,7 @@ const TeacherHome = () => {
         });
     };
 
-    const totalCards = 2;
+/*     const totalCards = 2; */
     const filteredReservations = filterReservationsByTime();
     const totalPages = Math.ceil(filteredReservations.length / cardsPerPage);
     
@@ -101,7 +101,7 @@ const TeacherHome = () => {
         (currentPage + 1) * cardsPerPage
     );
 
-    const skeletonCards = totalCards - paginatedReservations.length;
+    const skeletonCards = 0 /* totalCards - paginatedReservations.length; */
 
     return (
         <MainContainer >
@@ -183,7 +183,7 @@ const TeacherHome = () => {
                                         Array.from({ length: skeletonCards }).map((_, index) => (
                                             <StaticSkeletonCard key={`skeleton-${index}`} />
                                     ))}
-                                   {skeletonCards === 2 && 
+                                   {paginatedReservations.length === 0 && 
                                     <Notification alternative={true} message='No pending classes for this time scale.' />
                                    }
                               {totalPages > 1 && (

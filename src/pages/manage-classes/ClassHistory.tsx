@@ -84,8 +84,8 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
         (currentPage + 1) * cardsPerPage
     );
 
-    const totalCards = 3;
-    const skeletonCards = totalCards - paginatedReservations.length;
+/*     const totalCards = 3; */
+    const skeletonCards = 0 /* totalCards - paginatedReservations.length; */
 
   return (
     <MainContainer isCreateExamPopupOpen={false} isPopupOpen={false}>
@@ -122,11 +122,13 @@ const ClassHistory = ({toggleContainer}: {toggleContainer: () => void}) => {
                         Array.from({ length: skeletonCards }).map((_, index) => (
                             <StaticSkeletonCard key={`skeleton-${index}`} />
                     ))}
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', alignItems: 'center'}}>
-                            <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
-                            <PageNumber style={{ margin: '0 10px' }}>Page {currentPage + 1} of {totalPages}</PageNumber>
-                            <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
-                        </div>
+                        {totalPages > 1 && (
+                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
+                                <Button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</Button>
+                                <PageNumber style={{ margin: '0 10px' }}>Page {paginatedReservations.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                                <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1 || currentPage === 0 && totalPages === 0}>Next</Button>
+                            </div>
+                        )}
                 </CardsContainer>
                 </motion.div>
             ) : (
