@@ -51,6 +51,13 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
             }
         };
 
+        const timeoutId = setTimeout(() => {
+            if (!reservationId || !user?.token) {
+                setMessage("Error: Unable to process the request. Please try again.");
+                setIsLoading(false);
+            }
+        }, 7000);
+
         if (reservationId && user?.token) {
             if (mode === 'confirm' && teacherId) {
                 handleClassAction(`reservation/confirm-reservation/${reservationId}`, 'confirmed', teacherId);
@@ -58,7 +65,10 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
                 handleClassAction(`reservation/reject/${reservationId}`, 'rejected');
             }
         }
+
+        return () => clearTimeout(timeoutId);
     }, [URL, reservationId, teacherId, mode, user?.token]);    
+    
     return (
         <MainContainer>
             <Logo/>

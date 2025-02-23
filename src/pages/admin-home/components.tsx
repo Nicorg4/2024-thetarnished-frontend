@@ -4,6 +4,8 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title as Char
 import styled, { keyframes } from 'styled-components';
 import colors from '../../assets/colors';
 import { useAuth } from '../../auth/useAuth';
+import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/components';
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ChartTitle, Tooltip, Legend);
 
@@ -160,6 +162,7 @@ const Dashboard: React.FC = () => {
     const [totalTeachers, setTeachers] = React.useState(0);
     const [monthlyReservationsData, setMonthlyReservationsData] = React.useState<number[]>([]);
     const [width, setWidth] = React.useState(window.innerWidth);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     const getLastMonths = () => {
         const months = [
@@ -217,7 +220,9 @@ const Dashboard: React.FC = () => {
             setTotalStudents(data.totalStudents);
             setTeachers(data.totalTeachers);
             setMonthlyReservationsData(data.monthlyReservations);
-        }catch(error){ 
+            setIsLoading(false);
+        }catch(error){
+            setIsLoading(false);
             console.error("Error fetching app analytics: ", error);
         }
     }
@@ -235,23 +240,31 @@ const Dashboard: React.FC = () => {
     
     return (
         <DashboardContainer>
+            {isLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                    <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
+                </div>
+            ) : (
+            <>
             <StatsContainer>
                 <StatCard>
-                    <h2>Total Students</h2>
+                    <h2>Total Students:</h2>
                     <p>{totalStudents}</p>
                 </StatCard>
                 <StatCard>
-                    <h2>Total Teachers</h2>
+                    <h2>Total Teachers:</h2>
                     <p>{totalTeachers}</p>
                 </StatCard>
                 <StatCard>
-                    <h2>Total Reservations</h2>
+                    <h2>Total Reservations:</h2>
                     <p>{totalReservations}</p>
                 </StatCard>
             </StatsContainer>
             <ChartContainer>
                 <Bar data={data} options={options} />
             </ChartContainer>
+            </>
+            )}
         </DashboardContainer>
     );
 };

@@ -44,7 +44,7 @@ const UpdateSubjects = () => {
                 },
             });
             const data = await response.json();
-            setSubjects(data);
+            setSubjects(data || []);
             setIsLoading(false);
             } catch (error) {
             console.error('Error fetching subjects:', error);
@@ -59,7 +59,7 @@ const UpdateSubjects = () => {
         subject.subjectname.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const numStaticSkeletonCards = Math.max(0, 9 - filteredSubjects.length);
+    const numStaticSkeletonCards = 0 /* Math.max(0, 9 - filteredSubjects.length); */
     const cardsToDisplay = [...filteredSubjects.map(item => item), ...Array(numStaticSkeletonCards).fill(null)];
 
     const handlePriceChange = (index: number, newPrice: number) => {
@@ -127,14 +127,10 @@ const UpdateSubjects = () => {
                         <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
                     </div>
                 ) : (
-            <BrowserWrapper>
-                    {subjects.length === 0 ? (
-                    <NoSubjectsFound>
-                        <Notification alternative={true} message={"There are no subjects to display."} />
-                    </NoSubjectsFound>
-                    ) : (
                     <>
-                    <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
+                <BrowserWrapper>
+                {subjects.length !== 0 && (
+                    <div style={{ display: 'flex', marginBottom: '20px', alignItems:'center', width: '100%', justifyContent: 'center'}}>
                         <TextInput
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
@@ -142,6 +138,8 @@ const UpdateSubjects = () => {
                             placeholder='Search for a subject...'
                         />
                     </div>
+                    )}
+                    {cardsToDisplay.length > 0 ? (
                     <CardsContainer style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
                         {cardsToDisplay.map((subject, index) => (
                             subject ? (
@@ -166,9 +164,14 @@ const UpdateSubjects = () => {
                             )
                         ))}
                     </CardsContainer>
-                    </>
+                    ) : (
+                        <NoSubjectsFound>
+                            <Notification alternative={true} message={"There are no subjects to display."} />
+                        </NoSubjectsFound>
+          
                     )}
                 </BrowserWrapper>
+                </>
                 )}
             </Content>
     </MainContainer>

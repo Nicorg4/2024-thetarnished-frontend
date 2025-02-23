@@ -118,9 +118,8 @@ export const BrowserWrapper = styled.div`
     width: 90%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 10px;
+    height: 100%;
 `;
 
 export const Card = styled.div`

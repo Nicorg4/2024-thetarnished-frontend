@@ -61,7 +61,7 @@ const TeacherValidation = () => {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setTeachers(data);	
+                setTeachers(data || []);	
                 setIsLoading(false);
             }catch (error) {
                 setTeachers([]);
@@ -211,13 +211,9 @@ const TeacherValidation = () => {
                                 <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
                             </div>
                         ) : (
-                            (teachers.length === 0) ? 
-                            <NoTeachersFound>
-                                <Notification alternative={true} message={"There are no teachers to display."} />
-                            </NoTeachersFound>
-                            : (
                             <>
-                            <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
+                            {teachers.length !== 0 && (
+                            <div style={{ display: 'flex', marginBottom: '20px', alignItems:'center', width: '100%', justifyContent: 'center'}}>
                                 <TextInput
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
@@ -225,6 +221,8 @@ const TeacherValidation = () => {
                                     placeholder='Search for a teacher...'
                                 />
                             </div>
+                            )}
+                            {cardsToDisplay.length > 0 ? (
                             <CardsContainer>
                                 {cardsToDisplay.map((teacher, index) => (
                                     teacher ? (
@@ -254,8 +252,13 @@ const TeacherValidation = () => {
                                     )
                                 ))}
                             </CardsContainer>
+                            ) : (
+                                <NoTeachersFound>
+                                    <Notification alternative={true} message={"There are no teachers to display."} />
+                                </NoTeachersFound>
+                  
+                              )}
                             </>
-                            )
                         )}
                         </BrowserWrapper>
                     </Content>

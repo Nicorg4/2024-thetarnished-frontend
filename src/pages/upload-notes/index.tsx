@@ -370,15 +370,10 @@ const UploadNotes = () => {
                 <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
             </div>
         ) : (
-            (files.length === 0) ? 
-            <NoSubjectsFound>
-                <Notification alternative={true} message={"There are no notes to display."} />
-                <Button onClick={handleUploadFilePopUpOpen}><LuUpload size={25}/></Button>
-            </NoSubjectsFound>
-            : (
             <>
             <BrowserWrapper>
-            <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
+            {files.length !== 0 && (
+            <div style={{ display: 'flex', marginBottom: '20px', alignItems:'center', width: '100%', justifyContent: 'center'}}>
                 <TextInput
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
@@ -387,7 +382,8 @@ const UploadNotes = () => {
                 />
                 <Button onClick={handleUploadFilePopUpOpen}><LuUpload size={25}/></Button>
             </div>
-            
+            )}
+            {cardsToDisplay.length > 0 ? (
             <CardsContainer style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
                 {cardsToDisplay.map((file, index) => (
                     file ? (
@@ -411,9 +407,14 @@ const UploadNotes = () => {
                     )
                 ))}
             </CardsContainer>
+            ) : (
+              <NoSubjectsFound>
+                  <Notification alternative={true} message={"There are no notes to display."} />
+              </NoSubjectsFound>
+
+            )}
             </BrowserWrapper>
             </>
-            )
         )}
         
       </Content>

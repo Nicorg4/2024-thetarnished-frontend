@@ -60,9 +60,8 @@ export const BrowserWrapper = styled.div`
     width: 90%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 10px;
+    height: 100%;
     margin-top: 20px;
 `;
 
@@ -142,8 +141,11 @@ export const StaticSkeletonCard = styled.div`
 export const NoSubjectsFound = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 5%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
 `
+
 export const CardsContainer = styled.div`
     width: 90%;
     display: flex;

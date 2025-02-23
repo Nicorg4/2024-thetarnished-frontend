@@ -66,6 +66,10 @@ export const Content = styled.div`
     }
 `
 
+export const MainWrapper = styled.div`
+    height: 100%;
+`
+
 export const ContentTitle = styled.h2`
     font-size: 24px;
     font-weight: bold;
@@ -230,4 +234,11 @@ export const TutorialButton = styled.button`
 export const PageNumber = styled.span`
     color: ${colors.primary};
     font-weight: 400;
+`
+
+export const NotificationContainer = styled.div`
+    height: 100%;
+    display: flex;
+    justify-content: center ;
+    align-items: center;
 `

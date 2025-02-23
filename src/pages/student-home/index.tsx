@@ -1,4 +1,4 @@
-import { Content, MainContainer, CardsWrapper, Card, CardSubject, ButtonsContainer, TutorialButtonContainer, TutorialButton, PageNumber } from "./components";
+import { Content, MainContainer, CardsWrapper, Card, CardSubject, ButtonsContainer, TutorialButtonContainer, TutorialButton, PageNumber, MainWrapper, NotificationContainer } from "./components";
 import SideBar from "../../components/sidebar/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -151,10 +151,9 @@ const Home = () => {
             </div>
           </>
         ) : (     
-          <>
-          {currentSubjects.length > 0 ? (
-            <>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+          <MainWrapper>
+            {subjects.length !== 0 && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
               <TextInput
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
@@ -162,7 +161,11 @@ const Home = () => {
                   placeholder = "Search for a subject..."
                />
             </div>
+            )}
+            
 
+            {currentSubjects.length > 0 ? (
+            <>
             <CardsWrapper>
               {currentSubjects.map((subject, index) => (
                 <motion.div
@@ -190,17 +193,21 @@ const Home = () => {
               
             </CardsWrapper>
 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Button onClick={handlePrevPage} disabled={currentPage === 0}>Previous</Button>
-                <PageNumber style={{ margin: '0 10px' }}>Page {currentSubjects.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
-                <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</Button>
-            </div>
+            {totalPages > 1 && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', alignItems: 'center' }}>
+                  <Button onClick={handlePrevPage} disabled={currentPage === 0}>Previous</Button>
+                  <PageNumber style={{ margin: '0 10px' }}>Page {currentSubjects.length !== 0 ? currentPage + 1 : 0} of {totalPages}</PageNumber>
+                  <Button onClick={handleNextPage} disabled={currentPage === totalPages - 1 || currentPage === 0 && totalPages === 0}>Next</Button>
+              </div>
+            )}
           </>
           ) : (
-            <Notification alternative message='No subjects available at the moment.'/>
+            <NotificationContainer>
+              <Notification alternative message='No subjects available.'/>
+            </NotificationContainer>
           )
           }
-          </>
+          </MainWrapper>
         )}
         <TutorialButtonContainer>
             <TutorialButton onClick={() => setShowTutorialPopUp(true)}><PiWarningCircle /></TutorialButton>

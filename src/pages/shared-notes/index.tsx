@@ -117,23 +117,21 @@ const SharedNotes = () => {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
                 <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
             </div>
-        ) : (
-            (files.length === 0) ? 
-            <NoSubjectsFound>
-                <Notification alternative={true} message={"There are no notes to display."} />
-            </NoSubjectsFound>
-            : (
+          ) : (
             <>
             <BrowserWrapper>
-            <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
+              {files.length !== 0 && (
+                <div style={{ display: 'flex', marginBottom: '20px', alignItems:'center', width: '100%', justifyContent: 'center'}}>
                 <TextInput
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     icon={<LiaSchoolSolid />}
                     placeholder='Search for a file...'
                 />
-            </div>
+              </div>
+              )}
             
+            {cardsToDisplay.length > 0 ? (
             <CardsContainer style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
                 {cardsToDisplay.map((file, index) => (
                     file ? (
@@ -156,9 +154,14 @@ const SharedNotes = () => {
                     )
                 ))}
             </CardsContainer>
+            ) : (
+              <NoSubjectsFound>
+                  <Notification alternative={true} message={"There are no notes to display."} />
+              </NoSubjectsFound>
+
+            )}
             </BrowserWrapper>
             </>
-            )
         )}
         
       </Content>

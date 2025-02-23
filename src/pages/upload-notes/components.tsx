@@ -111,15 +111,12 @@ export const FileName = styled.h3`
 export const FileType = styled.p`
     font-size: 14px;
     color:${colors.primary};
-
 `
 
 export const BrowserWrapper = styled.div`
     width: 90%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 10px;
     margin-top: 20px;
     max-height: 650px;
@@ -205,8 +202,11 @@ export const StaticSkeletonCard = styled.div`
 export const NoSubjectsFound = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 5%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
 `
+
 export const CardsContainer = styled.div`
     width: 90%;
     display: flex;
