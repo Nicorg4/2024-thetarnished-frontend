@@ -1,4 +1,4 @@
-import { Content, MainContainer, CardsWrapper, Card, CardSubject, SkeletonCard, ButtonsContainer, TutorialButtonContainer, TutorialButton, PageNumber } from "./components";
+import { Content, MainContainer, CardsWrapper, Card, CardSubject, ButtonsContainer, TutorialButtonContainer, TutorialButton, PageNumber } from "./components";
 import SideBar from "../../components/sidebar/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -12,6 +12,8 @@ import { LiaSchoolSolid } from "react-icons/lia";
 import { PopUp, PopUpContainer } from "../../components/popup/components";
 import { PiWarningCircle } from "react-icons/pi";
 import Logo from "../../components/top-down-logo";
+import { AnimatedLoadingLogo } from "../../components/animated-loading-logo/components";
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 
 
 interface Subject {
@@ -79,10 +81,8 @@ const Home = () => {
         }
 
         const data = await response.json();
-        setSubjects(data.results);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1500);
+        setSubjects(data.results || []);	
+        setIsLoading(false);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -102,8 +102,8 @@ const Home = () => {
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentSubjects = filteredSubjects.slice(startIndex, endIndex);
-  const skeletonCount = ITEMS_PER_PAGE - currentSubjects.length;
-
+  const skeletonCount = 0/* ITEMS_PER_PAGE - currentSubjects.length;
+ */
   const handleClosePopup = () => {
     setShowTutorialPopUp(false)
   }
@@ -146,12 +146,9 @@ const Home = () => {
       <Content>
         {isLoading ? (
           <>
-            <h2>Loading subjects...</h2>
-            <CardsWrapper>
-              {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-                <SkeletonCard key={index}></SkeletonCard>
-              ))}
-            </CardsWrapper>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
+            </div>
           </>
         ) : (     
           <>

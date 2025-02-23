@@ -12,6 +12,7 @@ import { HiOutlineQuestionMarkCircle } from "react-icons/hi2";
 import { PiRanking } from "react-icons/pi";
 import { MdOutlineQuiz } from "react-icons/md";
 import { FaRegNoteSticky } from "react-icons/fa6";
+import { useNavigate } from 'react-router-dom';
 
 
 const SideBar: React.FC = () => {
@@ -60,12 +61,22 @@ const SideBar: React.FC = () => {
         }
     };
 
+    const navigate = useNavigate();
+
+    const handleNavigateProfile = () => {
+        if (user?.role === 'ADMIN') {
+            return
+        } else {
+            navigate('/profile');
+        }
+    };
+
     return (
         <>
         <NavbarContainer isOpen={isOpen}>
             <MainContentWrapper>
             <UserInfo>
-            <UserImage src={getAvatarSource()} alt="User Image" />
+            <UserImage src={getAvatarSource()} alt="User Image" onClick={handleNavigateProfile}/>
                 {(user?.role !== 'ADMIN') && (
                 <>
                     <UserName>{showContent && user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : ''}</UserName>
@@ -80,26 +91,49 @@ const SideBar: React.FC = () => {
                                 style={{ color: "grey" }} 
                             />
                         </UserLevel>
-                    )}   
-                    <XpTutorial visible={showXpTutorial}>
-                        <div className="xp-tutorial-content">
-                            <h2>How to Earn Experience Points (XP)</h2>
-                            <ul>
-                                <li>
-                                    <strong>Reserve a Class:</strong> Earn 50 XP for each class reserved.
-                                </li>
-                                <li>
-                                    <strong>Complete a Class:</strong> Earn 100 XP for each class completed.
-                                </li>
-                                <li>
-                                    <strong>Pass an Exam:</strong> Earn 200 XP for each exam passed.
-                                </li>
-                                <li>
-                                    <strong>Complete the daily quiz:</strong> Earn 10 XP for each question answered correctly.
-                                </li>
-                            </ul>
-                        </div>
-                    </XpTutorial>
+                    )}
+                    {user?.role === 'TEACHER' ? (
+                        <XpTutorial visible={showXpTutorial}>
+                            <div className="xp-tutorial-content">
+                                <h2>How to Earn Experience Points (XP)</h2>
+                                <ul>
+                                    <li>
+                                        <strong>Confirm a Class:</strong> Earn 50 XP for each class confirmed.
+                                    </li>
+                                    <li>
+                                        <strong>Complete a Class:</strong> Earn 100 XP for each class completed.
+                                    </li>
+                                    <li>
+                                        <strong>Create an Exam:</strong> Earn 50 XP for each exam created.
+                                    </li>
+                                    <li>
+                                        <strong>Complete the daily quiz:</strong> Earn 10 XP for each question answered correctly.
+                                    </li>
+                                </ul>
+                            </div>
+                        </XpTutorial>
+                    ) : (
+                        <XpTutorial visible={showXpTutorial}>
+                            <div className="xp-tutorial-content">
+                                <h2>How to Earn Experience Points (XP)</h2>
+                                <ul>
+                                    <li>
+                                        <strong>Reserve a Class:</strong> Earn 50 XP for each class reserved.
+                                    </li>
+                                    <li>
+                                        <strong>Complete a Class:</strong> Earn 100 XP for each class completed.
+                                    </li>
+                                    <li>
+                                        <strong>Pass an Exam:</strong> Earn 200 XP for each exam passed.
+                                    </li>
+                                    <li>
+                                        <strong>Complete the daily quiz:</strong> Earn 10 XP for each question answered correctly.
+                                    </li>
+                                </ul>
+                            </div>
+                        </XpTutorial>
+                    )}
+                    
                 </>
                 )}
                 

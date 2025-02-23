@@ -13,15 +13,18 @@ export const MainContainer =  styled.div`
 export const Content = styled.div`
     width: 90% ;
     height: 100% ;
-    margin-left: 100px;
     display: flex ;
     flex-direction: column;
     align-items: center ;
     justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
     @media (max-width: 1000px){
         margin-left: 0;
-        width: 100% ;
+        width: 90% ;
     }
 `
 
@@ -58,4 +61,11 @@ export const NotificationIcon = styled.div`
         transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
     }
    
+`
+
+export const PencilImage = styled.img`
+    z-index: 10;
+    @media (max-width: 800px) {
+        display: none;
+    }
 `

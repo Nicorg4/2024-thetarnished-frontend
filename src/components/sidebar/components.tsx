@@ -84,6 +84,7 @@ export const UserImage = styled.img`
     border-radius: 50%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     margin-bottom: 10px;
+    cursor: pointer;
 `
 
 export const UserName = styled.p`

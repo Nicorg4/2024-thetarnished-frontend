@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/sidebar/sidebar';
-import { MainContainer, Content, Card, Title, Instructor, BrowserWrapper, CardInfo, ButtonsContainer, LoadingSkeletonCard, StaticSkeletonCard, Select, InputsContainer, PaymentButton, CashFlowProLogo, CloseButton, LeftContainer, SlotButton, RightContainer, SummaryContainer, StarIconContainer, SubjectName, NoTeachersFound } from './components';
+import { MainContainer, Content, Card, Title, Instructor, BrowserWrapper, CardInfo, ButtonsContainer, StaticSkeletonCard, Select, InputsContainer, PaymentButton, CashFlowProLogo, CloseButton, LeftContainer, SlotButton, RightContainer, SummaryContainer, StarIconContainer, SubjectName, NoTeachersFound } from './components';
 import { Button } from '../../components/main-button/components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
@@ -9,6 +9,7 @@ import { AnimatedLoadingLogo } from '../../components/animated-loading-logo/comp
 import { PopUp, PopUpContainer } from '../../components/payment-popup/components';
 import Topbar from '../../components/topbar';
 import SimplifiedLogo from "../../assets/Logo transparent.png";
+import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 import CashFlowLogo from '../../assets/Cash Flow Logo.jpeg';
 import { RiCloseLargeFill } from "react-icons/ri";
 import { GoPlus, GoDash  } from "react-icons/go";
@@ -432,20 +433,18 @@ const ClassBrowser = () => {
                     <SideBar />
                     <Content>
                     <SubjectName>{subjectName}</SubjectName>
+                        {isLoading ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'center'}}>
+                                <AnimatedLoadingLogo src={SimplifiedLogoAlt} width='70px' height='70px' />
+                            </div>
+                        ) : (
                         <BrowserWrapper>
-                            {isLoading ? (
-                                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
-                                    {Array.from({ length: 9 }).map((_, index) => (
-                                        <LoadingSkeletonCard key={index} />
-                                    ))}
-                                </div>
-                            ) : (
-                                (teachersDictatingSubject.length === 0) ? 
+                                {teachersDictatingSubject.length === 0 ? (
                                 <NoTeachersFound>
                                     <Notification alternative={true} message={"No teachers available for this subject."} />
                                     <Button secondary onClick={handleGoBack}>Go back</Button>
                                 </NoTeachersFound>
-                                : (
+                               ) : (
                                 <>
                                 <div style={{ display: 'flex', marginBottom: '20px', alignItems:'left', width: '100%' }}>
                                     <TextInput
@@ -489,9 +488,9 @@ const ClassBrowser = () => {
                                 </div>
                                 </motion.div>
                                 </>
-                                )
-                            )}
+                                )}
                         </BrowserWrapper>
+                        )}
                     </Content>
                 </MainContainer>
             </>

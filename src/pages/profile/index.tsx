@@ -235,6 +235,7 @@ import EasterEggRiddle from '../../components/riddle';
                 }))
             });
             setIsEditing(false);
+            setMessage("Profile updated successfully");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -293,6 +294,9 @@ import EasterEggRiddle from '../../components/riddle';
             }
             setIsConfirmingVacation(false);
             setShowTakeVacationPopup(false);
+            setMessage('Vacation programmed successfully!');
+            updateUser({ has_planned_vacation: true });
+            updateUser({ vacation_range: `From ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}` });            
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -305,8 +309,7 @@ import EasterEggRiddle from '../../components/riddle';
             }, 3000);
             console.error(error);
         }   
-    }
-    
+    }    
     const handleTerminateVacation = async () => {
         setShowTerminateVacationPopup(true)
     }
@@ -334,8 +337,11 @@ import EasterEggRiddle from '../../components/riddle';
                 throw new Error('Failed to terminate vacation');
             }
             updateUser({ isOnVacation: false });
+            updateUser({ has_planned_vacation: false });
+            updateUser({ vacation_range: '' });
             setIsConfirmingTerminateVacation(false);
             setShowTerminateVacationPopup(false);
+            setMessage("Vacation terminated successfully!");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -349,7 +355,6 @@ import EasterEggRiddle from '../../components/riddle';
             console.error(error);
         }
     }
-
     const [dateRange, setDateRange] = useState<[string | null, string | null]>([null, null]);
 
     const handleDateChange = (newDateRange: [dayjs.Dayjs | null, dayjs.Dayjs | null]) => {
@@ -399,6 +404,7 @@ import EasterEggRiddle from '../../components/riddle';
             updateUser({ avatar_id: selectedAvatarId });
             setIsSelectingAvatar(false);
             setShowAvatarSelectorPopup(false);
+            setMessage("Avatar updated successfully");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -522,7 +528,7 @@ import EasterEggRiddle from '../../components/riddle';
                 </PopUpContainer>
             )}
         <MainContainer openRiddlePopUp={openRiddlePopUp} isPopupOpen={isPopupOpen} showTakeVacationPopup={showTakeVacationPopup} showDeleteAccountConfirmation={showDeleteAccountConfirmation} showTerminateVacationPopup={showTerminateVacationPopup} showAvatarSelectorPopup={showAvatarSelectorPopup}>
-            {showSuccessMessage && <Message>Your profile has been updated.</Message>}
+            {showSuccessMessage && <Message>{message}</Message>}
             {showErrorMessage && <Message error>{message}</Message>}
             <SideBar/>
             <Topbar/>

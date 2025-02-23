@@ -151,7 +151,7 @@ export const CardInfo = styled.div`
     width: 100%;
     height: 100%;
     justify-content: space-between;
-    padding: 0 20px 0 20px;
+    padding: 0 0px 0 20px;
     align-items: center;
 `
 export const Title = styled.h2`
@@ -250,6 +250,7 @@ export const DownloadButtonContainer = styled.div`
    flex-direction: row;
    align-items: center;
    justify-content: center;
+   height: 100%;
 `
 export const DownloadButton = styled.button`
   background-color: ${colors.primary};
@@ -257,7 +258,7 @@ export const DownloadButton = styled.button`
   border-radius: 0px;
   border-bottom-right-radius: 5px;
   border-top-right-radius: 5px;
-  height: 35px;
+  height: 50px;
   display: flex;
   text-align: center;
   align-items: center;

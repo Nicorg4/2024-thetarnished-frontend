@@ -149,7 +149,7 @@ export const CardInfo = styled.div`
     width: 100%;
     height: 100%;
     justify-content: space-between;
-    padding: 0 20px 0 20px;
+    padding: 0 0px 0 20px;
     align-items: center;
 `
 export const Title = styled.h2`
@@ -248,7 +248,6 @@ export const DownloadButtonContainer = styled.div`
    flex-direction: row;
    align-items: center;
    justify-content: center;
-   gap: 5px;
 `
 export const DownloadButton = styled.button`
   background-color: ${colors.primary};
@@ -256,7 +255,7 @@ export const DownloadButton = styled.button`
   border-radius: 0px;
   border-bottom-right-radius: 5px;
   border-top-right-radius: 5px;
-  height: 35px;
+  height: 50px;
   display: flex;
   text-align: center;
   align-items: center;
@@ -266,8 +265,8 @@ export const DownloadButton = styled.button`
   border: none;
 
   &:hover {
-    opacity: 0.8;
-    background-color: ${colors.primary};
+    background-color: ${colors.secondary};
+    color: ${colors.primary};
     border: none;
   }
 `
@@ -275,9 +274,7 @@ export const EditButton = styled.button`
   background-color: ${colors.secondary};
   color: ${colors.primary};
   border-radius: 0px;
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
-  height: 35px;
+  height: 50px;
   display: flex;
   text-align: center;
   align-items: center;
@@ -285,7 +282,7 @@ export const EditButton = styled.button`
   padding-left: 10px;
   padding-right: 10px;
   border: none;
-  border: 1px solid ${colors.primary};
+  border-left: 1px solid ${colors.primary};
 
   &:hover {
     background-color: ${colors.primary};

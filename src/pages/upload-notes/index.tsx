@@ -58,16 +58,7 @@ const UploadNotes = () => {
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [activeGranting, setActiveGranting] = useState('');
   const [activeRevoking, setActiveRevoking] = useState('');
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 900);
   const URL = import.meta.env.VITE_API_URL;
-
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 900);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const fetchFiles = async () => {
     try {
@@ -410,11 +401,8 @@ const UploadNotes = () => {
                             <CardInfo>
                                 <Title>{truncateText(file.filename)}</Title>
                                 <DownloadButtonContainer>
-                                  {isMobile ? <EditButton onClick={handleFileDownload(file.id, file.filename)}><FaUserLock /></EditButton> : (
-                                    <EditButton onClick={() => handleOpenGivePermissionsPopUp(file.id)}>Edit permissions</EditButton>
-                                  )}
-                                    
-                                    <DownloadButton onClick={handleFileDownload(file.id, file.filename)}><IoMdDownload /></DownloadButton>
+                                  <EditButton onClick={() => handleOpenGivePermissionsPopUp(file.id)}><FaUserLock /></EditButton>
+                                  <DownloadButton onClick={handleFileDownload(file.id, file.filename)}><IoMdDownload /></DownloadButton>
                                 </DownloadButtonContainer>
                             </CardInfo>
                         </Card>
