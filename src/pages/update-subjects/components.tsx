@@ -147,12 +147,12 @@ export const NoSubjectsFound = styled.div`
 `
 
 export const CardsContainer = styled.div`
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    max-height: 550px;
+    max-height: 480px;
     overflow-y: auto;
     flex-wrap: wrap;
     padding: 10px;
@@ -237,4 +237,24 @@ export const PageTitle = styled.h1`
     @media (max-width: 550px){
         font-size: 2.3rem;
   }
+`
+
+export const CloseButton = styled.button`
+    background-color: transparent;
+    color: ${colors.primary};
+    font-size: 1.5rem;
+    border: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    &:hover {
+        opacity: 0.7;
+        background-color: transparent;
+    }
+`
+
+export const FormTitle = styled.h2`
+    color: ${colors.primary};
+    font-weight: 500;
 `

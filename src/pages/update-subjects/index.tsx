@@ -1,7 +1,7 @@
 import Logo from '../../components/top-down-logo'
 import Topbar from '../../components/topbar'
 import SideBar from '../../components/sidebar/sidebar'
-import { BrowserWrapper, Card, CardInfo, CardsContainer, Content, Currency, MainContainer, NoSubjectsFound, PageTitle, PriceInput, PriceInputContainer, StaticSkeletonCard, Title, UpdateButton } from './components'
+import { BrowserWrapper, Card, CardInfo, CardsContainer, Content, Currency, FormTitle, MainContainer, NoSubjectsFound, PageTitle, PriceInput, PriceInputContainer, StaticSkeletonCard, Title, UpdateButton } from './components'
 import { useEffect, useState } from 'react';
 import Notification from '../../components/notification';
 import TextInput from '../../components/search-input';
@@ -13,6 +13,10 @@ import SimplifiedLogo from "../../assets/Logo transparent.png";
 import { Message } from '../../components/message/components';
 import SimplifiedLogoAlt from "../../assets/Logo transparent alt.png";
 import { motion } from 'framer-motion';
+import { Button } from '../../components/main-button/components';
+import { PopUp, PopUpContainer } from '../../components/popup/components';
+import { IoAddCircleOutline } from "react-icons/io5";
+import { ButtonsContainer, Form, Input, InputText } from '../profile/components';
 
 interface Subject {
     subjectid: string;
@@ -30,6 +34,11 @@ const UpdateSubjects = () => {
     const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const [showAddSubjectPopUp, setShowAddSubjectPopUp] = useState(false);
+    const [newSubjectName, setNewSubjectName] = useState("");
+    const [newSubjectPrice, setNewSubjectPrice] = useState<number>(0);
+    const [isCreating, setIsCreating] = useState(false);
+    const [message, setMessage] = useState("");
 
     const { user } = useAuth();
 
@@ -82,12 +91,14 @@ const UpdateSubjects = () => {
                 body: JSON.stringify({ class_price: subject.class_price }),
             });
             if (!response.ok) {
+                setMessage("Failed to update class price");
                 throw new Error('Failed to update class price');
             }
             setSubjects(prevSubjects => prevSubjects.map(subject =>
                 subject.subjectid === subject.subjectid ? { ...subject, class_price: subject.class_price } : subject
             ));
             setIsUpdating(false);
+            setMessage("Class price updated successfully!");
             setShowSuccessMessage(true);
             setTimeout(() => {
                 setShowSuccessMessage(false);
@@ -101,11 +112,79 @@ const UpdateSubjects = () => {
             console.error('Error updating class price:', error);
         }
     };
+
+    const handleCreateSubject = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsCreating(true);
+        try {
+            const response = await fetch(`${URL}subject/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`,
+                    'ngrok-skip-browser-warning': 'true',
+                },
+                body: JSON.stringify({
+                    subjectname: newSubjectName,
+                    class_price: newSubjectPrice
+                }),
+            });
+            if (!response.ok) {
+                setMessage('Failed to create subject');
+                throw new Error('Failed to create subject');
+            }
+            const newSubject = await response.json();
+            setSubjects(prev => [...prev, newSubject]);
+            setMessage('Subject created successfully');
+            setShowSuccessMessage(true);
+            setShowAddSubjectPopUp(false);
+            setNewSubjectName("");
+            setNewSubjectPrice(0);
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+            }, 3000);
+        } catch (error) {
+            setShowErrorMessage(true);
+            setTimeout(() => {
+                setShowErrorMessage(false);
+            }, 3000);
+            console.error('Error creating subject:', error);
+        }
+        setIsCreating(false);
+    };
+
+    const handleShowAddSubjectPopUp = () => {
+        setShowAddSubjectPopUp(true);
+    };
+
+    const handlePopupClose = () => {
+        setShowAddSubjectPopUp(false);
+        setNewSubjectName("");
+        setNewSubjectPrice(0);
+    };
     
   return (
+    <>
+    {showAddSubjectPopUp && (
+        <PopUpContainer>
+            <PopUp>
+                <FormTitle>Create new subject</FormTitle>
+                <Form style={{minWidth:'300px'}} onSubmit={handleCreateSubject}>
+                    <InputText >Name:</InputText>
+                    <Input  type="text" id="name" placeholder="Name..." value={newSubjectName} onChange={(e) => setNewSubjectName(e.target.value)} required ></Input>
+                    <InputText >Price:</InputText>
+                    <Input  type="number" id="price" placeholder="price..." value={newSubjectPrice} onChange={(e) => setNewSubjectPrice(Number(e.target.value))} required ></Input>
+                    <ButtonsContainer>
+                        <Button type="submit">{isCreating ? <AnimatedLoadingLogo src={SimplifiedLogo}/> : "Save"}</Button>
+                        <Button type="button" onClick={() => handlePopupClose()} secondary>Cancel</Button>
+                    </ButtonsContainer>
+                </Form>
+            </PopUp>
+        </PopUpContainer>
+    )}
     <MainContainer >
-        {showSuccessMessage && <Message>Subject cost updated successfully!</Message>}
-        {showErrorMessage && <Message error>Failed to update subject cost.</Message>}
+        {showSuccessMessage && <Message>{message}</Message>}
+        {showErrorMessage && <Message error>{message}</Message>}
         <Logo />
         <Topbar/>
         <SideBar/>
@@ -137,8 +216,10 @@ const UpdateSubjects = () => {
                             icon={<LiaSchoolSolid />}
                             placeholder='Search for a subject...'
                         />
+                        <Button style={{height:'56px'}}onClick={handleShowAddSubjectPopUp}><IoAddCircleOutline size={25}/></Button>
                     </div>
                     )}
+                    
                     {cardsToDisplay.length > 0 ? (
                     <CardsContainer style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', width: '100%'}}>
                         {cardsToDisplay.map((subject, index) => (
@@ -167,6 +248,7 @@ const UpdateSubjects = () => {
                     ) : (
                         <NoSubjectsFound>
                             <Notification alternative={true} message={"There are no subjects to display."} />
+                            <Button style={{gap:'5px', height:'56px'}}onClick={handleShowAddSubjectPopUp}>Add new subject<IoAddCircleOutline size={25}/></Button>
                         </NoSubjectsFound>
           
                     )}
@@ -175,7 +257,8 @@ const UpdateSubjects = () => {
                 )}
             </Content>
     </MainContainer>
+    </>
   )
-}
 
+}
 export default UpdateSubjects
