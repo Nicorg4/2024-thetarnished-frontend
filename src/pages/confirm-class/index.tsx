@@ -19,62 +19,46 @@ const ClassConfirm = ({ mode }: { mode: string }) => {
 
     useEffect(() => {
         setIsLoading(true);
-        const confirmClass = async () => {
-            try{
-                const reponse = await fetch(`${URL}reservation/confirm-reservation/${reservationId}`, {
+
+        const handleClassAction = async (endpoint: string, actionType: string, teacherId?: string) => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true',
+                    'Authorization': `Bearer ${user?.token}`,
+                };
+
+                const requestOptions: RequestInit = {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true',
-                        'Authorization': `Bearer ${user?.token}`,
-                    },
-                    body: JSON.stringify({
-                        teacher_id: teacherId,
-                    })
-                });
-                const data = await reponse.json();
-                if (!reponse.ok) {
+                    headers,
+                    body: teacherId ? JSON.stringify({ teacher_id: teacherId }) : undefined
+                };
+
+                const response = await fetch(`${URL}${endpoint}`, requestOptions);
+                const data = await response.json();
+
+                if (!response.ok) {
                     setMessage(data.message);
-                    throw new Error('Failed to confirm class');
+                    throw new Error(`Failed to ${actionType} class`);
                 }
-                setMessage('Class confirmed!');
+
+                setMessage(`Class ${actionType} successfully!`);
                 setIsConfirmed(true);
-                setIsLoading(false);
-            }catch(error){
-                setIsLoading(false);
+            } catch (error) {
                 console.error(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (reservationId && user?.token) {
+            if (mode === 'confirm' && teacherId) {
+                handleClassAction(`reservation/confirm-reservation/${reservationId}`, 'confirmed', teacherId);
+            } else {
+                handleClassAction(`reservation/reject/${reservationId}`, 'rejected');
             }
         }
-        const rejectClass = async () => {
-            try{
-                const reponse = await fetch(`${URL}reservation/reject/${reservationId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true',
-                        'Authorization': `Bearer ${user?.token}`,
-                    },
-                });
-                const data = await reponse.json();
-                if (!reponse.ok) {
-                    setMessage(data.message);
-                    throw new Error('Failed to reject class');
-                }
-                setMessage('Class rejected succesfully!');
-                setIsConfirmed(true);
-                setIsLoading(false);
-            }catch(error){
-                setIsLoading(false);
-                console.error(error);
-            }
-        }
-        if (mode && mode === 'confirm' && reservationId && teacherId && user?.token) {
-            confirmClass();
-        } else {
-            rejectClass();
-        }
-    }, [URL, reservationId, teacherId, user?.token]);
-    
+    }, [URL, reservationId, teacherId, mode, user?.token]);    
     return (
         <MainContainer>
             <Logo/>
