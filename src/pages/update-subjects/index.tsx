@@ -216,7 +216,7 @@ const UpdateSubjects = () => {
                             icon={<LiaSchoolSolid />}
                             placeholder='Search for a subject...'
                         />
-                        <Button style={{height:'56px'}}onClick={handleShowAddSubjectPopUp}><IoAddCircleOutline size={25}/></Button>
+                        <Button style={{height:'56px'}} onClick={handleShowAddSubjectPopUp}><IoAddCircleOutline size={25}/></Button>
                     </div>
                     )}
                     

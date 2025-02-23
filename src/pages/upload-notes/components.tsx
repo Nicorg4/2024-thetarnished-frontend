@@ -150,7 +150,7 @@ export const CardInfo = styled.div`
     align-items: center;
 `
 export const Title = styled.h2`
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 400;
     margin: 0;
     color: ${colors.primary};
@@ -161,6 +161,14 @@ export const Title = styled.h2`
     @media (max-width: 900px){
         font-size: 0.8rem;
     }
+`;
+
+export const PopUpTitle = styled.h2`
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin: 0;
+    color: ${colors.primary};
+    padding-bottom: 15px;
 `;
 export const Instructor = styled.p`
     color: ${colors.primary};
@@ -249,13 +257,18 @@ export const DownloadButtonContainer = styled.div`
    align-items: center;
    justify-content: center;
 `
-export const DownloadButton = styled.button`
-  background-color: ${colors.primary};
+interface ButtonProps {
+    revoke?: boolean;
+    grant?: boolean;
+}
+
+export const DownloadButton = styled.button<ButtonProps>`
+  background-color: ${props => (props.revoke ? `${colors.important}` : `${colors.primary}`)};
   color: ${colors.secondary};
   border-radius: 0px;
   border-bottom-right-radius: 5px;
   border-top-right-radius: 5px;
-  height: 50px;
+  height: 55px;
   display: flex;
   text-align: center;
   align-items: center;
@@ -266,15 +279,15 @@ export const DownloadButton = styled.button`
 
   &:hover {
     background-color: ${colors.secondary};
-    color: ${colors.primary};
+    color: ${props => (props.revoke ? `${colors.important}` : `${colors.primary}`)};
     border: none;
   }
 `
-export const EditButton = styled.button`
-  background-color: ${colors.secondary};
-  color: ${colors.primary};
+export const EditButton = styled.button<ButtonProps>`
+  background-color: ${props => (props.grant ? `${colors.primary}` : `${colors.secondary}`)};
+  color: ${props => (props.grant ? `${colors.secondary}` : `${colors.primary}`)};
   border-radius: 0px;
-  height: 50px;
+  height: 55px;
   display: flex;
   text-align: center;
   align-items: center;
@@ -285,8 +298,8 @@ export const EditButton = styled.button`
   border-left: 1px solid ${colors.primary};
 
   &:hover {
-    background-color: ${colors.primary};
-    color: ${colors.secondary};
+    background-color: ${props => (props.grant ? `${colors.secondary}` : `${colors.primary}`)};
+    color: ${props => (props.grant ? `${colors.primary}` : `${colors.secondary}`)};
     border: none;
   }
 `
@@ -342,3 +355,39 @@ export const FileInput = styled.input`
     border-color: ${colors.primary};
   }
 `;
+
+export const StudentsContainer = styled.div`
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-height: 650px;
+    overflow-y: auto;
+    flex-wrap: wrap;
+    padding: 10px;
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: white;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #e0e0e0;
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: ${colors.primary} transparent;
+
+    @media (max-width: 1000px){
+        width: 80%;
+    }
+`

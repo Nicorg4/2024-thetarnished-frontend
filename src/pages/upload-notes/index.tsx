@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import SideBar from "../../components/sidebar/sidebar";
 import Logo from "../../components/top-down-logo";
 import Topbar from "../../components/topbar";
-import { BrowserWrapper, Card, CardInfo, CardsContainer, CloseButton, Content, DownloadButton, DownloadButtonContainer, EditButton, FileInput, MainContainer, NoSubjectsFound, PageTitle, StaticSkeletonCard, Title, UploadForm } from "./components";
+import { BrowserWrapper, Card, CardInfo, CardsContainer, CloseButton, Content, DownloadButton, DownloadButtonContainer, EditButton, FileInput, MainContainer, NoSubjectsFound, PageTitle, PopUpTitle, StaticSkeletonCard, StudentsContainer, Title, UploadForm } from "./components";
 import { useAuth } from "../../auth/useAuth";
 import Notification from "../../components/notification";
 import TextInput from "../../components/search-input";
@@ -300,7 +300,7 @@ const UploadNotes = () => {
         <PopUpContainer>
             <PopUp>
                 <CloseButton onClick={handlePopupClose}><RiCloseLargeFill/></CloseButton>
-                <Title>Grant or revoke file access permissions.</Title>
+                <PopUpTitle>Grant or revoke file access permissions.</PopUpTitle>
                 {loadingStudents ? (
                   <div style={{ textAlign: "center", padding: "20px" }}>
                     <AnimatedLoadingLogo src={SimplifiedLogoAlt} alt="Loading..." />
@@ -308,21 +308,23 @@ const UploadNotes = () => {
                 ) : students.length === 0 ? (
                   <p>No students available.</p>
                 ) : (
-                  students.map((student) => (
+                  <StudentsContainer>
+                  {students.map((student) => (
                     <Card key={student.studentid}>
                       <CardInfo>
                         <p>{student.firstname} {student.lastname}</p>
                       </CardInfo>
                       <DownloadButtonContainer>
-                        <Button onClick={handleGrantAccess(fileId, student.studentid)}>
+                        <EditButton grant={true} onClick={handleGrantAccess(fileId, student.studentid)}>
                           {isGranting && activeGranting === student.studentid ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : <FaUnlockAlt />}
-                        </Button>
-                        <Button important onClick={handleRevokeAccess(fileId, student.studentid)}>
+                        </EditButton>
+                        <DownloadButton revoke={true} onClick={handleRevokeAccess(fileId, student.studentid)}>
                           {isRevoking && activeRevoking === student.studentid ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : <FaLock />}
-                        </Button>
+                        </DownloadButton>
                       </DownloadButtonContainer>
                     </Card>
-                  ))
+                  ))}
+                </StudentsContainer>
                 )}
 
             </PopUp>
@@ -331,7 +333,6 @@ const UploadNotes = () => {
     {uploadFilePopUpOpen &&
         <PopUpContainer>
             <PopUp>
-            <CloseButton onClick={handleFilePopupClose}><RiCloseLargeFill/></CloseButton>
             <Title>Upload your file.</Title>
               <UploadForm onSubmit={handleFileUpload}>
                 <FileInput
@@ -339,9 +340,15 @@ const UploadNotes = () => {
                   accept="application/pdf"
                   onChange={handleFileChange}
                 />
-                <Button type="submit">
-                  {isUploading ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : "Upload"}
-                </Button>
+                <DownloadButtonContainer>
+                  <Button type="submit">
+                    {isUploading ? <AnimatedLoadingLogo src={SimplifiedLogo} alt="Loading..." /> : "Upload"}
+                  </Button>
+                  <Button secondary onClick={handleFilePopupClose}>
+                    Cancel
+                  </Button>
+                </DownloadButtonContainer>
+                
               </UploadForm>
             </PopUp>
         </PopUpContainer>
@@ -380,7 +387,7 @@ const UploadNotes = () => {
                     icon={<LiaSchoolSolid />}
                     placeholder='Search for a file...'
                 />
-                <Button onClick={handleUploadFilePopUpOpen}><LuUpload size={25}/></Button>
+                <Button style={{height:'56px'}} onClick={handleUploadFilePopUpOpen}><LuUpload size={25}/></Button>
             </div>
             )}
             {cardsToDisplay.length > 0 ? (
